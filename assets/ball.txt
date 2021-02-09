@@ -1,0 +1,10 @@
+background
+ball
+Racquet
+b'Service_Line'
+b'Front_Right_Corner'
+b'T'
+b'Short_line_left'
+b'Front_Left_Corner'
+b'Squash'
+b'Racquet'
