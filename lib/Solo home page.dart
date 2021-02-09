@@ -95,7 +95,7 @@ class SoloHomeState extends State<SoloHome> {
 
   int upcount = 0;
 
-  List<dynamic> last_seen = [];
+  List<Point> last_seen = [];
   List<bool> direction = [];
 
   bool up_down = false;
@@ -143,7 +143,7 @@ class SoloHomeState extends State<SoloHome> {
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
           //ball_conf = ((re["confidenceInClass"] * 100).toString());
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height + 10);
-          smartbounce2(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+          smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
         }
       });
     });
@@ -189,7 +189,7 @@ class SoloHomeState extends State<SoloHome> {
     }
   }
 
-  void smartbounce(x, y, h) {
+  void smartbounce2(x, y, h) {
     if (y > dst_point[0].y - 30) {
       below = true;
       last_bounce.add(Point(x, y));
@@ -232,28 +232,57 @@ class SoloHomeState extends State<SoloHome> {
     }
   }
 
-  void smartbounce2(x, y, h) {
-    if (last_seen.length > 6) {
+  void smartbounce(x, y, h) {
 
+    if (y > dst_point[0].y - 30) {
+      below = true;
+    }else{
 
-      int len = last_seen.length;
+      below=false;
 
-      int mid=last_seen[len-3][1];
-
-
-      if (last_seen[len-5][1]<mid && last_seen[len-4][1] && last_seen[len-2][1]<mid && last_seen[len-2][1] ) {
-        ball.add(Positioned(
-            left: last_seen[last_seen.length - 3][0] + 5,
-            top: last_seen[last_seen.length - 3][1] - (h / 2),
-            child: Icon(
-              Icons.circle,
-              size: 15,
-              color: Colors.black,
-            )));
-      }
     }
 
-    last_seen.add([x, y]);
+
+    if (last_bounce.length > 9) {
+
+
+
+      int len = last_bounce.length;
+
+      double mid_om=last_bounce[last_bounce.length-3].y;
+
+
+        if (last_bounce[len - 8].y < mid_om && last_bounce[len - 4].y < mid_om && last_bounce[len - 2].y < mid_om && last_bounce[len - 1].y < mid_om && mid_om-last_bounce[len - 8].y>15 && below) {
+          ball.add(Positioned(
+              left: last_bounce[last_bounce.length - 3].x + 5,
+              top: last_bounce[last_bounce.length - 3].y - (h / 2),
+              child: Icon(
+                Icons.circle,
+                size: 15,
+                color: Colors.black,
+              )));
+
+
+          last_bounce.removeAt(len - 8);
+          last_bounce.removeAt(len - 7);
+          last_bounce.removeAt(len - 6);
+          last_bounce.removeAt(len - 5);
+          last_bounce.removeAt(len - 4);
+
+
+        }else{
+          last_bounce.removeAt(len - 8);
+
+        }
+
+
+
+
+    }
+
+    print(last_bounce.length);
+
+    last_bounce.add(Point(x,y));
   }
 
   Point hom_trans(x, y, H) {
