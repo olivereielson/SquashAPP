@@ -143,8 +143,7 @@ class SoloHomeState extends State<SoloHome> {
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
           //ball_conf = ((re["confidenceInClass"] * 100).toString());
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height + 10);
-          //smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
-          ground(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+          smartbounce2(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
         }
       });
     });
@@ -187,92 +186,6 @@ class SoloHomeState extends State<SoloHome> {
           }
         });
       });
-    }
-  }
-
-  void ground2(x, y) {
-    //rectangle
-
-    if (y > points[0].y && y > points[1].y && y < points[2].y && y < points[3].y) {
-      double slope_R = (points[2].y - points[0].y) / (points[2].x - points[0].x);
-      double slope_L = (points[3].y - points[1].y) / (points[3].x - points[1].x);
-      double y_line = ((y - points[1].y) / slope_L) + points[1].x;
-      double x_line = ((y - points[0].y) / slope_R) + points[0].x;
-
-      if (x < x_line && x > y_line && !on_ground && DateTime.now().difference(start_time).inSeconds > 0.5) {
-        on_ground = true;
-
-        start_time = DateTime.now();
-
-        List<dynamic> dst = [
-          [points[0].x, points[0].y],
-          [points[1].x, points[1].y],
-          [points[2].x, points[2].y],
-          [points[3].x, points[3].y]
-        ];
-        List<dynamic> scr = [
-          [300, 217],
-          [229, 214],
-          [229, 167],
-          [300, 167]
-        ];
-        H = find_homography3(dst, scr);
-
-        bounces.add(hom_trans(x, y, H));
-        ball.add(Positioned(
-            left: x,
-            top: y,
-            child: Icon(
-              Icons.adjust,
-              size: 30,
-            )));
-      }
-    } else {
-      on_ground = false;
-    }
-  }
-
-  void ground(x, y, h) {
-    //rectangle
-
-    if (y > dst_point[0].y && y > dst_point[1].y && y < dst_point[2].y && y < dst_point[3].y) {
-      double slope_R = (dst_point[2].y - dst_point[0].y) / (dst_point[2].x - dst_point[0].x);
-      double slope_L = (dst_point[3].y - dst_point[1].y) / (dst_point[3].x - dst_point[1].x);
-      double y_line = ((y - dst_point[1].y) / slope_L) + dst_point[1].x;
-      double x_line = ((y - dst_point[0].y) / slope_R) + dst_point[0].x;
-
-      // print("x=$x    xline=$x_line     yline=$y_line");
-
-      if (x < x_line && x > y_line && !on_ground && DateTime.now().difference(start_time).inSeconds > 0.5) {
-        on_ground = true;
-
-        start_time = DateTime.now();
-
-        List<dynamic> dst = [
-          [points[2].x, points[2].y],
-          [points[3].x, points[3].y],
-          [points[1].x, points[1].y],
-          [points[0].x, points[0].y],
-        ];
-
-        H = find_homography3(dst, scr);
-
-        bounces.add(hom_trans(x, y, H));
-
-        if (x > location.x && x < location.x + box_size2 && y > location.y && y < location.y + box_size2) {
-          target_bounces.add(hom_trans(x, y, h));
-        }
-
-        ball.add(Positioned(
-            left: x,
-            top: y - h,
-            child: Icon(
-              Icons.adjust,
-              size: 30,
-            )));
-      }
-    } else {
-      on_ground = false;
     }
   }
 
@@ -320,28 +233,18 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   void smartbounce2(x, y, h) {
-    if (last_seen.length > 5) {
-      //print(last_seen[last_seen.length-1][1]-y);
-
-      if (last_seen[last_seen.length - 1][1] - y > 10) {
-        up_down = true;
-      } else {
-        up_down = false;
-      }
-
-      direction.add(up_down);
-      ball_conf = up_down.toString();
-
-      //print(direction[direction.length - 1]);
+    if (last_seen.length > 6) {
 
 
-      //print(" fff     ");
+      int len = last_seen.length;
 
-      if ( dst_point[0].y<last_seen[last_seen.length - 4][1]&&direction[direction.length - 4] != up_down && direction[direction.length - 3] != up_down && direction[direction.length - 2] == up_down
-          && up_down) {
+      int mid=last_seen[len-3][1];
+
+
+      if (last_seen[len-5][1]<mid && last_seen[len-4][1] && last_seen[len-2][1]<mid && last_seen[len-2][1] ) {
         ball.add(Positioned(
-            left: last_seen[last_seen.length - 4][0] + 5,
-            top: last_seen[last_seen.length - 4][1] - (h / 2),
+            left: last_seen[last_seen.length - 3][0] + 5,
+            top: last_seen[last_seen.length - 3][1] - (h / 2),
             child: Icon(
               Icons.circle,
               size: 15,
