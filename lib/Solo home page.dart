@@ -189,49 +189,6 @@ class SoloHomeState extends State<SoloHome> {
     }
   }
 
-  void smartbounce2(x, y, h) {
-    if (y > dst_point[0].y - 30) {
-      below = true;
-      last_bounce.add(Point(x, y));
-    } else {
-      if (upcount > 3) {
-        if (below && last_bounce.length > 1) {
-          up_count = 0;
-
-          last_bounce.sort((a, b) => a.y.compareTo(b.y));
-
-          Point p = last_bounce[last_bounce.length - 1];
-
-          ball.add(Positioned(
-              left: p.x + 5,
-              top: p.y - (h / 2),
-              child: Icon(
-                Icons.circle,
-                size: 15,
-                color: Colors.blue,
-              )));
-
-          List<dynamic> dst = [
-            [points[2].x, points[2].y],
-            [points[3].x, points[3].y],
-            [points[1].x, points[1].y],
-            [points[0].x, points[0].y],
-          ];
-
-          H = find_homography3(dst, scr);
-
-          bounces.add(hom_trans(p.x + 5, p.y - (h / 2), H));
-          upcount = 0;
-        }
-      } else {
-        upcount++;
-      }
-
-      last_bounce.clear();
-      below = false;
-    }
-  }
-
   void smartbounce(x, y, h) {
 
     if (y < dst_point[0].y - 30) {
@@ -250,6 +207,18 @@ class SoloHomeState extends State<SoloHome> {
 
         if (last_bounce[len - 8].y < mid_om && last_bounce[len - 4].y < mid_om && last_bounce[len - 2].y < mid_om && last_bounce[len - 1].y < mid_om && mid_om-last_bounce[len - 8].y>15
             &&dst_point[0].y - 30< mid_om &&mid_om-last_bounce[len - 5].y>15&& !below) {
+
+          List<dynamic> dst = [
+            [points[2].x, points[2].y],
+            [points[3].x, points[3].y],
+            [points[1].x, points[1].y],
+            [points[0].x, points[0].y],
+          ];
+
+          H = find_homography3(dst, scr);
+
+          bounces.add(hom_trans(x, y, H));
+
           ball.add(Positioned(
               left: last_bounce[last_bounce.length - 3].x + 5,
               top: last_bounce[last_bounce.length - 3].y - (h / 2),
