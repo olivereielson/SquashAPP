@@ -89,7 +89,7 @@ class SoloHomeState extends State<SoloHome> {
   double threshold = 0.2;
   int numResultsPerClass = 1;
   ResolutionPreset res = ResolutionPreset.high;
-  int camera = 0;
+  int camera = 1;
 
   //bouce
 
@@ -234,12 +234,8 @@ class SoloHomeState extends State<SoloHome> {
 
   void smartbounce(x, y, h) {
 
-    if (y > dst_point[0].y - 30) {
-      below = true;
-    }else{
-
-      below=false;
-
+    if (y < dst_point[0].y - 30) {
+      below = false;
     }
 
 
@@ -252,7 +248,8 @@ class SoloHomeState extends State<SoloHome> {
       double mid_om=last_bounce[last_bounce.length-3].y;
 
 
-        if (last_bounce[len - 8].y < mid_om && last_bounce[len - 4].y < mid_om && last_bounce[len - 2].y < mid_om && last_bounce[len - 1].y < mid_om && mid_om-last_bounce[len - 8].y>15 && below) {
+        if (last_bounce[len - 8].y < mid_om && last_bounce[len - 4].y < mid_om && last_bounce[len - 2].y < mid_om && last_bounce[len - 1].y < mid_om && mid_om-last_bounce[len - 8].y>15
+            &&dst_point[0].y - 30< mid_om &&mid_om-last_bounce[len - 5].y>15&& !below) {
           ball.add(Positioned(
               left: last_bounce[last_bounce.length - 3].x + 5,
               top: last_bounce[last_bounce.length - 3].y - (h / 2),
@@ -263,11 +260,8 @@ class SoloHomeState extends State<SoloHome> {
               )));
 
 
-          last_bounce.removeAt(len - 8);
-          last_bounce.removeAt(len - 7);
-          last_bounce.removeAt(len - 6);
-          last_bounce.removeAt(len - 5);
-          last_bounce.removeAt(len - 4);
+         last_bounce.clear();
+         below=true;
 
 
         }else{
