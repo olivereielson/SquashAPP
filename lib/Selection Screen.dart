@@ -95,14 +95,13 @@ class GhostScreenState extends State<GhostScreen> {
           );
         });
   }
-
-  Widget input(String title, String value, Icon icon) {
+  Widget input2(String title, String value, Icon icon) {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-        Radius.circular(20),
-      )),
+            Radius.circular(20),
+          )),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Container(
@@ -136,6 +135,42 @@ class GhostScreenState extends State<GhostScreen> {
       ),
     );
   }
+  Widget input(String title, String value, Icon icon) {
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+
+          Container(
+            height: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(value,
+                      style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: main),
+                    ),
+                    Text(title),
+                  ],
+                ),
+                Icon(Icons.chevron_right)
+              ],
+            ),
+          ),
+
+          Divider(
+            thickness: 2,
+          ),
+        ],
+      ),
+    );
+
+  }
+
 
   show_round_picker() {
     List<Widget> nums = [];
@@ -523,7 +558,7 @@ class GhostScreenState extends State<GhostScreen> {
                   },
                   child: input(
                       "Inital Count Down",
-                      start_time.inSeconds.toString() + " Seconds",
+                      start_time.toString().split('.').first.padLeft(8, "0").substring(3),
                       Icon(
                         Icons.timer,
                         color: main,
@@ -539,7 +574,7 @@ class GhostScreenState extends State<GhostScreen> {
                   },
                   child: input(
                       "Rest time",
-                      rest_time.inSeconds.toString() + " Seconds",
+                      rest_time.toString().split('.').first.padLeft(8, "0").substring(3) ,
                       Icon(
                         Icons.timer,
                         color: main,
@@ -555,7 +590,7 @@ class GhostScreenState extends State<GhostScreen> {
                   },
                   child: input(
                       "Number of Ghosts",
-                      number_set.toInt().toString() + " ghosts",
+                      number_set.toInt().toString(),
                       Icon(
                         EvaIcons.hashOutline,
                         color: main,
@@ -571,7 +606,7 @@ class GhostScreenState extends State<GhostScreen> {
                   },
                   child: input(
                       "Number of rounds",
-                      round_num.toInt().toString() + " sets",
+                      round_num.toInt().toString(),
                       Icon(
                         EvaIcons.hashOutline,
                         color: main,
@@ -593,8 +628,8 @@ class GhostScreenState extends State<GhostScreen> {
                   child: Hero(
                       tag: "courtscreen",
                       child: input(
-                          "Selected Corners",
-                          corners.length.toInt().toString() + " corners",
+                          "Number of Corners",
+                          corners.length.toInt().toString(),
                           Icon(
                             Icons.apps,
                             color: main,

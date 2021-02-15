@@ -1,3 +1,4 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:hive/hive.dart';
 import 'package:squash/Selection%20Screen.dart';
 import 'package:squash/finish%20screen.dart';
+import 'package:squash/save_page.dart';
 import 'package:squash/solo%20screen.dart';
 import 'account.dart';
 import 'home.dart';
@@ -49,6 +51,8 @@ class _MyAppState extends State<MyApp> {
       darkTheme: ThemeData(brightness: Brightness.light, primaryTextTheme: TextTheme(), textTheme: TextTheme()),
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
+
+          unselectedItemColor: Colors.grey,
           items: [
 
             BottomNavigationBarItem(
@@ -59,7 +63,10 @@ class _MyAppState extends State<MyApp> {
               icon: Icon(Icons.sports_tennis_outlined),
               label: 'Solo',
             ),
-
+            BottomNavigationBarItem(
+              icon: Icon(EvaIcons.activityOutline),
+              label: 'Saved Data',
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle_outlined),
               label: 'Acount',
@@ -89,6 +96,7 @@ class _MyAppState extends State<MyApp> {
           children: <Widget>[
             gs,
             SoloScreen(cameras),
+            SavedData(),
             Acount()
 
           ],

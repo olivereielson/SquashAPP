@@ -48,10 +48,7 @@ class MyPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint2 = Paint()
-      ..color = Colors.blue
-      ..strokeWidth = 10
-      ..strokeCap = StrokeCap.round;
+
     final paint = Paint()
       ..color =Color.fromRGBO(4, 12, 128, 1)
       ..strokeWidth = 1

@@ -58,10 +58,10 @@ class SoloHomeState extends State<SoloHome> {
   List<Point> points = [Point(324.0, 489.0), Point(157.0, 498.0), Point(349.0, 535.0), Point(133.0, 543.0)];
 
   List<dynamic> scr = [
-    [485, 1080],
     [240, 1080],
-    [240, 825],
-    [485, 825]
+    [485, 1080],
+    [485, 825],
+    [240, 825]
   ];
 
   List<Point> dst_point = [];
@@ -86,18 +86,14 @@ class SoloHomeState extends State<SoloHome> {
 
   //Camera varavibles
 
-  double threshold = 0.2;
+  double threshold = 0.01;
   int numResultsPerClass = 1;
   ResolutionPreset res = ResolutionPreset.high;
   int camera = 1;
 
   //bouce
 
-  int upcount = 0;
-
   List<Point> last_seen = [];
-  List<bool> direction = [];
-
   bool up_down = false;
 
   @override
@@ -141,7 +137,7 @@ class SoloHomeState extends State<SoloHome> {
         if (re["detectedClass"] == "ball") {
           double x = re["rect"]["x"] * MediaQuery.of(context).size.width;
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
-          //ball_conf = ((re["confidenceInClass"] * 100).toString());
+          ball_conf = ((re["confidenceInClass"] * 100).toString());
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height + 10);
           smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
         }
@@ -190,62 +186,52 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   void smartbounce(x, y, h) {
-
     if (y < dst_point[0].y - 30) {
       below = false;
     }
 
-
     if (last_bounce.length > 9) {
-
-
-
       int len = last_bounce.length;
 
-      double mid_om=last_bounce[last_bounce.length-3].y;
+      double mid_om = last_bounce[last_bounce.length - 3].y;
 
+      if (last_bounce[len - 8].y < mid_om &&
+          last_bounce[len - 4].y < mid_om &&
+          last_bounce[len - 2].y < mid_om &&
+          last_bounce[len - 1].y < mid_om &&
+          mid_om - last_bounce[len - 8].y > 15 &&
+          dst_point[0].y - 30 < mid_om &&
+          mid_om - last_bounce[len - 5].y > 15 &&
+          !below) {
+        List<dynamic> dst = [
+          [points[2].x, points[2].y],
+          [points[3].x, points[3].y],
+          [points[1].x, points[1].y],
+          [points[0].x, points[0].y],
+        ];
 
-        if (last_bounce[len - 8].y < mid_om && last_bounce[len - 4].y < mid_om && last_bounce[len - 2].y < mid_om && last_bounce[len - 1].y < mid_om && mid_om-last_bounce[len - 8].y>15
-            &&dst_point[0].y - 30< mid_om &&mid_om-last_bounce[len - 5].y>15&& !below) {
+        H = find_homography3(dst, scr);
 
-          List<dynamic> dst = [
-            [points[2].x, points[2].y],
-            [points[3].x, points[3].y],
-            [points[1].x, points[1].y],
-            [points[0].x, points[0].y],
-          ];
+        bounces.add(hom_trans(x, y, H));
 
-          H = find_homography3(dst, scr);
+        ball.add(Positioned(
+            left: last_bounce[last_bounce.length - 3].x,
+            top: last_bounce[last_bounce.length - 3].y - h,
+            child: Icon(
+              Icons.circle,
+              size: 15,
+              color: Colors.black,
+            )));
 
-          bounces.add(hom_trans(x, y, H));
-
-          ball.add(Positioned(
-              left: last_bounce[last_bounce.length - 3].x + 5,
-              top: last_bounce[last_bounce.length - 3].y - (h / 2),
-              child: Icon(
-                Icons.circle,
-                size: 15,
-                color: Colors.black,
-              )));
-
-
-         last_bounce.clear();
-         below=true;
-
-
-        }else{
-          last_bounce.removeAt(len - 8);
-
-        }
-
-
-
-
+        last_bounce.clear();
+        below = true;
+      } else {
+        last_bounce.removeAt(len - 8);
+      }
     }
 
-    print(last_bounce.length);
 
-    last_bounce.add(Point(x,y));
+    last_bounce.add(Point(x, y));
   }
 
   Point hom_trans(x, y, H) {
@@ -599,18 +585,21 @@ class SoloHomeState extends State<SoloHome> {
                 show_stuff ? extra() : Text(""),
                 Settings_tap(false),
                 //counter(),
-                //counter_widget(widget.type,widget.side_count,main,time:widget.time,counter_value: bounces.length,counter_goal: widget.type==1?widget.target_count:widget.shot_count, done: (bool)
-                //{Navigator.pop(context);},),
+                counter_widget(
+                  widget.type,
+                  widget.side_count,
+                  main,
+                  time: widget.time,
+                  counter_value: bounces.length,
+                  counter_goal: widget.type == 1 ? widget.target_count : widget.shot_count,
+                  done: (bool) {
+                    print(points);
+                    Navigator.pop(context);
+                  },
+                ),
 
                 Positioned(top: 400, right: 40, child: Text(ball_conf)),
 
-                Positioned(
-                    top: dst_point[0].y - 30,
-                    child: Container(
-                      color: Colors.blue,
-                      width: MediaQuery.of(context).size.width,
-                      height: 10,
-                    )),
                 show_stuff
                     ? Stack(
                         children: ball,
