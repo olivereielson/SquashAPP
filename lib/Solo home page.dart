@@ -190,19 +190,13 @@ class SoloHomeState extends State<SoloHome> {
       below = false;
     }
 
-    if (last_bounce.length > 9) {
+    if (last_bounce.length > 7) {
       int len = last_bounce.length;
 
       double mid_om = last_bounce[last_bounce.length - 3].y;
 
-      if (last_bounce[len - 8].y < mid_om &&
-          last_bounce[len - 4].y < mid_om &&
-          last_bounce[len - 2].y < mid_om &&
-          last_bounce[len - 1].y < mid_om &&
-          mid_om - last_bounce[len - 8].y > 15 &&
-          dst_point[0].y - 30 < mid_om &&
-          mid_om - last_bounce[len - 5].y > 15 &&
-          !below) {
+      if (last_bounce[len - 6].y < mid_om && last_bounce[len - 4].y < mid_om && last_bounce[len - 2].y < mid_om && last_bounce[len - 1].y < mid_om && dst_point[0].y - 30 < mid_om && mid_om - last_bounce[len - 5].y > 15 && !below) {
+
         List<dynamic> dst = [
           [points[2].x, points[2].y],
           [points[3].x, points[3].y],
@@ -225,11 +219,11 @@ class SoloHomeState extends State<SoloHome> {
 
         last_bounce.clear();
         below = true;
+
       } else {
-        last_bounce.removeAt(len - 8);
+        last_bounce.removeAt(len - 7);
       }
     }
-
 
     last_bounce.add(Point(x, y));
   }
