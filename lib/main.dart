@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
 
   PageController _pageController = new PageController();
 
-  int current=0;
+  int current = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +47,26 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
+
+        dividerTheme: DividerThemeData(
+
+          
+
+
+        )
+
+
+
+
       ),
       darkTheme: ThemeData(brightness: Brightness.light, primaryTextTheme: TextTheme(), textTheme: TextTheme()),
+
+
+
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-
           unselectedItemColor: Colors.grey,
           items: [
-
             BottomNavigationBarItem(
               icon: Icon(Icons.directions_run),
               label: 'Ghosting',
@@ -71,35 +83,21 @@ class _MyAppState extends State<MyApp> {
               icon: Icon(Icons.account_circle_outlined),
               label: 'Acount',
             ),
-
           ],
-
-
           fixedColor: Color.fromRGBO(4, 12, 128, 1),
-
-          onTap: (index){
-
+          onTap: (index) {
             _pageController.jumpToPage(index);
             setState(() {
-              current=index;
-
+              current = index;
             });
-
           },
           currentIndex: current,
-
         ),
         body: PageView(
           pageSnapping: true,
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            gs,
-            SoloScreen(cameras),
-            SavedData(),
-            Acount()
-
-          ],
+          children: <Widget>[gs, SoloScreen(cameras), SavedData(), Acount()],
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -13,11 +14,13 @@ import 'package:scidart/numdart.dart';
 import 'package:squash/bndboxsolo.dart';
 import 'package:tflite/tflite.dart';
 
+import 'Selection Screen.dart';
 import 'bndbox.dart';
 import 'camera.dart';
 import 'counter_widget.dart';
 import 'court_functions.dart';
 import 'court_painter.dart';
+import 'hive_classes.dart';
 
 class SoloHome extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -81,6 +84,8 @@ class SoloHomeState extends State<SoloHome> {
 
   bool below = false;
   List<Point> last_bounce = [];
+  var solo_storage_box;
+
 
   int up_count = 0;
 
@@ -562,6 +567,23 @@ class SoloHomeState extends State<SoloHome> {
         ));
   }
 
+  Future<void> save() async {
+
+    Hive.registerAdapter(Solo_stroage_Adapter());
+
+    solo_storage_box = await Hive.openBox<Solo_stroage>("SoloStorage");
+
+    if (Hive.isBoxOpen("SoloStorage")) {
+      solo_storage_box = Hive.box<Solo_stroage>("SoloStorage");
+    }
+
+    var store= Solo_stroage()..date=DateTime.now().toString()..duration=start_time.difference(DateTime.now()).toString()..bounces=bounces.toString();
+    solo_storage_box.add(store); // Store this object for the first time
+
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return PageView(
@@ -586,8 +608,8 @@ class SoloHomeState extends State<SoloHome> {
                   time: widget.time,
                   counter_value: bounces.length,
                   counter_goal: widget.type == 1 ? widget.target_count : widget.shot_count,
-                  done: (bool) {
-                    print(points);
+                  done: (bool) async {
+                    await save();
                     Navigator.pop(context);
                   },
                 ),

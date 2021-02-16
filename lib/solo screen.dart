@@ -61,7 +61,6 @@ class SoloScreenState extends State<SoloScreen> {
     if (Hive.isBoxOpen(box)) {
       Exersises = Hive.box<Solo_Custom>(box);
     }
-    settings = [Time_Input(), Target_input(), round()];
   }
 
   Future<void> load_hive() async {
@@ -132,7 +131,6 @@ class SoloScreenState extends State<SoloScreen> {
       ),
     );
   }
-
 
 
   Widget saved_set() {
@@ -632,6 +630,29 @@ class SoloScreenState extends State<SoloScreen> {
     );
   }
 
+
+  Widget mode_choice(){
+
+
+    switch(segmentedControlGroupValue){
+
+      case 0:
+        return Time_Input();
+
+      case 1:
+        return Target_input();
+
+      case 2:
+        return round();
+
+
+    }
+
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -728,9 +749,7 @@ class SoloScreenState extends State<SoloScreen> {
                       }),
                 ),
 
-                Container(
-
-                    child: settings[segmentedControlGroupValue]),
+                mode_choice(),
 
 
 
