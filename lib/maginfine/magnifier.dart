@@ -62,7 +62,7 @@ class _MagnifierState extends State<Magnifier> {
     }
 
     setState(() {
-      double newX = widget.position.dx - (_magnifierSize.width / 2 / _scale)-(((MediaQuery.of(context).size.width-widget.size.width)/2)/_scale);
+      double newX = widget.position.dx - (_magnifierSize.width / 2 / _scale)-((127)/_scale);
       double newY = widget.position.dy - (_magnifierSize.height / 2 / _scale)-(100/_scale);
 
 
@@ -78,7 +78,7 @@ class _MagnifierState extends State<Magnifier> {
 
   Widget _getMagnifier(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: (MediaQuery.of(context).size.width-widget.size.width)/2,vertical: 100),
+      padding: EdgeInsets.symmetric(horizontal: 127,vertical: 100),
       child: ClipOval(
         child: BackdropFilter(
           filter: ImageFilter.matrix(_matrix.storage),
