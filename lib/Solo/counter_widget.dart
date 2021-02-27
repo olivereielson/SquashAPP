@@ -127,7 +127,7 @@ class counter_widget_state extends State<counter_widget> {
   Widget build(BuildContext context) {
     switch (widget.type) {
       case 0:
-        return timer();
+        return Counter();
 
       case 1:
         return Counter();

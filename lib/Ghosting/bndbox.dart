@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'models.dart';
+import '../models.dart';
 import 'dart:ui' as ui;
 import 'dart:io' show Platform;
 

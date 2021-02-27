@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:squash/Court.dart';
-import 'package:squash/home.dart';
+import 'package:squash/Ghosting/home.dart';
 import 'package:tflite/tflite.dart';
 
 class GhostScreen extends StatefulWidget {
@@ -35,7 +35,7 @@ class GhostScreenState extends State<GhostScreen> {
   final _mylistkey = GlobalKey<AnimatedListState>();
   Color main_color = Colors.lightBlueAccent;
   var Exersises;
-  Color main = Color.fromRGBO(4, 12, 128, 1);
+  Color main = Color.fromRGBO(40, 70, 130, 1);
 
   List<Color> title_color = [
     //Colors.lightBlueAccent,
@@ -95,46 +95,6 @@ class GhostScreenState extends State<GhostScreen> {
           );
         });
   }
-  Widget input2(String title, String value, Icon icon) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(20),
-          )),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Container(
-          height: 75,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                child: icon,
-              ),
-
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(value),
-                  ],
-                ),
-              ),
-              Spacer(),
-              Icon(Icons.navigate_next, color: Colors.black) // This Icon
-            ],
-          ),
-        ),
-      ),
-    );
-  }
   Widget input(String title, String value, Icon icon) {
 
     return Padding(
@@ -143,20 +103,30 @@ class GhostScreenState extends State<GhostScreen> {
         children: [
 
           Container(
-            height: 80,
+            height: 40,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+
+
+                Row(
                   children: [
-                    Text(value,
-                      style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: main),
+                    icon,
+                    Container(width: 30,),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(value,
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: main),
+                        ),
+                        Text(title,style: TextStyle(fontSize: 10)),
+                      ],
                     ),
-                    Text(title),
+
                   ],
                 ),
+
                 Icon(Icons.chevron_right)
               ],
             ),
@@ -350,25 +320,7 @@ class GhostScreenState extends State<GhostScreen> {
                 width: 200,
                 height: 200,
 
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(40.0)),
 
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.1, 0.3, 0.5, 0.9],
-                    colors: [
-                      Colors.white,
-                      Colors.white,
-                      Colors.white,
-                      Colors.white,
-
-                      //Color.fromRGBO(4, 12, 200, 1),
-                      //Color.fromRGBO(4, 12, 200, 1),
-                      //Color.fromRGBO(4, 12, 200, 1),
-                    ],
-                  ),
-                ),
                 child: Card(
                   elevation: 5,
                   shape: RoundedRectangleBorder(
@@ -453,22 +405,41 @@ class GhostScreenState extends State<GhostScreen> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
       if (Hive.isBoxOpen(box)) {
         return Container(
-          child: ListView(
+          decoration: new BoxDecoration(
+              gradient: new LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromRGBO(230, 240, 250, 1),
+                  Color.fromRGBO(230, 240, 250, 1),
+                ],
+              )),
+          child: Stack(
+
+
             children: [
-              
-              SafeArea(child: Container()),
-              
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+              CustomPaint(
+                size: Size(MediaQuery.of(context).size.width, 300),
+                painter: LogoPainter(),
+              ),
+
+              SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Saved Ghosting Sets",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    delete_mode
-                        ? GestureDetector(
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Saved Ghosting Sets",
+                            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                          ),
+                          delete_mode
+                              ? GestureDetector(
                             onTap: () {
                               setState(() {
                                 delete_mode = false;
@@ -487,229 +458,243 @@ class GhostScreenState extends State<GhostScreen> {
                               ),
                             ),
                           )
-                        : Text("")
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Divider(
-                  color: main,
-                  thickness: 3,
-                ),
-              ),
-              Container(
-                height: 240,
-                child: AnimatedList(
-                    key: _mylistkey,
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.all(8),
-                    initialItemCount: Hive.box<Custom>(box).length,
-                    itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                      return SizeTransition(
-                        sizeFactor: animation,
-                        axis: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                              onLongPress: () {
-                                setState(() {});
-                                delete_mode = true;
-                              },
-                              onTap: () async {
-                                await loadModel();
+                              : Text("")
+                        ],
+                      ),
+                    ),
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage(
-                                          cameras,
-                                          Hive.box<Custom>(box).getAt(index).number_set,
-                                          Hive.box<Custom>(box).getAt(index).round_num,
-                                          Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
-                                          Hive.box<Custom>(box).getAt(index).corners,
-                                          Hive.box<Custom>(box).getAt(index).start_time)),
-                                );
-                              },
-                              child: Show_Custom_Card(index)),
-                        ),
-                      );
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Text(
-                  "Custom Ghosting Set",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Divider(
-                  color: main,
-                  thickness: 3,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_initail_time_picker();
-                  },
-                  child: input(
-                      "Inital Count Down",
-                      start_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                      Icon(
-                        Icons.timer,
-                        color: main,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_time_picker();
-                  },
-                  child: input(
-                      "Rest time",
-                      rest_time.toString().split('.').first.padLeft(8, "0").substring(3) ,
-                      Icon(
-                        Icons.timer,
-                        color: main,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_set_picker();
-                  },
-                  child: input(
-                      "Number of Ghosts",
-                      number_set.toInt().toString(),
-                      Icon(
-                        EvaIcons.hashOutline,
-                        color: main,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_round_picker();
-                  },
-                  child: input(
-                      "Number of rounds",
-                      round_num.toInt().toString(),
-                      Icon(
-                        EvaIcons.hashOutline,
-                        color: main,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () async {
-                    corners = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Court_Screen(corners)),
-                    );
+                    Container(
+                      height: 240,
+                      child: AnimatedList(
+                          key: _mylistkey,
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.all(8),
+                          initialItemCount: Hive.box<Custom>(box).length,
+                          itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                            return SizeTransition(
+                              sizeFactor: animation,
+                              axis: Axis.horizontal,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                    onLongPress: () {
+                                      setState(() {});
+                                      delete_mode = true;
+                                    },
+                                    onTap: () async {
+                                      await loadModel();
 
-                    setState(() {});
-                  },
-                  child: Hero(
-                      tag: "courtscreen",
-                      child: input(
-                          "Number of Corners",
-                          corners.length.toInt().toString(),
-                          Icon(
-                            Icons.apps,
-                            color: main,
-                            size: 30,
-                          ))),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        await loadModel();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomePage(
+                                                cameras,
+                                                Hive.box<Custom>(box).getAt(index).number_set,
+                                                Hive.box<Custom>(box).getAt(index).round_num,
+                                                Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
+                                                Hive.box<Custom>(box).getAt(index).corners,
+                                                Hive.box<Custom>(box).getAt(index).start_time)),
+                                      );
+                                    },
+                                    child: Show_Custom_Card(index)),
+                              ),
+                            );
+                          }),
+                    ),
+                    Padding(
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
-                        );
-                      },
-                      child: Center(
-                        child: Container(
-                          height: 50,
-                          width: 150,
-                          child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                Radius.circular(18),
-                              )),
-                              elevation: 2,
-                              color: main,
-                              child: Center(
-                                  child: Text(
-                                "Start",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
-                              ))),
+
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        "Custom Ghosting Set",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        height: 360,
+                        decoration: BoxDecoration(color:Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+
+
+
+
+
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  show_initail_time_picker();
+                                },
+                                child: input(
+                                    "Inital Count Down",
+                                    start_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                                    Icon(
+                                      Icons.timer,
+                                      color: main,
+                                      size: 30,
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  show_time_picker();
+                                },
+                                child: input(
+                                    "Rest time",
+                                    rest_time.toString().split('.').first.padLeft(8, "0").substring(3) ,
+                                    Icon(
+                                      Icons.timer,
+                                      color: main,
+                                      size: 30,
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  show_set_picker();
+                                },
+                                child: input(
+                                    "Number of Ghosts",
+                                    number_set.toInt().toString(),
+                                    Icon(
+                                      EvaIcons.hashOutline,
+                                      color: main,
+                                      size: 30,
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  show_round_picker();
+                                },
+                                child: input(
+                                    "Number of rounds",
+                                    round_num.toInt().toString(),
+                                    Icon(
+                                      EvaIcons.hashOutline,
+                                      color: main,
+                                      size: 30,
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  corners = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => Court_Screen(corners)),
+                                  );
+
+                                  setState(() {});
+                                },
+                                child: Hero(
+                                    tag: "courtscreen",
+                                    child: input(
+                                        "Number of Corners",
+                                        corners.length.toInt().toString(),
+                                        Icon(
+                                          Icons.apps,
+                                          color: main,
+                                          size: 30,
+                                        ))),
+                              ),
+                            ),
+
+                          ],
                         ),
                       ),
                     ),
-                    GestureDetector(
-                        onTap: () async {
-                          await text_dialog();
 
-                          var exersie = Custom()
-                            ..name = name
-                            ..number_set = number_set
-                            ..round_num = round_num
-                            ..rest_time = rest_time.inSeconds
-                            ..start_time = start_time.inSeconds
-                            ..corners = corners
-                            ..color_index= Random().nextInt(title_color.length);
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await loadModel();
 
-                          Exersises.add(exersie); // Store this object for the first time
-
-                          _mylistkey.currentState.insertItem(Exersises.length - 1);
-                        },
-                        child: Container(
-                          width: 200,
-                          height: 50,
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                              Radius.circular(18),
-                            )),
-                            elevation: 2,
-                            color: main,
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
+                              );
+                            },
                             child: Center(
-                                child: Text(
-                              "Save Custom Set",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
-                            )),
+                              child: Container(
+                                height: 50,
+                                width: 150,
+                                child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(18),
+                                        )),
+                                    elevation: 2,
+                                    color: main,
+                                    child: Center(
+                                        child: Text(
+                                          "Start",
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
+                                        ))),
+                              ),
+                            ),
                           ),
-                        )),
+                          GestureDetector(
+                              onTap: () async {
+                                await text_dialog();
+
+                                var exersie = Custom()
+                                  ..name = name
+                                  ..number_set = number_set
+                                  ..round_num = round_num
+                                  ..rest_time = rest_time.inSeconds
+                                  ..start_time = start_time.inSeconds
+                                  ..corners = corners
+                                  ..color_index= Random().nextInt(title_color.length);
+
+                                Exersises.add(exersie); // Store this object for the first time
+
+                                _mylistkey.currentState.insertItem(Exersises.length - 1);
+                              },
+                              child: Container(
+                                width: 200,
+                                height: 50,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(18),
+                                      )),
+                                  elevation: 2,
+                                  color: main,
+                                  child: Center(
+                                      child: Text(
+                                        "Save Custom Set",
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
+                                      )),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+
+
+
                   ],
                 ),
               ),
-              Container(
-                height: 10,
-              )
             ],
           ),
         );
@@ -773,5 +758,46 @@ class CustomAdapter extends TypeAdapter<Custom> {
     writer.write(obj.corners);
     writer.write(obj.color_index);
 
+  }
+}
+
+class LogoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint();
+    var rect = Offset.zero & size;
+
+    var path = Path();
+    //path.lineTo(0, size.height - size.height / 5);
+    //path.lineTo(size.width / 1.2, size.height);
+    //Added this line
+
+    path.moveTo(0, 0);
+    path.lineTo(0, size.height * 0.6);
+
+    path.quadraticBezierTo(size.width * 0.1, size.height * 0.6, size.width * 0.52, size.height * 0.8);
+    path.quadraticBezierTo(size.width * 0.74, size.height * 0.92, size.width, size.height * 0.84);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+    path.close();
+    canvas.drawPath(path, paint);
+
+    paint.shader = LinearGradient(
+      begin: Alignment.bottomRight,
+      end: Alignment.topLeft,
+      stops: [0.1, 0.5, 1],
+      colors: [
+        Color.fromRGBO(40, 40, 80, 1),
+        Color.fromRGBO(40, 40, 80, 1),
+        Colors.indigo,
+      ],
+    ).createShader(rect);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }

@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:hive/hive.dart';
 import 'package:squash/Selection%20Screen.dart';
-import 'package:squash/finish%20screen.dart';
+import 'package:squash/Ghosting/finish%20screen.dart';
 import 'package:squash/save_page.dart';
-import 'package:squash/solo%20screen.dart';
+import 'package:squash/Solo/solo%20screen.dart';
+import 'Saved Data Page.dart';
 import 'account.dart';
-import 'home.dart';
+import 'Ghosting/home.dart';
 
 List<CameraDescription> cameras;
 
@@ -97,7 +98,7 @@ class _MyAppState extends State<MyApp> {
           pageSnapping: true,
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[gs, SoloScreen(cameras), SavedData(), Acount()],
+          children: <Widget>[gs, SoloScreen(cameras), SavedDataPage(), Acount()],
         ),
       ),
     );

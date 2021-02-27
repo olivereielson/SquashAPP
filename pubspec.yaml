@@ -39,6 +39,9 @@ dependencies:
   matrix_gesture_detector:
   shared_preferences:
   scidart:
+  shape_of_view:
+  google_fonts:
+  bubble_tab_indicator:
   cupertino_icons: ^0.1.3
 
 dev_dependencies:

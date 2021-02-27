@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'dart:math' as math;
 
-import 'main.dart';
+import '../main.dart';
 
 typedef void Callback(List<dynamic> list, int h, int w);
 

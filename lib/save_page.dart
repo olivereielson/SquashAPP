@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import 'Saved Data Page.dart';
 import 'hive_classes.dart';
 import 'main.dart';
 
@@ -28,68 +30,103 @@ class SavedDataState extends State<SavedData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Saved Solo Workouts",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-              Divider(
-                color: main,
-                thickness: 3,
-              ),
-
-              Container(height: 10,),
-
-              FutureBuilder(
-                future: load_hive(),
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  if (Hive.isBoxOpen("SoloStorage")) {
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: Hive.box<Solo_stroage>("SoloStorage").length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 80,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                                    children: [
-                                      Text("1:04",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: main)),
-                                      Icon(Icons.chevron_right)
-                                    ],
-                                  ),
-                                  Text(DateFormat.yMMMMd('en_US').format(DateTime.parse(Hive.box<Solo_stroage>("SoloStorage").getAt(index).date)),style: TextStyle()),
-                                  Divider(
-                                    thickness: 2,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  } else {
-                    return Text("not");
-                  }
-                },
-              )
-            ],
-          ),
+        body: Stack(
+      children: [
+        CustomPaint(
+          size: Size(MediaQuery.of(context).size.width, 200),
+          painter: LogoPainter(),
         ),
-      ),
-    );
+        SafeArea(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                "Preformance Analytics",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 80),
+              child: Row(
+                children: [
+                  Container(
+                    height: 200,
+                    child: CircularPercentIndicator(
+                      radius: 150.0,
+                      lineWidth: 15.0,
+                      backgroundWidth: 10,
+                      percent: 0.9,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      progressColor: Color.fromRGBO(40, 40, 80, 1),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 80),
+              child: Row(
+                children: [
+                  Container(
+                    height: 200,
+                    child: CircularPercentIndicator(
+                      radius: 150.0,
+                      lineWidth: 15.0,
+                      backgroundWidth: 10,
+                      percent: 0.9,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      progressColor: Color.fromRGBO(40, 40, 80, 1),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ))
+      ],
+    ));
+  }
+}
+
+class LogoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint();
+    var rect = Offset.zero & size;
+
+    var path = Path();
+    //path.lineTo(0, size.height - size.height / 5);
+    //path.lineTo(size.width / 1.2, size.height);
+    //Added this line
+
+    path.moveTo(0, 0);
+    path.lineTo(0, size.height * 0.6);
+
+    path.quadraticBezierTo(size.width * 0.1, size.height * 0.6, size.width * 0.52, size.height * 0.8);
+    path.quadraticBezierTo(size.width * 0.74, size.height * 0.92, size.width, size.height * 0.84);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+    path.close();
+    canvas.drawPath(path, paint);
+
+    paint.shader = LinearGradient(
+      begin: Alignment.bottomRight,
+      end: Alignment.topLeft,
+      stops: [0.1, 0.5, 1],
+      colors: [
+        Color.fromRGBO(40, 40, 80, 1),
+        Color.fromRGBO(40, 40, 80, 1),
+        Colors.indigo,
+      ],
+    ).createShader(rect);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }

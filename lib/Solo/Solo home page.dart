@@ -11,16 +11,19 @@ import 'package:intl/intl.dart';
 import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scidart/numdart.dart';
-import 'package:squash/bndboxsolo.dart';
+import 'package:squash/Solo/bndboxsolo.dart';
+import 'package:squash/maginfine/magnifier.dart';
 import 'package:tflite/tflite.dart';
 
-import 'Selection Screen.dart';
-import 'bndbox.dart';
-import 'camera.dart';
+import '../Selection Screen.dart';
+import '../Ghosting/bndbox.dart';
+import '../Ghosting/camera.dart';
+import '../magnifier.dart';
+import '../maginfine/touchBubble.dart';
 import 'counter_widget.dart';
 import 'court_functions.dart';
 import 'court_painter.dart';
-import 'hive_classes.dart';
+import '../hive_classes.dart';
 
 class SoloHome extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -63,7 +66,7 @@ class SoloHomeState extends State<SoloHome> {
   List<dynamic> scr = [
     [240, 1080],
     [485, 1080],
-    [485, 825],
+    [485, 0],
     [240, 825]
   ];
 
@@ -91,7 +94,7 @@ class SoloHomeState extends State<SoloHome> {
 
   //Camera varavibles
 
-  double threshold = 0.01;
+  double threshold = 0.2;
   int numResultsPerClass = 1;
   ResolutionPreset res = ResolutionPreset.high;
   int camera = 1;
@@ -103,10 +106,13 @@ class SoloHomeState extends State<SoloHome> {
 
   @override
   void initState() {
-    super.initState();
+    currentBubbleSize = touchBubbleSize;
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     setupcamera();
     start_time = DateTime.now();
     generate_cout_point();
+    super.initState();
+
   }
 
   void generate_cout_point() {
@@ -170,14 +176,14 @@ class SoloHomeState extends State<SoloHome> {
             isDetecting = false;
 
             Tflite.detectObjectOnFrame(
-                    bytesList: img.planes.map((plane) {
-                      return plane.bytes;
-                    }).toList(),
-                    imageHeight: img.height,
-                    imageWidth: img.width,
-                    model: "SSDMobileNet",
-                    threshold: threshold,
-                    numResultsPerClass: numResultsPerClass)
+                bytesList: img.planes.map((plane) {
+                  return plane.bytes;
+                }).toList(),
+                imageHeight: img.height,
+                imageWidth: img.width,
+                model: "SSDMobileNet",
+                threshold: threshold,
+                numResultsPerClass: numResultsPerClass)
                 .then((recognitions) {
               //print(recognitions);
 
@@ -302,10 +308,45 @@ class SoloHomeState extends State<SoloHome> {
     return Stack(
       children: [
         painting(),
-        t_box(0, "TR"),
-        t_box(1, "TL"),
-        t_box(2, "BR"),
-        t_box(3, "BL"),
+        TouchBubble(
+          index: 1,
+          position: Offset(points[1].x,points[1].y),
+          bubbleSize: currentBubbleSize,
+          onStartDragging: _startDragging,
+          onDrag: _drag,
+          onEndDragging: _endDragging,
+        ),
+        TouchBubble(
+          index: 0,
+
+          position: Offset(points[0].x,points[0].y),
+          bubbleSize: currentBubbleSize,
+          onStartDragging: _startDragging,
+          onDrag: _drag,
+          onEndDragging: _endDragging,
+        ),
+        TouchBubble(
+          index: 2,
+
+          position: Offset(points[2].x,points[2].y),
+          bubbleSize: currentBubbleSize,
+          onStartDragging: _startDragging,
+          onDrag: _drag,
+          onEndDragging: _endDragging,
+        ),
+        TouchBubble(
+          index: 3,
+
+          position: Offset(points[3].x,points[3].y),
+          bubbleSize: currentBubbleSize,
+          onStartDragging: _startDragging,
+          onDrag: _drag,
+          onEndDragging: _endDragging,
+        ),
+        //t_box(0, "TR"),
+        //t_box(1, "TL"),
+        //t_box(2, "BR"),
+        //t_box(3, "BL"),
       ],
     );
   }
@@ -357,32 +398,6 @@ class SoloHomeState extends State<SoloHome> {
     );
   }
 
-  Widget counter() {
-    return Positioned(
-      left: (MediaQuery.of(context).size.width - 180) / 2,
-      top: 10,
-      child: SafeArea(
-        child: CircularPercentIndicator(
-          progressColor: main,
-          arcBackgroundColor: Colors.white,
-          arcType: ArcType.FULL,
-          lineWidth: 20,
-          backgroundColor: Colors.white,
-          percent: 0.2,
-          radius: 180,
-          animation: true,
-          animateFromLastPercent: true,
-          animationDuration: 1,
-          backgroundWidth: 20,
-          center: Text(
-            bounces.length.toString(),
-            style: TextStyle(fontSize: 49, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-
   void onNewCameraSelected(CameraDescription cameraDescription) async {
     if (controller != null) {
       await controller.dispose();
@@ -411,14 +426,14 @@ class SoloHomeState extends State<SoloHome> {
         isDetecting = false;
 
         Tflite.detectObjectOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                imageHeight: img.height,
-                imageWidth: img.width,
-                model: "SSDMobileNet",
-                threshold: threshold,
-                numResultsPerClass: numResultsPerClass)
+            bytesList: img.planes.map((plane) {
+              return plane.bytes;
+            }).toList(),
+            imageHeight: img.height,
+            imageWidth: img.width,
+            model: "SSDMobileNet",
+            threshold: threshold,
+            numResultsPerClass: numResultsPerClass)
             .then((recognitions) {
           //print(recognitions);
 
@@ -584,24 +599,64 @@ class SoloHomeState extends State<SoloHome> {
 
   }
 
+  static const double touchBubbleSize = 50;
+
+  Offset position=Offset(200, 500);
+  double currentBubbleSize;
+  bool magnifierVisible = false;
+
+
+  void _startDragging(Offset newPosition) {
+    setState(() {
+      magnifierVisible = true;
+      position = newPosition;
+      currentBubbleSize = touchBubbleSize * 1.5;
+    });
+  }
+  void _drag(Offset newPosition,int index) {
+    setState(() {
+      position = newPosition;
+      points[index]=Point(newPosition.dx,newPosition.dy);
+      points[index]=Point(newPosition.dx,newPosition.dy);
+      generate_cout_point();
+
+    });
+  }
+  void _endDragging() {
+    setState(() {
+      currentBubbleSize = touchBubbleSize;
+      magnifierVisible = false;
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return PageView(
       scrollDirection: Axis.horizontal,
+      physics: NeverScrollableScrollPhysics(),
       children: [
         Stack(
           children: [
             Scaffold(
               body: Stack(children: [
                 //Image(image: AssetImage('assets/test.jpg')),
-                camera_preview(),
+                Magnifier(
+
+
+                  position: position,
+                  visible: magnifierVisible,
+                  child:   camera_preview(),
+                ),
 
                 BndBoxSolo(_recognitions == null ? [] : _recognitions),
 
                 show_stuff ? extra() : Text(""),
                 Settings_tap(false),
-                //counter(),
-                counter_widget(
+
+                /*
+                 counter_widget(
                   widget.type,
                   widget.side_count,
                   main,
@@ -613,27 +668,31 @@ class SoloHomeState extends State<SoloHome> {
                     Navigator.pop(context);
                   },
                 ),
+                 */
 
                 Positioned(top: 400, right: 40, child: Text(ball_conf)),
 
                 show_stuff
                     ? Stack(
-                        children: ball,
-                      )
+                  children: ball,
+                )
                     : Text(""),
+
+
+
               ]),
             ),
           ],
         ),
         Scaffold(
             body: Stack(
-          children: [
-            draw_court(),
-            fixed_target(),
-            Settings_tap(true),
-            flat_bounce(),
-          ],
-        )),
+              children: [
+                draw_court(),
+                fixed_target(),
+                Settings_tap(true),
+                flat_bounce(),
+              ],
+            )),
       ],
     );
   }

@@ -51,20 +51,30 @@ class MyPainter extends CustomPainter {
 
     final paint = Paint()
       ..color =Color.fromRGBO(4, 12, 128, 1)
-      ..strokeWidth = 1
+      ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
+
+    final paint2 = Paint()
+      ..color =Color.fromRGBO(4, 255, 255, 1)
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+
+
 
 //2
 
 
 
-    //canvas.drawLine(point_to_offset(serve_box[0]), point_to_offset(serve_box[1]), paint);
-   // canvas.drawLine(point_to_offset(serve_box[0]), point_to_offset(serve_box[2]), paint);
-    //canvas.drawLine(point_to_offset(serve_box[3]), point_to_offset(serve_box[2]), paint);
-    //drawLine(point_to_offset(serve_box[3]), point_to_offset(serve_box[1]), paint);
+    canvas.drawLine(point_to_offset(serve_box[0]), point_to_offset(serve_box[1]), paint);
+    canvas.drawLine(point_to_offset(serve_box[0]), point_to_offset(serve_box[2]), paint);
+    canvas.drawLine(point_to_offset(serve_box[3]), point_to_offset(serve_box[2]), paint);
+    canvas.drawLine(point_to_offset(serve_box[3]), point_to_offset(serve_box[1]), paint);
 
 
 
+    //canvas.drawLine(point_to_offset(dst_point[0]), point_to_offset(serve_box[1]), paint2);
+
+    //anvas.drawLine(point_to_offset(dst_point[2]), point_to_offset(dst_point[3]), paint2);
 
 
 
@@ -78,8 +88,7 @@ class MyPainter extends CustomPainter {
 
 
 
-    //canvas.drawCircle(point_to_offset(dst_point[7]), 50, paint2);
-   // canvas.drawCircle(point_to_offset(dst_point[6]), 20, paint2);
+
 //3
   }
 

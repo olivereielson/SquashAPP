@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive/hive.dart';
-import 'package:squash/Solo%20home%20page.dart';
+import 'package:squash/Solo/Solo%20home%20page.dart';
 import 'package:squash/Target_page.dart';
 import 'package:tflite/tflite.dart';
 
@@ -96,8 +96,8 @@ class SoloScreenState extends State<SoloScreen> {
       elevation: 5,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-        Radius.circular(20),
-      )),
+            Radius.circular(20),
+          )),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Container(
@@ -135,38 +135,38 @@ class SoloScreenState extends State<SoloScreen> {
 
   Widget saved_set() {
     return Container(
-      height: 210,
-      width: MediaQuery.of(context).size.width,
-      child: AnimatedList(
-          key: _solokey,
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.all(8),
-          initialItemCount: Hive.box<Solo_Custom>(box).length,
-          itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-            return SizeTransition(
-              sizeFactor: animation,
-              axis: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GestureDetector(
-                    onLongPress: () {
-                      setState(() {});
-                      delete_mode = true;
-                    },
-                    onTap: () async {
+        height: 210,
+        width: MediaQuery.of(context).size.width,
+        child: AnimatedList(
+            key: _solokey,
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(8),
+            initialItemCount: Hive.box<Solo_Custom>(box).length,
+            itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+              return SizeTransition(
+                sizeFactor: animation,
+                axis: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                      onLongPress: () {
+                        setState(() {});
+                        delete_mode = true;
+                      },
+                      onTap: () async {
 
-                      await loadModel();
+                        await loadModel();
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SoloHome(cameras, start_camera, location,shot_number,taraget_count,total_time,segmentedControlGroupValue,side_count)),
-                      );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SoloHome(cameras, start_camera, location,shot_number,taraget_count,total_time,segmentedControlGroupValue,side_count)),
+                        );
 
-                    },
-                    child: Show_Custom_Card(index)),
-              ),
-            );
-          })
+                      },
+                      child: Show_Custom_Card(index)),
+                ),
+              );
+            })
     );
   }
 
@@ -381,7 +381,7 @@ class SoloScreenState extends State<SoloScreen> {
                         ),
 
                         Text(
-                         "Type: " +type_list[Hive.box<Solo_Custom>(box).getAt(index).type] ,style: TextStyle(color: Colors.black),
+                          "Type: " +type_list[Hive.box<Solo_Custom>(box).getAt(index).type] ,style: TextStyle(color: Colors.black),
                         ),
                         Text(test(Hive.box<Solo_Custom>(box).getAt(index).type),style: TextStyle(color: Colors.black),
                         ),
@@ -656,192 +656,192 @@ class SoloScreenState extends State<SoloScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: load_hive(),
-    builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        body: FutureBuilder(
+            future: load_hive(),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
 
 
-          if(Hive.isBoxOpen(box)){
+              if(Hive.isBoxOpen(box)){
 
-            return       ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                return       ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                    children: [
-                      Text(
-                        "Solo Workout",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      delete_mode
-                          ? GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            delete_mode = false;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.grey,
-                              border: Border.all(
-                                color: Colors.grey,
+                        children: [
+                          Text(
+                            "Solo Workout",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          delete_mode
+                              ? GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                delete_mode = false;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: BorderRadius.all(Radius.circular(20))),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                                child: Text("done"),
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(20))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                            child: Text("done"),
-                          ),
-                        ),
-                      )
-                          : Text("")
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Divider(
-                    color: main,
-                    thickness: 3,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: saved_set(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Custom Workout",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Divider(
-                    color: main,
-                    thickness: 3,
-                  ),
-                ),
-
-                // Target_input(),
-
-                //round(),
-                // Time_Input(),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: CupertinoSegmentedControl(
-                      borderColor: main,
-                      selectedColor: main,
-                      groupValue: segmentedControlGroupValue,
-                      children: <int, Widget>{0: Text("Time"), 1: Text("Target"), 2: Text("Shot Count")},
-                      onValueChanged: (i) {
-                        setState(() {
-                          segmentedControlGroupValue = i;
-
-                        });
-                      }),
-                ),
-
-                mode_choice(),
-
-
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          await loadModel();
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SoloHome(cameras, start_camera, location,shot_number,taraget_count,total_time,segmentedControlGroupValue,side_count)),
-                          );
-                        },
-                        child: Center(
-                          child: Container(
-                            height: 50,
-                            width: 150,
-                            child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    )),
-                                elevation: 2,
-                                color: main,
-                                child: Center(
-                                    child: Text(
-                                      "Start",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ))),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                          onTap: () async {
-
-
-                            await text_dialog();
-
-                            var exersie = Solo_Custom()
-                              ..name = name
-                              ..type = segmentedControlGroupValue
-                              ..side_num = side_count
-                              ..target_num = taraget_count
-                              ..time = total_time.inSeconds
-                              ..shot_num = shot_number;
-
-                            Exersises.add(exersie); // Store this object for the first time
-
-                            _solokey.currentState.insertItem(Exersises.length - 1);
-
-
-
-
-                          },
-                          child: Container(
-                            width: 200,
-                            height: 50,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(18),
-                                  )),
-                              elevation: 2,
-                              color: main,
-                              child: Center(
-                                  child: Text(
-                                    "Save Custom Set",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                  )),
                             ),
-                          )),
-                    ],
-                  ),
-                ),
-              ],
-            );
+                          )
+                              : Text("")
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Divider(
+                        color: main,
+                        thickness: 3,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: saved_set(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Custom Workout",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Divider(
+                        color: main,
+                        thickness: 3,
+                      ),
+                    ),
+
+                    // Target_input(),
+
+                    //round(),
+                    // Time_Input(),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: CupertinoSegmentedControl(
+                          borderColor: main,
+                          selectedColor: main,
+                          groupValue: segmentedControlGroupValue,
+                          children: <int, Widget>{0: Text("Time"), 1: Text("Target"), 2: Text("Shot Count")},
+                          onValueChanged: (i) {
+                            setState(() {
+                              segmentedControlGroupValue = i;
+
+                            });
+                          }),
+                    ),
+
+                    mode_choice(),
 
 
 
-    }else{
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await loadModel();
 
-            return Center(child: Text("hiii"));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => SoloHome(cameras, start_camera, location,shot_number,taraget_count,total_time,segmentedControlGroupValue,side_count)),
+                              );
+                            },
+                            child: Center(
+                              child: Container(
+                                height: 50,
+                                width: 150,
+                                child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(18),
+                                        )),
+                                    elevation: 2,
+                                    color: main,
+                                    child: Center(
+                                        child: Text(
+                                          "Start",
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                        ))),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                              onTap: () async {
 
-          }
+
+                                await text_dialog();
+
+                                var exersie = Solo_Custom()
+                                  ..name = name
+                                  ..type = segmentedControlGroupValue
+                                  ..side_num = side_count
+                                  ..target_num = taraget_count
+                                  ..time = total_time.inSeconds
+                                  ..shot_num = shot_number;
+
+                                Exersises.add(exersie); // Store this object for the first time
+
+                                _solokey.currentState.insertItem(Exersises.length - 1);
 
 
 
-    })
+
+                              },
+                              child: Container(
+                                width: 200,
+                                height: 50,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(18),
+                                      )),
+                                  elevation: 2,
+                                  color: main,
+                                  child: Center(
+                                      child: Text(
+                                        "Save Custom Set",
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                      )),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+
+
+
+              }else{
+
+                return Center(child: Text("hiii"));
+
+              }
+
+
+
+            })
 
 
     );

@@ -8,7 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:squash/finish%20screen.dart';
+import 'package:squash/Ghosting/finish%20screen.dart';
 import 'camera.dart';
 import 'bndbox.dart';
 import 'countdown.dart';
