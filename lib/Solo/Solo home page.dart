@@ -18,7 +18,6 @@ import 'package:tflite/tflite.dart';
 import '../Selection Screen.dart';
 import '../Ghosting/bndbox.dart';
 import '../Ghosting/camera.dart';
-import '../magnifier.dart';
 import '../maginfine/touchBubble.dart';
 import 'counter_widget.dart';
 import 'court_functions.dart';

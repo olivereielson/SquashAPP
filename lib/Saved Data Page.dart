@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:squash/maginfine/touchBubble.dart';
 
-import 'magnifier.dart';
+import 'maginfine/magnifier.dart';
 
 class SavedDataPage extends StatefulWidget {
   DateTime date;

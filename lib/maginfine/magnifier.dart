@@ -32,9 +32,10 @@ class _MagnifierState extends State<Magnifier> {
   void initState() {
     _magnifierSize = widget.size;
     _scale = widget.scale;
+    super.initState();
+
     _calculateMatrix();
 
-    super.initState();
   }
 
   @override
