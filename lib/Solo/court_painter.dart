@@ -14,10 +14,9 @@ class MyPainter extends CustomPainter {
   List<Point> serve_box;
   List<Point> dst_point;
 
-  Point target;
 
 
-  MyPainter(this.serve_box,this.dst_point,this.target);
+  MyPainter(this.serve_box,this.dst_point);
 
 
 
@@ -50,8 +49,8 @@ class MyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
 
     final paint = Paint()
-      ..color =Color.fromRGBO(4, 12, 128, 1)
-      ..strokeWidth = 5
+      ..color =Color.fromRGBO(40, 45, 81, 1)
+      ..strokeWidth = 9
       ..strokeCap = StrokeCap.round;
 
     final paint2 = Paint()

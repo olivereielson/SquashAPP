@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:hive/hive.dart';
-import 'package:squash/Selection%20Screen.dart';
+import 'package:squash/Ghosting/Selection%20Screen.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
 import 'package:squash/save_page.dart';
 import 'package:squash/Solo/solo%20screen.dart';
@@ -80,10 +80,7 @@ class _MyAppState extends State<MyApp> {
               icon: Icon(EvaIcons.activityOutline),
               label: 'Saved Data',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle_outlined),
-              label: 'Acount',
-            ),
+
           ],
           fixedColor: Color.fromRGBO(4, 12, 128, 1),
           onTap: (index) {
@@ -98,7 +95,7 @@ class _MyAppState extends State<MyApp> {
           pageSnapping: true,
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[gs, SoloScreen(cameras), SavedDataPage(), Acount()],
+          children: <Widget>[gs, SoloScreen(cameras), SavedDataPage(),],
         ),
       ),
     );

@@ -23,11 +23,11 @@ class BndBoxSolo extends StatelessWidget {
 
 
 
-        var x = re["rect"]["x"]*MediaQuery.of(context).size.width;
-        var w = re["rect"]["w"]*MediaQuery.of(context).size.width;
-        var y = re["rect"]["y"]*MediaQuery.of(context).size.height;
-        var h = re["rect"]["h"]*MediaQuery.of(context).size.height;
 
+        var x = MediaQuery.of(context).size.width-(re["rect"]["y"]*MediaQuery.of(context).size.width);
+        var w = re["rect"]["w"]*MediaQuery.of(context).size.width;
+        var y = re["rect"]["x"]*MediaQuery.of(context).size.height;
+        var h = re["rect"]["h"]*MediaQuery.of(context).size.height;
 
 
 

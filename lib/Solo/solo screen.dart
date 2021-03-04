@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:squash/Solo/Solo%20home%20page.dart';
 import 'package:squash/Target_page.dart';
 import 'package:tflite/tflite.dart';
@@ -34,8 +35,6 @@ class SoloScreenState extends State<SoloScreen> {
 
   String name;
 
-
-
   int extra_num;
   int shot_number = 100;
   int start_camera = 0;
@@ -49,13 +48,11 @@ class SoloScreenState extends State<SoloScreen> {
 
   Duration rest_time = Duration(seconds: 30);
 
-
-
   Color main = Color.fromRGBO(40, 70, 130, 1);
 
   DateTime time;
 
-  List<int> sides = [0,1,2,3];
+  List<int> sides = [0, 1, 2, 3];
 
   List<Widget> settings;
   int side_count = 2;
@@ -153,7 +150,6 @@ class SoloScreenState extends State<SoloScreen> {
         });
   }
 
-
   show_target_picker() {
     List<Widget> nums = [];
 
@@ -236,7 +232,6 @@ class SoloScreenState extends State<SoloScreen> {
         });
   }
 
-
   text_dialog() async {
     await showDialog(
       context: context,
@@ -261,270 +256,354 @@ class SoloScreenState extends State<SoloScreen> {
   }
 
   Widget round() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            Divider(
-              thickness: 2,
-            ),
-            GestureDetector(
-              onTap: () {
-                show_shot_picker();
-              },
-              child: Container(
-                height: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          shot_number.toString(),
-                          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: main),
-                        ),
-                        Text("Number of Shots"),
-                      ],
-                    ),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 2,
-            ),
-            GestureDetector(
-              onTap: () {
-                show_rest_picker();
-              },
-              child: Container(
-                height: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: main),
-                        ),
-                        Text("Rest Time"),
-                      ],
-                    ),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 2,
-            ),
-          ],
-        ));
-  }
-
-  Widget Target_input() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            Divider(
-              thickness: 2,
-            ),
-            GestureDetector(
-              onTap: () {
-                show_target_picker();
-              },
-              child: Container(
-                height: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          taraget_count.toString(),
-                          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: main),
-                        ),
-                        Text("Number of Targets"),
-                      ],
-                    ),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 2,
-            ),
-            GestureDetector(
-              onTap: () {
-                show_rest_picker();
-              },
-              child: Container(
-                height: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                          style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: main),
-                        ),
-                        Text("Rest Time"),
-                      ],
-                    ),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 2,
-            ),
-          ],
-        ));
-  }
-
-  Widget Time_Input() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          Divider(
-            thickness: 2,
-          ),
-          GestureDetector(
-            onTap: () {
-              show_time_picker();
-            },
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            show_shot_picker();
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Container(
-              height: 80,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        total_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                        style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: main),
+              height: 90,
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        EvaIcons.hash,
+                        color: Colors.white,
                       ),
-                      Text("Time on Side"),
-                    ],
-                  ),
-                  Icon(Icons.chevron_right)
-                ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Number of Shots", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text(
+                            shot_number.toString(),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(Icons.chevron_right)
+                  ],
+                ),
               ),
             ),
           ),
-          Divider(
-            thickness: 2,
-          ),
-          GestureDetector(
-            onTap: () {
-              show_rest_picker();
-            },
+        ),
+        GestureDetector(
+          onTap: () {
+            show_rest_picker();
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Container(
-              height: 80,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                        style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: main),
+              height: 90,
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        Icons.timer,
+                        color: Colors.white,
                       ),
-                      Text("Rest Time"),
-                    ],
-                  ),
-                  Icon(Icons.chevron_right)
-                ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Rest Time", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text(
+                            rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(Icons.chevron_right)
+                  ],
+                ),
               ),
             ),
           ),
-          Divider(
-            thickness: 2,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget shot(String name, bool selected,int index) {
+  Widget Target_input() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            show_target_picker();
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: Container(
+              height: 90,
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        EvaIcons.hash,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Number of Targets", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text(
+                            taraget_count.toString(),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(Icons.chevron_right)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            show_rest_picker();
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: Container(
+              height: 90,
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        Icons.timer,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Rest Time", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text(
+                            rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(Icons.chevron_right)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget Time_Input() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            show_time_picker();
+          },
+          child: Container(
+            height: 90,
+            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        Icons.timer,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Time on Side",
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
+                          ),
+                          Text(
+                            total_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(
+                      Icons.chevron_right,
+                      size: 30,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            show_rest_picker();
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: Container(
+              height: 90,
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        Icons.timer,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Rest Time", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text(
+                            rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(Icons.chevron_right)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget shot(String name, bool selected, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: GestureDetector(
-
-        onTap: (){
-
-          if(sides.contains(index)){
-
+        onTap: () {
+          if (sides.contains(index)) {
             setState(() {
               sides.remove(index);
-
             });
-
-
-          }else{
-
+          } else {
             setState(() {
               sides.add(index);
-
             });
-
-
           }
-
-
         },
-
         child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: sides.contains(index) ? Colors.white : Color.fromRGBO(40, 70, 130, 1), width: 5), color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
-            height: 175,
-            width: 120,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color.fromRGBO(40, 70, 130, 1)),
+          child: Card(
+            elevation: 3,
+            color: Color.fromRGBO(40, 70, 130, 1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+              side: BorderSide(color: sides.contains(index) ? Colors.white : Color.fromRGBO(40, 70, 130, 1), width: 5),
+            ),
+            child: Container(
+              height: 175,
+              width: 120,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
                   ),
-                ),
-                Spacer(),
-                Container(
-                  height: 80,
-                  width: 130,
-                  child: Stack(
-                    children: [
-                      Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: Color.fromRGBO(40, 70, 130, 1))),
-                      Positioned(left: 50.0, top: 15, child: Container(width: 5, height: 100, color: Color.fromRGBO(40, 70, 130, 1))),
-                      Positioned(left: 25.0, top: 15, child: Container(width: 5, height: 30, color: Color.fromRGBO(40, 70, 130, 1))),
-                      Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: Color.fromRGBO(40, 70, 130, 1))),
-                      Positioned(right: 25.0, top: 15, child: Container(width: 5, height: 30, color: Color.fromRGBO(40, 70, 130, 1))),
-                      Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: Color.fromRGBO(40, 70, 130, 1))),
-                    ],
-                  ),
-                )
-              ],
+                  Spacer(),
+                  Container(
+                    height: 80,
+                    width: 130,
+                    child: Stack(
+                      children: [
+                        Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: Colors.white)),
+                        Positioned(left: 50.0, top: 15, child: Container(width: 5, height: 100, color: Colors.white)),
+                        Positioned(left: 25.0, top: 15, child: Container(width: 5, height: 30, color: Colors.white)),
+                        Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: Colors.white)),
+                        Positioned(right: 25.0, top: 15, child: Container(width: 5, height: 30, color: Colors.white)),
+                        Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: Colors.white)),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -536,35 +615,34 @@ class SoloScreenState extends State<SoloScreen> {
     switch (segmentedControlGroupValue) {
       case 0:
         return Time_Input();
-
       case 1:
-        return Target_input();
-
-      case 2:
         return round();
+      case 2:
+        return Target_input();
     }
   }
 
   Widget button(int index, String name) {
     return GestureDetector(
-
-      onTap: (){
+      onTap: () {
         setState(() {
           segmentedControlGroupValue = index;
         });
-
       },
-
       child: Container(
-        decoration: BoxDecoration(color: segmentedControlGroupValue!=index?Colors.white:Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
-        height: 40,
-
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Center(child: Text(name,style: TextStyle(fontWeight: FontWeight.bold,color: segmentedControlGroupValue==index?Colors.white:Color.fromRGBO(40, 70, 130, 1),)),
-
-      ),
-        )),
+          decoration: BoxDecoration(color: segmentedControlGroupValue != index ? Colors.grey.withOpacity(0.2) : Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+          height: 40,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Center(
+              child: Text(name,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: segmentedControlGroupValue == index ? Colors.white : Color.fromRGBO(40, 70, 130, 1),
+                  )),
+            ),
+          )),
     );
   }
 
@@ -577,28 +655,54 @@ class SoloScreenState extends State<SoloScreen> {
         begin: Alignment.topLeft,
         end: Alignment.bottomCenter,
         colors: [
-          Color.fromRGBO(230, 240, 250, 1),
-          Color.fromRGBO(230, 240, 250, 1),
+          Color.fromRGBO(255, 255, 255, 1),
+          Color.fromRGBO(255, 255, 255, 1),
         ],
       )),
       child: Stack(
         children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width, 300),
-            painter: LogoPainter(),
+          Container(
+            height: 500,
+            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)), color: Color.fromRGBO(20, 20, 50, 1)),
           ),
-          Column(
+          Positioned(
+            bottom: 0,
+            child: Container(
+              height: 550,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+            ),
+          ),
+          ListView(
+            physics: NeverScrollableScrollPhysics(),
             children: [
               Container(
                 child: SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Solo Exersises",
-                          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Solo",
+                              style: TextStyle(
+                                fontSize: 50,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "Exersise",
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white54,
+                              ),
+                            ),
+                          ],
                         ),
                         Icon(
                           Icons.info,
@@ -614,7 +718,7 @@ class SoloScreenState extends State<SoloScreen> {
                 height: 250,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: [shot("Forehand Drives", true,0), shot("Backhand Drives", true,1), shot("Forehand Volley", true,2), shot("Backhand Volley", false,3)],
+                  children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Volley", true, 2), shot("Backhand Volley", false, 3)],
                 ),
               ),
 
@@ -624,48 +728,60 @@ class SoloScreenState extends State<SoloScreen> {
               // Time_Input(),
 
               Container(
-                height: 120,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [button(0, "Time"), button(1, "Target Count"), button(2, "Shot Count")],
-                ),
-              ),
-
-              mode_choice(),
-              Spacer(),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-
+                height: MediaQuery.of(context).size.height-470,
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+                child: ListView(
                   children: [
-                    GestureDetector(
-                      onTap: () async {
-                        await loadModel();
+                    Container(
+                      height: 120,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [button(0, "Time"), button(1, "Shot Count")],
+                      ),
+                    ),
+                    mode_choice(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await loadModel();
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SoloHome(cameras, start_camera, location, shot_number, taraget_count, total_time, segmentedControlGroupValue, side_count)),
-                        );
-                      },
-                      child: Center(
-                        child: Container(
-                          height: 50,
-                          width: 150,
-                          child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                Radius.circular(18),
-                              )),
-                              elevation: 2,
-                              color: main,
-                              child: Center(
-                                  child: Text(
-                                "Start",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                              ))),
-                        ),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SoloHome(
+                                          cameras: cameras,
+                                          start_camera: 0,
+                                          type: segmentedControlGroupValue,
+                                          time: total_time,
+                                          shot_count: shot_number,
+                                          sides: sides,
+                                        )),
+                              );
+                            },
+                            child: Center(
+                              child: Container(
+                                height: 50,
+                                width: 150,
+                                child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                      Radius.circular(18),
+                                    )),
+                                    elevation: 2,
+                                    color: main,
+                                    child: Center(
+                                        child: Text(
+                                      "Start",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ))),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -683,32 +799,38 @@ class LogoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint();
+    Paint paint2 = Paint()..color = Colors.red;
+
     var rect = Offset.zero & size;
 
     var path = Path();
+
+    var path2 = Path();
+    path2.lineTo(0, size.height / 3);
+
+    path2.moveTo(0, size.height / 3);
+    path2.quadraticBezierTo(size.width / 2, size.height, size.width, size.height / 1.1);
+    path2.lineTo(size.width, 0);
+    path2.lineTo(0, 0);
+
     //path.lineTo(0, size.height - size.height / 5);
     //path.lineTo(size.width / 1.2, size.height);
     //Added this line
 
-    path.moveTo(0, 0);
-    path.lineTo(0, size.height * 0.6);
+    path.lineTo(0, size.height / 3);
 
-    path.quadraticBezierTo(size.width * 0.1, size.height * 0.6, size.width * 0.52, size.height * 0.8);
-    path.quadraticBezierTo(size.width * 0.74, size.height * 0.92, size.width, size.height * 0.84);
+    path.moveTo(0, size.height / 1.5);
+    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height / 1.5);
     path.lineTo(size.width, 0);
     path.lineTo(0, 0);
+
     path.close();
     canvas.drawPath(path, paint);
 
-    paint.shader = LinearGradient(
-      begin: Alignment.bottomRight,
-      end: Alignment.topLeft,
-      stops: [0.1, 0.5, 1],
-      colors: [
-        Color.fromRGBO(40, 40, 80, 1),
-        Color.fromRGBO(40, 40, 80, 1),
-        Colors.indigo,
-      ],
+    paint.shader = RadialGradient(
+      center: Alignment.bottomCenter,
+      radius: 100,
+      colors: [Color.fromRGBO(40, 80, 150, 1), Color.fromRGBO(40, 70, 130, 1)],
     ).createShader(rect);
 
     canvas.drawPath(path, paint);

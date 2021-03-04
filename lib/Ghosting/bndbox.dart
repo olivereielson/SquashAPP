@@ -6,8 +6,8 @@ import 'dart:io' show Platform;
 
 class BndBox extends StatelessWidget {
   List<dynamic> results;
-
   BndBox(this.results,);
+
 
   @override
   Widget build(BuildContext context) {

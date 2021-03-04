@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:squash/maginfine/touchBubble.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 
 import 'maginfine/magnifier.dart';
 
@@ -18,11 +20,23 @@ class SavedDataPage extends StatefulWidget {
   SavedDataPageSate createState() => new SavedDataPageSate();
 }
 
-
-
 class SavedDataPageSate extends State<SavedDataPage> {
-
   static const double touchBubbleSize = 50;
+
+  List<String> ghost_data_names = [
+    "Average",
+    "Speed",
+    "Average",
+    "Duration",
+  ];
+
+  List<String> solo_data_names = ["Average", "Duration", "Average", "Accuracy", "Average", "Shot Count"];
+
+  List<double> ghost_data = [100, 80, 40];
+  List<double> solo_data = [100, 80, 40];
+
+  int solo_index = 0;
+  int ghost_index = 0;
 
   Offset position;
   double currentBubbleSize;
@@ -30,7 +44,6 @@ class SavedDataPageSate extends State<SavedDataPage> {
 
   @override
   void initState() {
-    currentBubbleSize = touchBubbleSize;
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     super.initState();
   }
@@ -39,162 +52,217 @@ class SavedDataPageSate extends State<SavedDataPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Magnifier(
-          position: position,
-          visible: magnifierVisible,
-          child: Image(image: AssetImage('assets/lenna.png')),
+        Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Data",
+                      style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Analytics",
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        TouchBubble(
-          position: position,
-          bubbleSize: currentBubbleSize,
-          onStartDragging: _startDragging,
-          onDrag: _drag,
-          onEndDragging: _endDragging,
+        Positioned(
+          top: 200,
+          child: Container(
+            height: 400,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 1), borderRadius: BorderRadius.all(Radius.circular(25))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text("Ghosting Data", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 30)),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                        child: CircularPercentIndicator(
+                          progressColor: Color.fromRGBO(20, 20, 50, 1),
+                          arcBackgroundColor: Colors.transparent,
+                          arcType: ArcType.FULL,
+                          lineWidth: 20,
+                          percent: (ghost_data[ghost_index] / 100),
+                          radius: 180,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          center: Text(
+                            ghost_data[ghost_index].toInt().toString(),
+                            style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
+                          ),
+                          animation: true,
+                          animateFromLastPercent: true,
+                          animationDuration: 1200,
+                          startAngle: 90.0,
+                          backgroundWidth: 10,
+                        ),
+                      ),
+                      Container(
+                        height: 100,
+                        width: 170,
+                        child: new Swiper(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Row(
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      ghost_data_names[index * 2],
+                                      style: TextStyle(fontSize: 30, color: Colors.white54),
+                                    ),
+                                    Text(
+                                      ghost_data_names[(index * 2) + 1],
+                                      style: TextStyle(fontSize: 30, color: Colors.white54),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                          itemCount: ghost_data_names.length ~/ 2,
+                          scrollDirection: Axis.vertical,
+                          autoplayDelay: 4000,
+                          duration: 1200,
+                          pagination: new SwiperPagination(builder: new DotSwiperPaginationBuilder(color: Colors.grey, activeColor: Colors.white, size: 10.0, activeSize: 10.0)),
+                          control: new SwiperControl(
+                            color: Colors.transparent,
+                          ),
+                          loop: true,
+                          onIndexChanged: (index) {
+                            setState(() {
+                              ghost_index = index;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: Container(
+            height: 300,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    child: Text(
+                      "Solo Data",
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: CircularPercentIndicator(
+                          progressColor: Color.fromRGBO(40, 45, 81, 1),
+                          arcBackgroundColor: Colors.transparent,
+                          arcType: ArcType.FULL,
+                          lineWidth: 20,
+                          percent: (solo_data[solo_index] / 100),
+                          radius: 170,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          center: Text(
+                            solo_data[solo_index].toInt().toString(),
+                            style: TextStyle(color: Color.fromRGBO(40, 45, 81, 1), fontSize: 40, fontWeight: FontWeight.bold),
+                          ),
+                          animation: true,
+                          animateFromLastPercent: true,
+                          animationDuration: 600,
+                          startAngle: 0.45,
+                          backgroundWidth: 10,
+                        ),
+                      ),
+                      Container(
+                        height: 100,
+                        width: 200,
+                        color: Colors.transparent,
+                        child: Swiper(
+                          itemBuilder: (BuildContext context, int index) {
+                            return Row(
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      solo_data_names[index * 2],
+                                      style: TextStyle(fontSize: 30, color: Color.fromRGBO(40, 45, 81, 1), fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      solo_data_names[(index * 2) + 1],
+                                      style: TextStyle(fontSize: 30, color: Color.fromRGBO(40, 45, 81, 1), fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                          itemCount: solo_data_names.length ~/ 2,
+                          scrollDirection: Axis.vertical,
+                          duration: 600,
+                          pagination: new SwiperPagination(builder: new DotSwiperPaginationBuilder(color: Colors.grey, activeColor: Color.fromRGBO(40, 45, 81, 1), size: 10.0, activeSize: 10.0)),
+                          control: new SwiperControl(
+                            color: Colors.transparent,
+                            disableColor: Colors.pink,
+                          ),
+                          loop: true,
+                          onIndexChanged: (index) {
+                            setState(() {
+                              solo_index = index;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
-  void _startDragging(Offset newPosition) {
-    setState(() {
-      magnifierVisible = true;
-      position = newPosition;
-      currentBubbleSize = touchBubbleSize * 1.5;
-    });
-  }
-  void _drag(Offset newPosition) {
-    setState(() {
-      position = newPosition;
-    });
-  }
-  void _endDragging() {
-    setState(() {
-      currentBubbleSize = touchBubbleSize;
-      magnifierVisible = false;
-    });
-  }
-
-
 }
-
-
-/*
-class SavedDataPageSate extends State<SavedDataPage> {
-  Color main = Color.fromRGBO(4, 12, 128, 1);
-
-  List<Point> bounces = [];
-
-  @override
-  void initState() {
-
-    List<String> string_bounce = widget.bounces.replaceAll("]", "").replaceAll("[", "").replaceAll("Point", "").replaceAll("(", "").split("),");
-
-    for (int i = 0; i < string_bounce.length; i++) {
-      List<String> p = string_bounce[i].replaceAll(")", "").split(",");
-
-      bounces.add(Point(double.parse(p[0]), double.parse(p[1])));
-    }
-
-    super.initState();
-  }
-
-  Widget flat_bounce() {
-    List<Widget> bounce = [];
-
-    for (int i = 0; i < bounces.length; i++) {
-      double x1 = (bounces[i].x * (MediaQuery.of(context).size.width) / 2) / 485;
-      double y1 = (bounces[i].y * MediaQuery.of(context).size.height) / 1465;
-
-      bounce.add(Positioned(
-        top: y1,
-        left: x1 + (MediaQuery.of(context).size.width) / 2,
-        child: Icon(Icons.circle),
-      ));
-    }
-
-    return Stack(
-      children: bounce,
-    );
-  }
-
-  Widget draw_court() {
-    return Stack(
-      children: [
-        Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
-            child: Container(
-              height: 15,
-              width: MediaQuery.of(context).size.width,
-              color: main,
-            )),
-        Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
-            left: MediaQuery.of(context).size.width / 2,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.57,
-              width: 15,
-              color: main,
-            )),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
-          left: -15,
-          child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                  color: main,
-                  // set border color
-                  width: 15.0), // set border width
-              // set rounded corner radius
-            ),
-          ),
-        ),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
-          right: -15,
-          child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                  color: main,
-                  // set border color
-                  width: 15.0), // set border width
-              // set rounded corner radius
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: Stack(
-        children: [
-
-          SafeArea(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                MaterialButton(
-                    child: Text("Close",style: TextStyle(color: Colors.black),),
-                    color: Colors.white,
-                    onPressed: () => Navigator.of(context).pop())
-              ],
-            ),
-          ),
-
-
-          draw_court(), flat_bounce()],
-      ),
-    );
-  }
-}
-
-
- */

@@ -254,7 +254,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           height: 320,
           width: 320,
           duration: rest_time.inSeconds,
-          color: Colors.white,
           fillColor: main,
           strokeWidth: 10,
           isReverse: true,
@@ -265,7 +264,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               center = precent_complete_indicator(time_array.length / number_set);
               corner = corners[new Random().nextInt(corners.length)].toInt();
             });
-          },
+          }, ringColor: Colors.white,
         ),
       ),
     );

@@ -1,137 +1,322 @@
+import 'dart:async';
+
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 typedef void Callback(bool done);
+typedef void Callback1(int current_side);
 
 
 class counter_widget extends StatefulWidget {
-
   final Callback done;
+  final Callback1 current_side;
 
-  int type;
-  int sides;
+  List<int> activities;
+
+
   Color main;
   Duration time;
   int counter_value;
   int counter_goal;
+  int type;
 
-  counter_widget(this.type,this.sides,this.main,{this.time,this.done,this.counter_value,this.counter_goal});
+  counter_widget({this.type,this.main, this.time, this.done, this.counter_value, this.counter_goal, this.activities,this.current_side});
 
   @override
-  counter_widget_state createState() => new counter_widget_state();
+  counter_widget_state createState() => new counter_widget_state(time.inSeconds,type);
 }
 
 class counter_widget_state extends State<counter_widget> {
+  List<String> names = ["Forehand Drives", "Forehand Volleys", "BackHand Drives", "BackHand Volley"];
+  counter_widget_state(this._start,this.type);
+
+  int type;
+
+  SwiperController sc =new SwiperController();
 
   bool finished = false;
 
+  Widget t;
+  Timer _timer;
+  int _start;
 
-  int sides_done=0;
+  bool is_working = false;
+
+  int sides_done = 1;
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+            is_working = false;
+
+            if (sides_done == widget.activities.length-1) {
+            } else {
+              widget.done(false);
+
+              sides_done++;
+            }
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
+
+  void StopWatch() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        setState(() {
+          _start++;
+
+        });
+      },
+    );
+  }
+
+
 
   CountDownController _countDownController = CountDownController();
 
-
-
-
   Widget timer() {
-    return Positioned(
-      left: (MediaQuery.of(context).size.width - 180) / 2,
-      top: 10,
-      child: SafeArea(
-        child: CircularCountDownTimer(
-          duration: widget.time.inSeconds,
-          controller: _countDownController,
-          width: 200,
-          height: 200,
-          color: Colors.grey[300],
-          fillColor: widget.main,
-          backgroundColor: Colors.white,
-          strokeWidth: 20.0,
-          textStyle: TextStyle(
-              fontSize: 33.0, color: widget.main, fontWeight: FontWeight.bold),
-          isReverse: false,
-          isReverseAnimation: false,
-          isTimerTextShown: true,
-
-          onComplete: () {
-
-
-            sides_done++;
-
-            if(sides_done<(widget.sides*2)){
-
-              _countDownController.restart(duration: widget.time.inSeconds);
-
-            }else{
-
-              //print(sides_done);
-              //print(widget.sides);
-
-              widget.done(true);
-
-
-            }
-
-          },
+    if (is_working) {
+      return CircularPercentIndicator(
+        arcType: ArcType.FULL,
+        circularStrokeCap: CircularStrokeCap.round,
+        lineWidth: 20,
+        backgroundColor: Colors.white54,
+        percent: type==0?_start / widget.time.inSeconds:(_start%60)/60,
+        radius: 210,
+        animation: true,
+        linearGradient: LinearGradient(colors: [
+          widget.main,
+          Colors.indigo,
+        ]),
+        animateFromLastPercent: true,
+        addAutomaticKeepAlive: true,
+        animationDuration: 1200,
+        backgroundWidth: 20,
+        center: Text(
+          (_start~/60).toString()+":"+(_start%60).toString(),
+          style: TextStyle(fontSize: 49, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-      ),
-    );
+        header: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+          child: Text(
+            "Timer",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              names[widget.activities[sides_done]],
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+
+                  is_working = true;
+                  _start = widget.time.inSeconds;
+                  startTimer();
+                });
+              },
+              child: Container(
+                  height: 150,
+                  width: 150,
+                  decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.all(Radius.circular(25))),
+                  child: Icon(
+                    Icons.play_arrow,
+                    color: Colors.white,
+                    size: 90,
+                  )),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
-  Widget Counter(){
+  Widget Counter() {
 
 
+    if (is_working){
 
-    if(widget.counter_value==widget.counter_goal){
+      if(widget.counter_value==widget.counter_goal){
 
-      widget.done(true);
+        if(sides_done==widget.activities.length-1){
+
+          widget.done(true);
+
+        }else{
+
+          is_working=false;
+          sides_done++;
+          widget.current_side(sides_done);
+
+
+        }
+
+      }
+
+      return CircularPercentIndicator(
+        arcType: ArcType.FULL,
+        circularStrokeCap: CircularStrokeCap.round,
+        lineWidth: 20,
+        backgroundColor: Colors.white54,
+        percent: (widget.counter_value / widget.counter_goal),
+        radius: 200,
+        animation: true,
+        linearGradient: LinearGradient(colors: [
+          widget.main,
+          Colors.lightBlueAccent,
+        ]),
+        animateFromLastPercent: true,
+        animationDuration: 1200,
+        backgroundWidth: 20,
+        center: Text(
+          widget.counter_value.toString(),
+          style: TextStyle(fontSize: 49, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        header: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+          child: Text(
+            "Shot Count",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+      );
+
+
+    }else{
+
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              names[widget.activities[sides_done]],
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+
+                  is_working = true;
+                  _start=0;
+                  StopWatch();
+
+                });
+              },
+              child: Container(
+                  height: 150,
+                  width: 150,
+                  decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.all(Radius.circular(25))),
+                  child: Icon(
+                    Icons.play_arrow,
+                    color: Colors.white,
+                    size: 90,
+                  )),
+            ),
+          ],
+        ),
+      );
 
 
     }
 
 
-    return Positioned(
-      left: (MediaQuery.of(context).size.width - 180) / 2,
-      top: 10,
-      child: SafeArea(
-        child: CircularPercentIndicator(
-          progressColor: widget.main,
-          arcBackgroundColor: Colors.white,
-          arcType: ArcType.FULL,
-          lineWidth: 20,
-          startAngle: 0.5,
-          backgroundColor: Colors.white,
-          percent: (widget.counter_value/widget.counter_goal),
-          radius: 180,
-
-          animation: true,
-          animateFromLastPercent: true,
-          animationDuration: 1,
-          backgroundWidth: 20,
-          center: Text(
-             widget.counter_value.toString(),
-            style: TextStyle(fontSize: 49, fontWeight: FontWeight.bold, color: widget.main),
-          ),
-        ),
-      ),
-    );
-
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.type) {
-      case 0:
-        return Counter();
 
-      case 1:
-        return Counter();
+
+    return Positioned(
+      top: 0,
+      left: (MediaQuery.of(context).size.width - 320) / 2,
+      child: SafeArea(
+        child: Container(
+          width: 320,
+          height: 320,
+          decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 0.9), borderRadius: BorderRadius.all(Radius.circular(25))),
+          child: type==0?timer():Counter(),
+        ),
+      ),
+    );
+  }
+
+  /*
+  Swiper(
+            autoplayDisableOnInteraction: true,
+            autoplay: false,
+            autoplayDelay: 1200,
+
+
+
+            itemBuilder: (BuildContext context, int index) {
+
+
+              if (index == 0) {
+                return type==0?timer():Counter();
+              } else {
+                return type==0?Counter():timer();
+              }
+
+
+
+            },
+            itemCount: 2,
+
+            scrollDirection: Axis.vertical,
+            duration: 1200,
+            pagination: SwiperPagination(builder: new DotSwiperPaginationBuilder(color: Colors.transparent, activeColor: Colors.transparent, size: 10.0, activeSize: 10.0)),
+            control: SwiperControl(
+
+
+              color: Colors.transparent,
+              disableColor: Colors.pink,
+            ),
+            loop: true,
+            physics:NeverScrollableScrollPhysics(),
+            controller: sc,
+            onIndexChanged: (index) {},
+          ),
+
+   */
+
+
+  @override
+  void initState() {
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+
+    if(_timer!=null){
+      _timer.cancel();
     }
-    ;
+    super.dispose();
   }
 }

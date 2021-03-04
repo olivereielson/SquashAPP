@@ -139,21 +139,30 @@ class Court_Screen_State extends State<Court_Screen> {
     return Hero(
       tag: "courtscreen",
       child: Scaffold(
-        body: Stack(
+        body: ListView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
-            SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Stack(
                 children: [
-                  MaterialButton(
-                    child: Text("Close",style: TextStyle(color: Colors.black),),
-                      color: Colors.white,
-                      onPressed: () => Navigator.of(context).pop(corners))
+                  SafeArea(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MaterialButton(
+                          child: Text("Close",style: TextStyle(color: Colors.black),),
+                            color: Colors.white,
+                            onPressed: () => Navigator.of(context).pop(corners))
+                      ],
+                    ),
+                  ),
+                  draw_court(),
+                  select_corners()
                 ],
               ),
             ),
-            draw_court(),
-            select_corners()
           ],
         ),
       ),
