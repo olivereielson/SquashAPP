@@ -45,12 +45,14 @@ class SoloHomeState extends State<SoloHome> {
   List<dynamic> _recognitions;
 
   List<Point> bounces = [];
-  List<Point> total_bounces = [];
+  List<Bounce> total_bounces = [];
 
   Point location = Point(200, 200);
 
   bool show_stuff = true;
   bool front_Camera = true;
+
+  bool is_working=false;
 
   String ball_conf = "";
 
@@ -63,14 +65,31 @@ class SoloHomeState extends State<SoloHome> {
   static const double touchBubbleSize = 50;
 
   Offset position = Offset(200, 500);
-  double currentBubbleSize;
+  double currentBubbleSize = 10.0;
   bool magnifierVisible = false;
 
-  List<dynamic> scr = [
-    [240, 1080],
-    [485, 1080],
-    [485, 825],
-    [240, 825]
+  bool back_hand = false;
+
+  List<dynamic> scr_forehand = [
+    [810, 1200],
+    [1080, 1200],
+    [1080, 930],
+    [810, 930]
+  ];
+
+  List<dynamic> scr_backhand = [
+    [10, 1200],
+    [280, 1200],
+    [280, 930],
+    [10, 930]
+  ];
+
+  List<dynamic> scr_points_corners = [
+    [1080.0, 12.0],
+    [10.0, 15.0],
+    [1080.0, 1645.0],
+    [10.0, 1645.00],
+    [550.0, 930.00],
   ];
 
   List<Point> dst_point = [];
@@ -82,9 +101,9 @@ class SoloHomeState extends State<SoloHome> {
 
   List<Widget> ball = [];
 
-  final List<CameraDescription> cameras;
-
   bool on_ground = false;
+
+  int current_side=0;
 
   var H;
 
@@ -102,10 +121,11 @@ class SoloHomeState extends State<SoloHome> {
 
   //Camera varavibles
 
-  double threshold = 0.2;
+  double threshold = 0.4;
   int numResultsPerClass = 1;
   ResolutionPreset res = ResolutionPreset.high;
   int camera = 1;
+  final List<CameraDescription> cameras;
 
   //bouce
 
@@ -123,21 +143,47 @@ class SoloHomeState extends State<SoloHome> {
     setupcamera();
     start_time = DateTime.now();
     generate_cout_point();
-    super.initState();
     saved_points();
+    super.initState();
   }
 
   Future<void> saved_points() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    points[0] = Point(prefs.getDouble("p0.x"), prefs.getDouble("p0.y"));
-    points[1] = Point(prefs.getDouble("p1.x"), prefs.getDouble("p1.y"));
-    points[2] = Point(prefs.getDouble("p2.x"), prefs.getDouble("p2.y"));
-    points[3] = Point(prefs.getDouble("p3.x"), prefs.getDouble("p3.y"));
+    if(!prefs.containsKey("p2.y")){
 
-    generate_cout_point();
+      prefs.setDouble("p0.x", 324.0);
+      prefs.setDouble("p0.y",  489.0);
 
-    setState(() {});
+      prefs.setDouble("p1.x",  157.0);
+      prefs.setDouble("p1.y",  498.0);
+
+      prefs.setDouble("p2.x",  349.0);
+      prefs.setDouble("p2.y",  535.0);
+
+      prefs.setDouble("p3.x",  133.0);
+      prefs.setDouble("p3.y",  543.0);
+
+
+
+
+
+    }else{
+
+      points[0] = Point(prefs.getDouble("p0.x"), prefs.getDouble("p0.y"));
+      points[1] = Point(prefs.getDouble("p1.x"), prefs.getDouble("p1.y"));
+      points[2] = Point(prefs.getDouble("p2.x"), prefs.getDouble("p2.y"));
+      points[3] = Point(prefs.getDouble("p3.x"), prefs.getDouble("p3.y"));
+
+
+
+      generate_cout_point();
+
+      setState(() {});
+
+    }
+
+
   }
 
   void generate_cout_point() {
@@ -147,19 +193,12 @@ class SoloHomeState extends State<SoloHome> {
       [points[1].x, points[1].y],
       [points[0].x, points[0].y],
     ];
-    List<dynamic> scr_points = [
-      [485.0, 0.0],
-      [0.0, 0.0],
-      [485.0, 1465.0],
-      [0.0, 1465.00],
-    ];
 
     dst_point.clear();
+    var H = find_homography3(back_hand ? scr_backhand : scr_forehand, dst);
 
-    var H = find_homography3(scr, dst);
-
-    for (int i = 0; i < scr_points.length; i++) {
-      Point p = hom_trans(scr_points[i][0], scr_points[i][1], H);
+    for (int i = 0; i < scr_points_corners.length; i++) {
+      Point p = hom_trans(scr_points_corners[i][0], scr_points_corners[i][1], H);
 
       dst_point.add(p);
     }
@@ -167,16 +206,19 @@ class SoloHomeState extends State<SoloHome> {
 
   setRecognitions2(recognitions, imageHeight, imageWidth) {
     setState(() {
-
       _recognitions = recognitions;
 
       _recognitions.forEach((re) {
         if (re["detectedClass"] == "ball") {
-          double x = MediaQuery.of(context).size.width-(re["rect"]["y"]*MediaQuery.of(context).size.width);
-          double y = re["rect"]["x"] * MediaQuery.of(context).size.height;
+          double x = (re["rect"]["x"] * MediaQuery.of(context).size.width);
+          double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
           ball_conf = ((re["confidenceInClass"] * 100).toString());
-          y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height + 10);
-          smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+          y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
+          if(is_working){
+
+            smartbounce_service_box(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+
+          }
         }
       });
     });
@@ -188,7 +230,7 @@ class SoloHomeState extends State<SoloHome> {
     } else {
       controller = new CameraController(
         widget.cameras[camera],
-          ResolutionPreset.high,
+        ResolutionPreset.high,
       );
 
       controller.initialize().then((_) async {
@@ -199,7 +241,7 @@ class SoloHomeState extends State<SoloHome> {
 
         controller.startImageStream((CameraImage img) async {
           if (!isDetecting) {
-            isDetecting=true;
+            isDetecting = true;
             Tflite.detectObjectOnFrame(
                     bytesList: img.planes.map((plane) {
                       return plane.bytes;
@@ -213,17 +255,17 @@ class SoloHomeState extends State<SoloHome> {
               //print(recognitions);
 
               setRecognitions2(recognitions, img.height, img.width);
-              isDetecting=false;
-
+              isDetecting = false;
             });
           }
         });
       });
     }
   }
+  
+  void smartbounce(x, y, h)   {
 
-  void smartbounce(x, y, h) {
-    if (y < dst_point[0].y - 30) {
+    if (y < dst_point[0].y - 30&&x>dst_point[0].x) {
       below = false;
     }
 
@@ -239,24 +281,12 @@ class SoloHomeState extends State<SoloHome> {
           dst_point[0].y - 30 < mid_om &&
           mid_om - last_bounce[len - 5].y > 15 &&
           !below) {
+
+
         double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
 
         double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
 
-        print(line_x.toString() + "   " + last_bounce[last_bounce.length - 3].x.toString());
-
-        if (last_bounce[last_bounce.length - 3].x < line_x) {
-          print("done");
-          ball.add(Positioned(
-              left: last_bounce[last_bounce.length - 3].x,
-              top: last_bounce[last_bounce.length - 3].y - h,
-              child: Icon(
-                Icons.circle,
-                size: 15,
-                color: Colors.pink,
-              )));
-
-        }
 
         List<dynamic> dst = [
           [points[2].x, points[2].y],
@@ -265,21 +295,46 @@ class SoloHomeState extends State<SoloHome> {
           [points[0].x, points[0].y],
         ];
 
-        H = find_homography3(dst, scr);
+        //print(back_hand);
 
-        Point temp =hom_trans(x, y, H);
+        var H = find_homography3(dst, back_hand ? scr_backhand : scr_forehand);
 
+        Point temp;
+
+        if (last_bounce[last_bounce.length - 3].x < line_x) {
+          ball.add(Positioned(
+              left: line_x,
+              top: last_bounce[last_bounce.length - 3].y - h,
+              child: Icon(
+                Icons.circle,
+                size: 15,
+                color: line_x - last_bounce[last_bounce.length - 3].x > 40 ? Colors.pink : Colors.yellow,
+              )));
+          ball.add(Positioned(
+              left: last_bounce[last_bounce.length - 3].x,
+              top: last_bounce[last_bounce.length - 3].y - h,
+              child: Icon(
+                Icons.circle,
+                size: 15,
+                color: Colors.deepPurple,
+              )));
+          temp = hom_trans(line_x, last_bounce[last_bounce.length - 3].y - h, H);
+        } else {
+          ball.add(Positioned(
+              left: last_bounce[last_bounce.length - 3].x,
+              top: last_bounce[last_bounce.length - 3].y - h,
+              child: Icon(
+                Icons.circle,
+                size: 15,
+                color: Colors.black,
+              )));
+
+          temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
+        }
+
+        print(temp);
         bounces.add(temp);
-        total_bounces.add(temp);
-
-        ball.add(Positioned(
-            left: last_bounce[last_bounce.length - 3].x,
-            top: last_bounce[last_bounce.length - 3].y - h,
-            child: Icon(
-              Icons.circle,
-              size: 15,
-              color: Colors.black,
-            )));
+        //total_bounces.add(temp);
 
         last_bounce.clear();
         below = true;
@@ -290,6 +345,92 @@ class SoloHomeState extends State<SoloHome> {
 
     last_bounce.add(Point(x, y));
   }
+
+  void smartbounce_service_box(x, y, h)   {
+
+    if (y < dst_point[0].y - 30&&x>dst_point[0].x) {
+      below = false;
+    }
+
+    if (last_bounce.length > 7) {
+      int len = last_bounce.length;
+
+      double mid_om = last_bounce[last_bounce.length - 3].y;
+
+      if (last_bounce[len - 6].y < mid_om &&
+          last_bounce[len - 4].y < mid_om &&
+          last_bounce[len - 2].y < mid_om &&
+          last_bounce[len - 1].y < mid_om &&
+          dst_point[0].y - 30 < mid_om &&
+          mid_om - last_bounce[len - 5].y > 15 &&
+          !below) {
+
+
+        List<dynamic> dst = [
+          [points[2].x, points[2].y],
+          [points[3].x, points[3].y],
+          [points[1].x, points[1].y],
+          [points[0].x, points[0].y],
+        ];
+
+        //print(back_hand);
+
+        var H = find_homography3(dst, back_hand ? scr_backhand : scr_forehand);
+
+        Point temp;
+
+        temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
+
+
+
+        List<int> c =  back_hand ?[0,290,920,1210]:[800,1090,920,1210];
+
+
+
+        if(temp.x>c[0] && temp.x<c[1] && temp.y>c[2]  && temp.y<c[3] ){
+
+          ball.add(Positioned(
+              left: last_bounce[last_bounce.length - 3].x,
+              top: last_bounce[last_bounce.length - 3].y - h,
+              child: Icon(
+                Icons.circle,
+                size: 15,
+                color: Colors.black,
+              )));
+
+
+
+          bounces.add(temp);
+          total_bounces.add(new Bounce(temp.x,temp.y,current_side.toDouble(),DateTime.now()));
+
+
+        }else{
+
+
+          ball.add(Positioned(
+              left: last_bounce[last_bounce.length - 3].x,
+              top: last_bounce[last_bounce.length - 3].y - h,
+              child: Icon(
+                Icons.circle,
+                size: 15,
+                color: Colors.redAccent,
+              )));
+
+
+        }
+        last_bounce.clear();
+        below = true;
+
+
+      } else {
+        last_bounce.removeAt(len - 7);
+      }
+    }
+
+    last_bounce.add(Point(x, y));
+  }
+
+
 
   Point hom_trans(x, y, H) {
     var nums = Array2d([
@@ -305,17 +446,17 @@ class SoloHomeState extends State<SoloHome> {
     return Point(x1, y1);
   }
 
-  Widget painting() {
-    return CustomPaint(
-      size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
-      painter: MyPainter(points, dst_point),
-    );
-  }
-
   Widget extra() {
+
+
+
+
     return Stack(
       children: [
-        painting(),
+        CustomPaint(
+          size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
+          painter: MyPainter(points, dst_point),
+        ),
         TouchBubble(
           index: 1,
           position: Offset(points[1].x, points[1].y),
@@ -425,7 +566,6 @@ class SoloHomeState extends State<SoloHome> {
     controller = CameraController(
       cameraDescription,
       res,
-
     );
 
 // If the controller is updated then update the UI.
@@ -440,14 +580,11 @@ class SoloHomeState extends State<SoloHome> {
 
     if (mounted) {
       setState(() {});
-
     }
-
-
 
     controller.startImageStream((CameraImage img) async {
       if (!isDetecting) {
-        isDetecting=true;
+        isDetecting = true;
 
         Tflite.detectObjectOnFrame(
                 bytesList: img.planes.map((plane) {
@@ -462,8 +599,7 @@ class SoloHomeState extends State<SoloHome> {
           //print(recognitions);
 
           setRecognitions2(recognitions, img.height, img.width);
-          isDetecting=false;
-
+          isDetecting = false;
         });
       }
     });
@@ -472,29 +608,40 @@ class SoloHomeState extends State<SoloHome> {
   Widget draw_court() {
     Color court_color = Color.fromRGBO(40, 45, 81, 1);
 
+    double h = (MediaQuery.of(context).size.width * 1465) / 870;
+
+    double offset = MediaQuery.of(context).size.height - h;
+
     return Stack(
       children: [
         Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
+            bottom: h,
             child: Container(
               height: 15,
               width: MediaQuery.of(context).size.width,
               color: court_color,
             )),
         Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
+            top: h * 0.56 + offset,
+            child: Container(
+              height: 15,
+              width: MediaQuery.of(context).size.width,
+              color: court_color,
+            )),
+        Positioned(
+            top: h * 0.56 + offset,
             left: MediaQuery.of(context).size.width / 2,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.57,
+              height: MediaQuery.of(context).size.height * 0.56,
               width: 15,
               color: court_color,
             )),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
+          top: h * 0.56 + offset,
           left: -15,
           child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
+            width: MediaQuery.of(context).size.width / 4 + 15,
+            height: MediaQuery.of(context).size.width / 4 + 15,
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
@@ -506,11 +653,11 @@ class SoloHomeState extends State<SoloHome> {
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
+          top: h * 0.56 + offset,
           right: -15,
           child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
+            width: MediaQuery.of(context).size.width / 4 + 15,
+            height: MediaQuery.of(context).size.width / 4 + 15,
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
@@ -537,15 +684,23 @@ class SoloHomeState extends State<SoloHome> {
 
   Widget flat_bounce() {
     List<Widget> bounce = [];
+    double h = (MediaQuery.of(context).size.width * 1645) / 1080;
+
+    double offset = MediaQuery.of(context).size.height - h;
 
     for (int i = 0; i < bounces.length; i++) {
-      double x1 = (bounces[i].x * (MediaQuery.of(context).size.width) / 2) / 485;
-      double y1 = (bounces[i].y * MediaQuery.of(context).size.height) / 1465;
+      //(bounces[i]);
+
+      double x1 = (bounces[i].x * MediaQuery.of(context).size.width) / 1080;
+      double y1 = ((bounces[i].y * h) / 1645) + offset;
 
       bounce.add(Positioned(
-        top: y1,
-        left: x1 + (MediaQuery.of(context).size.width) / 2,
-        child: Icon(Icons.circle),
+        top: y1 - 10,
+        left: x1 - 10,
+        child: Icon(
+          Icons.circle,
+          size: 20,
+        ),
       ));
     }
 
@@ -610,20 +765,75 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   Future<void> save() async {
-    Hive.registerAdapter(Solo_stroage_Adapter());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    solo_storage_box = await Hive.openBox<Solo_stroage>("SoloStorage");
+    if (prefs.containsKey("Average_Duration")) {
+      double ave = (prefs.getDouble("Average_Duration") + (DateTime.now().difference(start_time).inSeconds)) / 2;
 
-    if (Hive.isBoxOpen("SoloStorage")) {
-      solo_storage_box = Hive.box<Solo_stroage>("SoloStorage");
+      prefs.setDouble("Average_Duration", ave);
+    } else {
+      prefs.setDouble("Average_Duration", DateTime.now().difference(start_time).inSeconds.toDouble());
     }
 
-    var store = Solo_stroage()
-      ..date = DateTime.now().toString()
-      ..duration = start_time.difference(DateTime.now()).toString()
-      ..bounces = total_bounces.toString();
-    solo_storage_box.add(store); // Store this object for the first time
+    if (prefs.containsKey("Average_Shot_Count")) {
+      double ave_shot = (prefs.getDouble("Average_Shot_Count") + total_bounces.length) / 2;
+
+      prefs.setDouble("Average_Shot_Count", ave_shot);
+    } else {
+      prefs.setDouble("Average_Shot_Count", total_bounces.length.toDouble());
+    }
+
+    //accuracy
+
+    for (int i = 0; i < total_bounces.length; i++) {}
+
+    if (prefs.containsKey("Average_Accuracy")) {
+      double ave_acc = (prefs.getDouble("Average_Accuracy") + total_bounces.length) / 2;
+
+      prefs.setDouble("Average_Accuracy", ave_acc);
+    } else {
+      prefs.setDouble("Average_Accuracy", total_bounces.length.toDouble());
+    }
   }
+
+  Future<void> save2() async {
+    String box = "Solo1";
+
+    if(!Hive.isAdapterRegistered(5)){
+
+      Hive.registerAdapter(Solo_stroage_Adapter());
+
+    }
+
+    if(!Hive.isAdapterRegistered(6)){
+
+      Hive.registerAdapter(BounceAdapter());
+
+    }
+
+
+    var solo;
+
+    if(Hive.isBoxOpen(box)){
+
+      solo=Hive.box<Solo_stroage>(box);
+
+    }else{
+
+      solo = await Hive.openBox<Solo_stroage>(box);
+
+    }
+
+    var s = Solo_stroage()..start=start_time..end=DateTime.now()..bounces=total_bounces;
+
+
+
+    solo.add(s);
+
+
+
+  }
+
 
   void _startDragging(Offset newPosition) {
     setState(() {
@@ -677,8 +887,6 @@ class SoloHomeState extends State<SoloHome> {
               body: Stack(children: [
                 //, Image(image: AssetImage('assets/test.jpg')
 
-
-
                 Magnifier(
                   scale: 2.0,
                   screen_width: MediaQuery.of(context).size.width,
@@ -688,25 +896,52 @@ class SoloHomeState extends State<SoloHome> {
                 ),
 
                 BndBoxSolo(_recognitions == null ? [] : _recognitions),
+
                 show_stuff ? extra() : Text(""),
 
                 Settings_tap(false),
 
-                magnifierVisible?Text(""):counter_widget(
-                  type: widget.type,
-                  main: main,
-                  time: widget.time,
-                  counter_value: bounces.length,
-                  counter_goal: widget.shot_count,
-                  activities: widget.sides,
-                  done: (bool) async {
-                    await save();
-                    Navigator.pop(context);
-                  },
-                  current_side: (int) {
-                    bounces.clear();
-                  },
-                ),
+                magnifierVisible
+                    ? Text("")
+                    : counter_widget(
+                        type: widget.type,
+                        main: main,
+                        time: widget.time,
+                        counter_value: bounces.length,
+                        counter_goal: widget.shot_count,
+                        activities: widget.sides,
+
+                        is_working: (bool){
+
+                          is_working=bool;
+
+
+                        },
+
+
+                        done: (bool) async {
+                          print(widget.sides);
+                          await save2();
+                          Navigator.pop(context);
+                        },
+                        current_side: (int) {
+                          current_side=int;
+
+                          print(int);
+
+                          if (int < 2) {
+                            back_hand = false;
+                            generate_cout_point();
+                          } else {
+                            setState(() {
+                              back_hand = true;
+                              generate_cout_point();
+                            });
+                          }
+                          bounces.clear();
+                          ball.clear();
+                        },
+                      ),
 
                 Positioned(top: 400, right: 40, child: Text(ball_conf)),
 
@@ -730,5 +965,12 @@ class SoloHomeState extends State<SoloHome> {
         )),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    //Tflite.close();
+    controller?.dispose();
+    super.dispose();
   }
 }

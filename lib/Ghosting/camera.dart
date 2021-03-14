@@ -16,7 +16,7 @@ class Camera extends StatefulWidget {
   final int start_camera;
   double threshold;
 
-  Camera(this.cameras, this.setRecognitions, this.showimg, this.automl,this.start_camera);
+  Camera(this.cameras, this.setRecognitions, this.showimg, this.automl, this.start_camera);
 
   @override
   _CameraState createState() => new _CameraState();
@@ -55,48 +55,34 @@ class _CameraState extends State<Camera> {
           if (!isDetecting) {
             isDetecting = true;
 
-            if (widget.automl) {
-              Tflite.detectObjectOnFrame(
-                      bytesList: img.planes.map((plane) {
-                        return plane.bytes;
-                      }).toList(),
-                      imageHeight: img.height,
-                      imageWidth: img.width,
-                      model: "SSDMobileNet",
-                      threshold: 0.01,
+            Tflite.detectObjectOnFrame(
+                    bytesList: img.planes.map((plane) {
+                      return plane.bytes;
+                    }).toList(),
+                    // required
+                    model: "SSDMobileNet",
+                    imageHeight: img.height,
+                    imageWidth: img.width,
+                    imageMean: 127.5,
+                    // defaults to 127.5
+                    imageStd: 127.5,
+                    // defaults to 127.5
+                    threshold: 0.6,
+                    // defaults to 0.1
+                    asynch: true,
+                    numResultsPerClass: 1 // defaults to true
+                    )
+                .then((recognitions) {
+              widget.setRecognitions(recognitions, img.height, img.width);
 
-
-                      numResultsPerClass: 1)
-                  .then((recognitions) {
-                //print(recognitions);
-
-                widget.setRecognitions(recognitions, img.height, img.width);
-                isDetecting = false;
-              });
-            } else {
-              Tflite.runPoseNetOnFrame(
-                      bytesList: img.planes.map((plane) {
-                        return plane.bytes;
-                      }).toList(),
-                      imageHeight: img.height,
-                      imageWidth: img.width,
-                      threshold: 0.8,
-
-                numResults: 1
-              )
-                  .then((recognitions) {
-                widget.setRecognitions(recognitions, img.height, img.width);
-
-                print(recognitions);
-                isDetecting = false;
-              });
-            }
+              //print(recognitions);
+              isDetecting = false;
+            });
           }
         });
       });
     }
   }
-
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
     if (controller != null) {
@@ -104,27 +90,27 @@ class _CameraState extends State<Camera> {
     }
     controller = CameraController(
       cameraDescription,
-      ResolutionPreset.high,
+      ResolutionPreset.veryHigh,
     );
 
 // If the controller is updated then update the UI.
     controller.addListener(() {
       if (mounted) setState(() {});
-      if (controller.value.hasError) {
-      }
+      if (controller.value.hasError) {}
     });
 
     try {
       await controller.initialize();
-    } on CameraException catch (e) {
-    }
+    } on CameraException catch (e) {}
 
     if (mounted) {
       setState(() {});
     }
   }
+
   @override
   void dispose() {
+    //Tflite.close();
     controller?.dispose();
     super.dispose();
   }
@@ -144,15 +130,13 @@ class _CameraState extends State<Camera> {
       children: <Widget>[
         Center(
           child: AspectRatio(
-            aspectRatio: MediaQuery.of(context).size.width /
-                MediaQuery.of(context).size.height,
+            aspectRatio: MediaQuery.of(context).size.width / MediaQuery.of(context).size.height,
 
             // Use the VideoPlayer widget to display the video.
 
             child: widget.showimg ? CameraPreview(controller) : Container(),
           ),
         ),
-
       ],
     );
   }

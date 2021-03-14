@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import '../hive_classes.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scidart/numdart.dart';
@@ -83,6 +85,8 @@ class MyPainter extends CustomPainter {
     canvas.drawLine(point_to_offset(dst_point[3]), point_to_offset(dst_point[2]), paint);
     canvas.drawLine(point_to_offset(dst_point[0]), point_to_offset(dst_point[2]), paint);
     canvas.drawLine(point_to_offset(dst_point[1]), point_to_offset(dst_point[0]), paint);
+    //canvas.drawLine(point_to_offset(dst_point[0]), Offset(dst_point[0].x,0.0), paint2);
+    //sscanvas.drawLine(point_to_offset(dst_point[0]), Offset(dst_point[0].x,1000), paint2);
 
 
 

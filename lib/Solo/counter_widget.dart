@@ -8,14 +8,14 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 
 typedef void Callback(bool done);
 typedef void Callback1(int current_side);
-
+typedef void Callback2(bool is_working);
 
 class counter_widget extends StatefulWidget {
   final Callback done;
   final Callback1 current_side;
+  final Callback2 is_working;
 
   List<int> activities;
-
 
   Color main;
   Duration time;
@@ -23,19 +23,20 @@ class counter_widget extends StatefulWidget {
   int counter_goal;
   int type;
 
-  counter_widget({this.type,this.main, this.time, this.done, this.counter_value, this.counter_goal, this.activities,this.current_side});
+  counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side});
 
   @override
-  counter_widget_state createState() => new counter_widget_state(time.inSeconds,type);
+  counter_widget_state createState() => new counter_widget_state(time.inSeconds, type);
 }
 
 class counter_widget_state extends State<counter_widget> {
   List<String> names = ["Forehand Drives", "Forehand Volleys", "BackHand Drives", "BackHand Volley"];
-  counter_widget_state(this._start,this.type);
+
+  counter_widget_state(this._start, this.type);
 
   int type;
 
-  SwiperController sc =new SwiperController();
+  SwiperController sc = new SwiperController();
 
   bool finished = false;
 
@@ -45,7 +46,7 @@ class counter_widget_state extends State<counter_widget> {
 
   bool is_working = false;
 
-  int sides_done = 1;
+  int sides_done = 0;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -56,12 +57,15 @@ class counter_widget_state extends State<counter_widget> {
           setState(() {
             timer.cancel();
             is_working = false;
+            widget.is_working(is_working);
 
-            if (sides_done == widget.activities.length-1) {
+            if (sides_done == widget.activities.length - 1) {
+              widget.done(true);
             } else {
-              widget.done(false);
+              //widget.done(false);
 
               sides_done++;
+              widget.current_side(sides_done);
             }
           });
         } else {
@@ -77,16 +81,13 @@ class counter_widget_state extends State<counter_widget> {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
         setState(() {
           _start++;
-
         });
       },
     );
   }
-
-
 
   CountDownController _countDownController = CountDownController();
 
@@ -97,7 +98,7 @@ class counter_widget_state extends State<counter_widget> {
         circularStrokeCap: CircularStrokeCap.round,
         lineWidth: 20,
         backgroundColor: Colors.white54,
-        percent: type==0?_start / widget.time.inSeconds:(_start%60)/60,
+        percent: type == 0 ? _start / widget.time.inSeconds : (_start % 60) / 60,
         radius: 210,
         animation: true,
         linearGradient: LinearGradient(colors: [
@@ -109,7 +110,7 @@ class counter_widget_state extends State<counter_widget> {
         animationDuration: 1200,
         backgroundWidth: 20,
         center: Text(
-          (_start~/60).toString()+":"+(_start%60).toString(),
+          Duration(seconds: _start).toString().substring(2, 7),
           style: TextStyle(fontSize: 49, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         header: Padding(
@@ -133,8 +134,9 @@ class counter_widget_state extends State<counter_widget> {
             GestureDetector(
               onTap: () {
                 setState(() {
-
                   is_working = true;
+                  widget.is_working(is_working);
+
                   _start = widget.time.inSeconds;
                   startTimer();
                 });
@@ -156,25 +158,16 @@ class counter_widget_state extends State<counter_widget> {
   }
 
   Widget Counter() {
-
-
-    if (is_working){
-
-      if(widget.counter_value==widget.counter_goal){
-
-        if(sides_done==widget.activities.length-1){
-
+    if (is_working) {
+      if (widget.counter_value == widget.counter_goal) {
+        if (sides_done == widget.activities.length - 1) {
           widget.done(true);
-
-        }else{
-
-          is_working=false;
+        } else {
+          is_working = false;
+          widget.is_working(is_working);
           sides_done++;
           widget.current_side(sides_done);
-
-
         }
-
       }
 
       return CircularPercentIndicator(
@@ -204,10 +197,7 @@ class counter_widget_state extends State<counter_widget> {
           ),
         ),
       );
-
-
-    }else{
-
+    } else {
       return Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -220,11 +210,11 @@ class counter_widget_state extends State<counter_widget> {
             GestureDetector(
               onTap: () {
                 setState(() {
-
                   is_working = true;
-                  _start=0;
-                  StopWatch();
+                  widget.is_working(is_working);
 
+                  _start = 0;
+                  StopWatch();
                 });
               },
               child: Container(
@@ -240,17 +230,11 @@ class counter_widget_state extends State<counter_widget> {
           ],
         ),
       );
-
-
     }
-
-
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Positioned(
       top: 0,
       left: (MediaQuery.of(context).size.width - 320) / 2,
@@ -259,62 +243,20 @@ class counter_widget_state extends State<counter_widget> {
           width: 320,
           height: 320,
           decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 0.9), borderRadius: BorderRadius.all(Radius.circular(25))),
-          child: type==0?timer():Counter(),
+          child: type == 0 ? timer() : Counter(),
         ),
       ),
     );
   }
 
-  /*
-  Swiper(
-            autoplayDisableOnInteraction: true,
-            autoplay: false,
-            autoplayDelay: 1200,
-
-
-
-            itemBuilder: (BuildContext context, int index) {
-
-
-              if (index == 0) {
-                return type==0?timer():Counter();
-              } else {
-                return type==0?Counter():timer();
-              }
-
-
-
-            },
-            itemCount: 2,
-
-            scrollDirection: Axis.vertical,
-            duration: 1200,
-            pagination: SwiperPagination(builder: new DotSwiperPaginationBuilder(color: Colors.transparent, activeColor: Colors.transparent, size: 10.0, activeSize: 10.0)),
-            control: SwiperControl(
-
-
-              color: Colors.transparent,
-              disableColor: Colors.pink,
-            ),
-            loop: true,
-            physics:NeverScrollableScrollPhysics(),
-            controller: sc,
-            onIndexChanged: (index) {},
-          ),
-
-   */
-
-
   @override
   void initState() {
-
     super.initState();
   }
 
   @override
   void dispose() {
-
-    if(_timer!=null){
+    if (_timer != null) {
       _timer.cancel();
     }
     super.dispose();

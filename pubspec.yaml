@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera:
+  camera: 0.5.7+4
   tflite:
   percent_indicator:
   circular_countdown_timer:
@@ -42,8 +42,12 @@ dependencies:
   shape_of_view:
   google_fonts:
   bubble_tab_indicator:
-  cupertino_icons: ^0.1.3
+  cupertino_icons:
   flutter_swiper:
+  custom_clippers:
+  page_transition: "^1.1.7+6"
+  blobs:
+
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +71,9 @@ flutter:
     - assets/posenet_mv1_075_float_from_checkpoints.tflite
     - assets/test.jpg
     - assets/target.png
+    - assets/ghost_icon.png
+    - assets/ssd_mobilenet.tflite
+    - assets/ssd_mobilenet.txt
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

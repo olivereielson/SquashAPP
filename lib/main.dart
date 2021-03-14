@@ -6,9 +6,9 @@ import 'package:camera/camera.dart';
 import 'package:hive/hive.dart';
 import 'package:squash/Ghosting/Selection%20Screen.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
-import 'package:squash/save_page.dart';
+import 'package:squash/data/save_page.dart';
 import 'package:squash/Solo/solo%20screen.dart';
-import 'Saved Data Page.dart';
+import 'data/Saved Data Page.dart';
 import 'account.dart';
 import 'Ghosting/home.dart';
 
@@ -46,30 +46,20 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-
-        dividerTheme: DividerThemeData(
-
-          
-
-
-        )
-
-
-
-
-      ),
+      theme: ThemeData(brightness: Brightness.light, dividerTheme: DividerThemeData()),
       darkTheme: ThemeData(brightness: Brightness.light, primaryTextTheme: TextTheme(), textTheme: TextTheme()),
-
-
-
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           unselectedItemColor: Colors.grey,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.directions_run),
+              icon: Image(
+                  color: current==0?Color.fromRGBO(4, 12, 128, 1):Colors.grey,
+                  height: 25,
+                  width: 25,
+                  image: AssetImage(
+                    'assets/ghost_icon.png',
+                  )),
               label: 'Ghosting',
             ),
             BottomNavigationBarItem(
@@ -80,7 +70,6 @@ class _MyAppState extends State<MyApp> {
               icon: Icon(EvaIcons.activityOutline),
               label: 'Saved Data',
             ),
-
           ],
           fixedColor: Color.fromRGBO(4, 12, 128, 1),
           onTap: (index) {
@@ -95,7 +84,11 @@ class _MyAppState extends State<MyApp> {
           pageSnapping: true,
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[gs, SoloScreen(cameras), SavedDataPage(),],
+          children: <Widget>[
+            gs,
+            SoloScreen(cameras),
+            SavedDataPage(),
+          ],
         ),
       ),
     );

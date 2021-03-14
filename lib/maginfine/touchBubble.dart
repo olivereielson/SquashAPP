@@ -37,6 +37,8 @@ class TouchBubble extends StatelessWidget {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color.fromRGBO(40, 45, 81, 0.5)),
+
+
             )));
   }
 }

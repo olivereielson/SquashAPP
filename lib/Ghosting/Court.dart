@@ -14,8 +14,7 @@ class Court_Screen_State extends State<Court_Screen> {
   Court_Screen_State(this.corners);
 
   List<double> corners;
-
-  Color court_color = Color.fromRGBO(4, 12, 128, 1);
+  Color court_color = Color.fromRGBO(40, 45, 81, 1);
 
   Widget draw_court() {
     return Stack(
@@ -72,99 +71,90 @@ class Court_Screen_State extends State<Court_Screen> {
   }
 
   Widget check(double x) {
-    return IconButton(
-      onPressed: () {
-        setState(() {
-          if (corners.contains(x)) {
-            corners.remove(x);
-          } else {
-            corners.add(x);
-          }
-        });
-      },
-      icon: corners.contains(x)
-          ? Icon(
-              Icons.radio_button_checked,
-              color: Colors.grey,
-              size: 35,
-            )
-          : Icon(
-              Icons.radio_button_unchecked,
-              size: 35,
-        color: Colors.grey,
-
-      ),
-    );
+    return MaterialButton(
+        onPressed: () {
+          setState(() {
+            if (corners.contains(x)) {
+              corners.remove(x);
+            } else {
+              corners.add(x);
+            }
+          });
+        },
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: corners.contains(x)?Color.fromRGBO(40, 70, 130, 1):Colors.transparent,
+            border: Border.all(
+                color: Color.fromRGBO(40, 70, 130, 1),
+                // set border color
+                width: 6.0), // set border width
+            borderRadius: BorderRadius.all(Radius.circular(15.0)), // set rounded corner radius
+          ),
+        ));
   }
 
   Widget select_corners() {
-    return Container(
-
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-
-
-      child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [check(0), check(1)],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [check(2), check(3)],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [check(4), check(5)],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [check(6), check(7)],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [check(8), check(9)],
-            ),
-          ],
-        ),
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [check(0), check(1)],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [check(2), check(3)],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [check(4), check(5)],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [check(6), check(7)],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [check(8), check(9)],
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: "courtscreen",
-      child: Scaffold(
-        body: ListView(
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Stack(
-                children: [
-                  SafeArea(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        MaterialButton(
-                          child: Text("Close",style: TextStyle(color: Colors.black),),
-                            color: Colors.white,
-                            onPressed: () => Navigator.of(context).pop(corners))
-                      ],
-                    ),
-                  ),
-                  draw_court(),
-                  select_corners()
-                ],
-              ),
-            ),
-          ],
-        ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned(
+              top: -20,
+              left: (MediaQuery.of(context).size.width - 170) / 2,
+              child: SafeArea(
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(corners),
+                  child: Container(
+                      width: 170,
+                      height: 60,
+                      decoration: BoxDecoration(
+                          color: Color.fromRGBO(40, 45, 81, 1),
+                          border: Border.all(
+                            color: Color.fromRGBO(40, 45, 81, 1),
+                          ),
+                          borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
+                      child: Center(
+                          child: Text(
+                        "Close",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                      ))),
+                ),
+              )),
+          draw_court(),
+          select_corners()
+        ],
       ),
     );
   }

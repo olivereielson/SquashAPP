@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:squash/Ghosting/Court.dart';
 import 'package:squash/Ghosting/home.dart';
@@ -59,9 +60,30 @@ class GhostScreenState extends State<GhostScreen> {
     if (Hive.isBoxOpen(box)) {
       Exersises = Hive.box<Custom>(box);
     }
+
   }
 
   GhostScreenState(this.cameras);
+
+
+  void saved(){
+
+
+    var exersie = Custom()
+      ..name = "default"
+      ..number_set = number_set
+      ..round_num = round_num
+      ..rest_time = rest_time.inSeconds
+      ..start_time = start_time.inSeconds
+      ..corners = corners
+      ..color_index = Random().nextInt(title_color.length);
+
+    Exersises.add(exersie); // Store this object for the first time
+
+    _mylistkey.currentState.insertItem(Exersises.length - 1);
+
+
+  }
 
   show_set_picker() {
     List<Widget> nums = [];
@@ -211,45 +233,6 @@ class GhostScreenState extends State<GhostScreen> {
         });
   }
 
-  Widget check(double x) {
-    return IconButton(
-      onPressed: () {
-        setState(() {
-          if (corners.contains(x)) {
-            corners.remove(x);
-          } else {
-            corners.add(x);
-          }
-        });
-
-        print(corners);
-      },
-      icon: corners.contains(x)
-          ? Icon(
-              Icons.radio_button_checked,
-              color: Colors.blue,
-              size: 35,
-            )
-          : Icon(
-              Icons.radio_button_unchecked,
-              size: 35,
-            ),
-    );
-  }
-
-  Widget select_corners() {
-    return Stack(
-      children: [
-        Positioned(bottom: 15, child: check(0)),
-        Positioned(bottom: 15, right: 10, child: check(1)),
-        Positioned(bottom: 150, child: check(2)),
-        Positioned(bottom: 150, right: 10, child: check(3)),
-        Positioned(bottom: 300, child: check(4)),
-        Positioned(bottom: 300, right: 10, child: check(5)),
-      ],
-    );
-  }
-
   void show_dialog() {
     showDialog(
       context: context,
@@ -319,7 +302,11 @@ class GhostScreenState extends State<GhostScreen> {
   }
 
   loadModel() async {
-    await Tflite.loadModel(model: "assets/posenet_mv1_075_float_from_checkpoints.tflite", useGpuDelegate: true);
+    await Tflite.loadModel(
+      model: "assets/ssd_mobilenet.tflite",
+      labels: "assets/ssd_mobilenet.txt",
+      useGpuDelegate: true,
+    );
   }
 
   Widget Show_Custom_Card(int index) {
@@ -403,9 +390,10 @@ class GhostScreenState extends State<GhostScreen> {
                         _mylistkey.currentState.removeItem(
                             index,
                             (context, Animation<double> animation) => ScaleTransition(
+
                                   scale: animation,
                                   child: test,
-                                ));
+                                ),duration: Duration(milliseconds: 500));
 
                         Hive.box<Custom>(box).getAt(index).delete();
                       },
@@ -436,13 +424,20 @@ class GhostScreenState extends State<GhostScreen> {
         future: load_hive(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (Hive.isBoxOpen(box)) {
+            if(Hive.box<Custom>(box).length==0){
+              //saved();
+
+
+            }
+
+
             return Container(
               color: Colors.white,
               child: Stack(
                 children: [
                   Container(
                     height: 500,
-                    decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))),
+                    decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                   ),
                   Positioned(
                     bottom: 0,
@@ -514,45 +509,49 @@ class GhostScreenState extends State<GhostScreen> {
                             ],
                           ),
                         ),
-                         Container(
+                        Container(
                           height: 240,
                           child: AnimatedList(
-                              key: _mylistkey,
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.all(8),
-                              initialItemCount: Hive.box<Custom>(box).length,
-                              itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                                return SizeTransition(
-                                  sizeFactor: animation,
-                                  axis: Axis.horizontal,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GestureDetector(
-                                        onLongPress: () {
-                                          setState(() {});
-                                          delete_mode = true;
-                                        },
-                                        onTap: () async {
-                                          await loadModel();
+                                  key: _mylistkey,
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.all(8),
+                                  initialItemCount: Hive.box<Custom>(box).length,
 
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                    cameras,
-                                                    Hive.box<Custom>(box).getAt(index).number_set,
-                                                    Hive.box<Custom>(box).getAt(index).round_num,
-                                                    Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
-                                                    Hive.box<Custom>(box).getAt(index).corners,
-                                                    Hive.box<Custom>(box).getAt(index).start_time)),
-                                          );
-                                        },
-                                        child: Show_Custom_Card(index)),
-                                  ),
-                                );
-                              }),
-                        ), 
-                        
+
+
+                                  itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                                    return SizeTransition(
+                                      sizeFactor: animation,
+                                      axis: Axis.horizontal,
+
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GestureDetector(
+                                            onLongPress: () {
+                                              setState(() {});
+                                              delete_mode = true;
+                                            },
+                                            onTap: () async {
+                                              await loadModel();
+
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => HomePage(
+                                                        cameras,
+                                                        Hive.box<Custom>(box).getAt(index).number_set,
+                                                        Hive.box<Custom>(box).getAt(index).round_num,
+                                                        Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
+                                                        Hive.box<Custom>(box).getAt(index).corners,
+                                                        Hive.box<Custom>(box).getAt(index).start_time)),
+                                              );
+                                            },
+                                            child: Show_Custom_Card(index)),
+                                      ),
+                                    );
+                                  })
+
+                        ),
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -626,23 +625,20 @@ class GhostScreenState extends State<GhostScreen> {
                                   padding: const EdgeInsets.all(10.0),
                                   child: GestureDetector(
                                     onTap: () async {
-                                      corners = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => Court_Screen(corners)),
-                                      );
+                                      corners = await  Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
+
+
 
                                       setState(() {});
                                     },
-                                    child: Hero(
-                                        tag: "courtscreen",
-                                        child: input(
-                                            "Number of Corners",
-                                            corners.length.toInt().toString(),
-                                            Icon(
-                                              Icons.apps,
-                                              color: Colors.white,
-                                              size: 30,
-                                            ))),
+                                    child: input(
+                                        "Number of Corners",
+                                        corners.length.toInt().toString(),
+                                        Icon(
+                                          Icons.apps,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
                                   ),
                                 ),
                                 Padding(

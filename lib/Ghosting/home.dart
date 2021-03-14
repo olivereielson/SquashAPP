@@ -6,9 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
+import 'package:squash/hive_classes.dart';
+import 'package:tflite/tflite.dart';
 import 'camera.dart';
 import 'bndbox.dart';
 import 'countdown.dart';
@@ -30,7 +34,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   List<dynamic> _recognitions;
 
   _HomePageState(this.number_set, this.round_num, this.rest_time, this.corners, this.start_countdown);
-  Color main=Color.fromRGBO(4, 12, 128, 1);
+  Color main= Color.fromRGBO(40, 45, 81, 1);
 
   List<double> corners;
   int start_countdown;
@@ -46,7 +50,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Duration rest_time;
   bool resting = false;
 
-  DateTime application_start;
 
   bool onT = false;
   AnimationController controller;
@@ -58,8 +61,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Point p1 = new Point(200, 500);
 
-  DateTime start_time, end_time;
+
+  DateTime start_time, end_time,application_start;
   List<double> time_array = [];
+  List<double> corner_array = [];
+
+
   double precent_effort = 0;
   double xpoint;
   double maxsize = 200;
@@ -73,6 +80,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     center = count_down_timer();
 
     application_start = DateTime.now();
+
     controller = AnimationController(duration: const Duration(seconds: 2), vsync: this);
 
     SystemChrome.setPreferredOrientations([
@@ -82,6 +90,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Future<void> kill() async {
     String test = DateTime.now().difference(application_start).toString();
+    await save_data();
 
     await Navigator.push(
       context,
@@ -225,6 +234,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Widget count_down_timer() {
+
+
+
     return Container(
       width: 200,
       child: Center(
@@ -296,6 +308,43 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
+  Future<void> save_data() async {
+
+    String box = "Ghosting1";
+
+    if(!Hive.isAdapterRegistered(9)){
+
+      Hive.registerAdapter(GhostingAdapter());
+
+    }
+
+
+    Box<Ghosting> ghost;
+
+    if(Hive.isBoxOpen(box)){
+
+      ghost=Hive.box<Ghosting>(box);
+
+    }else{
+
+      ghost = await Hive.openBox<Ghosting>(box);
+
+    }
+
+    Ghosting s = Ghosting()..start=application_start..end=DateTime.now()..time_array=time_array..corner_array=corner_array;
+
+
+
+    ghost.add(s);
+
+
+
+
+
+
+
+  }
+
   Widget draw_court() {
     return Stack(
       children: [
@@ -353,17 +402,19 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   setRecognitions(recognitions, imageHeight, imageWidth) {
     setState(() {
       _recognitions = recognitions;
-      print(recognitions);
+      //print(recognitions);
 
       try {
-        double xpos;
-        if (Platform.isIOS) {
-          xpos = _recognitions.asMap()[0]["keypoints"][part]["x"] * MediaQuery.of(context).size.width;
-        } else {
-          xpos = MediaQuery.of(context).size.width - (_recognitions.asMap()[0]["keypoints"][part]["x"] * MediaQuery.of(context).size.width);
-        }
 
-        double ypos = _recognitions.asMap()[0]["keypoints"][part]["y"] * MediaQuery.of(context).size.height;
+        var x = (recognitions[0]["rect"]["x"]*MediaQuery.of(context).size.width);
+        var w = recognitions[0]["rect"]["w"]*MediaQuery.of(context).size.width;
+        var y = recognitions[0]["rect"]["y"]*MediaQuery.of(context).size.height;
+        var h = recognitions[0]["rect"]["h"]*MediaQuery.of(context).size.height;
+
+        double xpos=x+(w~/2);
+        double ypos=y+h;
+
+
 
         if (is_exersising) {
           if (p1.x < xpos && xpos < p1.x + t_size && p1.y < ypos && ypos < p1.y + t_size) {
@@ -377,6 +428,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
               corner = rng;
               ghostcast++;
+              corner_array.add(rng.toDouble());
+
               if (start_time == null) {
                 start_time = DateTime.now();
               } else {
@@ -391,7 +444,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
                 center = precent_complete_indicator(time_array.length / number_set);
 
-                print(time_array);
+                //
+                //
+                // print(time_array);
 
                 if (time_array.length == number_set) {
                   resting = true;
@@ -401,12 +456,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   center = rest_timer();
                 }
 
-                print(round_num);
+                //(round_num);
 
                 if (round_num <= 0) {
                   kill();
 
-                  // Navigator.pop(context);
+                   Navigator.pop(context);
 
                 }
               }
@@ -429,10 +484,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         body: Stack(
       children: [
         Camera(widget.cameras, setRecognitions, showcam, false, 1),
+        showcam ? BndBox(_recognitions == null ? [] : _recognitions) : Text(""),
+
         showcam ? t_box() : draw_court(),
         Corner_tree(),
-        !showcam
-            ? Positioned(
+             Positioned(
                 top: -20,
                 left: (MediaQuery.of(context).size.width - 170) / 2,
                 child: SafeArea(
@@ -444,9 +500,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         width: 170,
                         height: 50,
                         decoration: BoxDecoration(
-                            color: main,
+                            color: Color.fromRGBO(40, 45, 81, 1),
                             border: Border.all(
-                              color: main,
+                              color: Color.fromRGBO(40, 45, 81, 1),
                             ),
                             borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                         child: Center(
@@ -456,19 +512,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         ))),
                   ),
                 ))
-            : Text(""),
+           ,
         GestureDetector(
           onDoubleTap: () {
             setState(() {
               showcam = !showcam;
             });
           },
-          onLongPress: () {
+          onLongPress: () async {
+            await save_data();
+
             Navigator.pop(context);
           },
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
+              padding: const EdgeInsets.symmetric(vertical: 40),
               child: Column(
                 children: [
                   Row(
@@ -488,8 +546,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             ),
           ),
         ),
-        showcam ? BndBox(_recognitions == null ? [] : _recognitions) : Text(""),
       ],
     ));
   }
+
+
+  @override
+  dispose() {
+    controller.dispose(); // you need this
+    super.dispose();
+  }
+
 }

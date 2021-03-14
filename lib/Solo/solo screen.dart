@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:io' show Platform;
 
 import 'package:camera/camera.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -38,13 +39,13 @@ class SoloScreenState extends State<SoloScreen> {
   int extra_num;
   int shot_number = 100;
   int start_camera = 0;
-  int segmentedControlGroupValue = 0;
+  int segmentedControlGroupValue = 1;
   Point location = Point(250.0, 250.0);
   bool target_locked = false;
   String box = "solo3";
   var Exersises;
 
-  Duration total_time = Duration(seconds: 500);
+  Duration total_time = Duration(seconds: 10);
 
   Duration rest_time = Duration(seconds: 30);
 
@@ -69,7 +70,7 @@ class SoloScreenState extends State<SoloScreen> {
     await Tflite.loadModel(
       model: "assets/converted_model.tflite",
       labels: "assets/ball.txt",
-      useGpuDelegate: true,
+      useGpuDelegate: Platform.isAndroid?false:true,
     );
   }
 
@@ -648,6 +649,7 @@ class SoloScreenState extends State<SoloScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         body: Container(
       decoration: new BoxDecoration(
@@ -663,18 +665,17 @@ class SoloScreenState extends State<SoloScreen> {
         children: [
           Container(
             height: 500,
-            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)), color: Color.fromRGBO(20, 20, 50, 1)),
+            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))),
           ),
           Positioned(
             bottom: 0,
             child: Container(
               height: 550,
               width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+              decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 1),  borderRadius: BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(20))),
             ),
           ),
-          ListView(
-            physics: NeverScrollableScrollPhysics(),
+          Column(
             children: [
               Container(
                 child: SafeArea(
@@ -718,7 +719,7 @@ class SoloScreenState extends State<SoloScreen> {
                 height: 250,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Volley", true, 2), shot("Backhand Volley", false, 3)],
+                  children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Service Box", true, 2), shot("Backhand Service Box", false, 3)],
                 ),
               ),
 
@@ -727,64 +728,67 @@ class SoloScreenState extends State<SoloScreen> {
               //round(),
               // Time_Input(),
 
-              Container(
-                height: MediaQuery.of(context).size.height-470,
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
-                child: ListView(
-                  children: [
-                    Container(
-                      height: 120,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [button(0, "Time"), button(1, "Shot Count")],
-                      ),
-                    ),
-                    mode_choice(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              await loadModel();
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20))),
+                  child: ListView(
 
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SoloHome(
-                                          cameras: cameras,
-                                          start_camera: 0,
-                                          type: segmentedControlGroupValue,
-                                          time: total_time,
-                                          shot_count: shot_number,
-                                          sides: sides,
-                                        )),
-                              );
-                            },
-                            child: Center(
-                              child: Container(
-                                height: 50,
-                                width: 150,
-                                child: Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    )),
-                                    elevation: 2,
-                                    color: main,
-                                    child: Center(
-                                        child: Text(
-                                      "Start",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ))),
+                    children: [
+                      Container(
+                        height: 70,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [button(0, "Time"), button(1, "Shot Count")],
+                        ),
+                      ),
+                      mode_choice(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                await loadModel();
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SoloHome(
+                                            cameras: cameras,
+                                            start_camera: 0,
+                                            type: segmentedControlGroupValue,
+                                            time: total_time,
+                                            shot_count: shot_number,
+                                            sides: sides,
+                                          )),
+                                );
+                              },
+                              child: Center(
+                                child: Container(
+                                  height: 50,
+                                  width: 150,
+                                  child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                        Radius.circular(18),
+                                      )),
+                                      elevation: 2,
+                                      color: main,
+                                      child: Center(
+                                          child: Text(
+                                        "Start",
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                      ))),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

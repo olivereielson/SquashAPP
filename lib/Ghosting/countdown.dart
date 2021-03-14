@@ -23,13 +23,9 @@ class _CountDownState extends State<CountDown> {
   String timer = "15";
   Timer _timer;
   int _start;
-  Color main = Color.fromRGBO(4, 12, 128, 1);
+  Color main= Color.fromRGBO(40, 45, 81, 1);
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +36,20 @@ class _CountDownState extends State<CountDown> {
         const oneSec = const Duration(seconds: 1);
         _timer = new Timer.periodic(
           oneSec,
-          (Timer timer) => setState(
-            () {
-              if (_start < 1) {
-                timer.cancel();
-                widget.done(true);
-              } else {
-                _start = _start - 1;
+          (Timer timer) {
 
-              }
-            },
-          ),
+            setState(
+                  () {
+                if (_start < 1) {
+                  _timer.cancel();
+                  widget.done(true);
+                } else {
+                  _start = _start - 1;
+
+                }
+              },
+            );
+          },
         );
       },
       child: Container(
@@ -78,5 +77,13 @@ class _CountDownState extends State<CountDown> {
               ),
       ),
     );
+  }
+  @override
+  void dispose() {
+    if(_timer!=null){
+      _timer.cancel();
+    }
+
+    super.dispose();
   }
 }
