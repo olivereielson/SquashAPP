@@ -64,6 +64,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   DateTime start_time, end_time,application_start;
   List<double> time_array = [];
+  List<double> time_array2 = [];
+
   List<double> corner_array = [];
 
 
@@ -331,8 +333,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     }
 
-    Ghosting s = Ghosting()..start=application_start..end=DateTime.now()..time_array=time_array..corner_array=corner_array;
+    print(time_array2);
 
+    Ghosting s = Ghosting()..start=application_start..end=DateTime.now()..rest_time=rest_time.inSeconds..rounds=round_num.toInt()..time_array=time_array2..corner_array=corner_array;
+
+    print(s.time_array);
 
 
     ghost.add(s);
@@ -440,13 +445,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 start_time = DateTime.now();
 
                 time_array.add(dif.toDouble());
+                time_array2.add(dif.toDouble());
                 //time_array.sort();
 
                 center = precent_complete_indicator(time_array.length / number_set);
 
                 //
-                //
-                // print(time_array);
+                //time_array
+                print(time_array);
 
                 if (time_array.length == number_set) {
                   resting = true;

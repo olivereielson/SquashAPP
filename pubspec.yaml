@@ -47,6 +47,8 @@ dependencies:
   custom_clippers:
   page_transition: "^1.1.7+6"
   blobs:
+  fl_chart: ^0.20.1
+
 
 
 dev_dependencies:

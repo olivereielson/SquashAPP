@@ -1,22 +1,88 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:scidart/numdart.dart';
 
-class Court_Screen extends StatefulWidget {
-  Court_Screen(this.corners);
+import 'Saved Data Page.dart';
+import '../hive_classes.dart';
+import '../main.dart';
 
-  List<double> corners;
+class SavedDataGhost extends StatefulWidget {
+  Ghosting ghost_box;
+
+  SavedDataGhost(this.ghost_box);
 
   @override
-  Court_Screen_State createState() => new Court_Screen_State(corners);
+  SavedGhostState createState() => new SavedGhostState(ghost_box);
 }
 
-class Court_Screen_State extends State<Court_Screen> {
-  Court_Screen_State(this.corners);
+class SavedGhostState extends State<SavedDataGhost> {
+  SavedGhostState(this.ghost_box);
 
-  List<double> corners;
-  Color court_color = Color.fromRGBO(40, 45, 81, 1);
+  Ghosting ghost_box;
+
+  Color main = Color.fromRGBO(4, 12, 128, 1);
+
+  bool expanded = false;
+
+  List<int> num_conrer=[0,0,0,0,0,0,0,0,0,0];
+
+  List<int> showing = [0, 1, 2, 3];
+
+
+  @override
+  void initState() {
+
+    for( int i =0; i < ghost_box.corner_array.length; i++){
+
+      num_conrer[ghost_box.corner_array[i].toInt()]++;
+
+    }
+
+
+
+    super.initState();
+  }
+
+
+  Widget button_box(String name, int index) {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: GestureDetector(
+        onTap: () {
+          if (showing.contains(index)) {
+            setState(() {
+              showing.remove(index);
+            });
+          } else {
+            setState(() {
+              showing.add(index);
+            });
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(color: showing.contains(index) ? Colors.white : Colors.white10, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          height: 60,
+          width: 130,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+                child: Text(
+                  name,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.black : Colors.white),
+                  textAlign: TextAlign.center,
+                )),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget draw_court() {
+   Color court_color=Color.fromRGBO(40, 45, 81, 1);
     return Stack(
       children: [
         Positioned(
@@ -70,32 +136,26 @@ class Court_Screen_State extends State<Court_Screen> {
     );
   }
 
-  Widget check(double x) {
-    return MaterialButton(
-      splashColor: Colors.transparent,
-        onPressed: () {
-          setState(() {
-            if (corners.contains(x)) {
-              corners.remove(x);
-            } else {
-              corners.add(x);
-            }
-          });
-        },
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: corners.contains(x)?Color.fromRGBO(40, 70, 130, 1):Colors.transparent,
-            border: Border.all(
-                color: Color.fromRGBO(40, 70, 130, 1),
-                // set border color
-                width: 6.0), // set border width
-            borderRadius: BorderRadius.all(Radius.circular(15.0)), // set rounded corner radius
-          ),
-        ));
-  }
+  Widget check(int x) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(40, 70, 130, 1),
+          border: Border.all(
+              color: Color.fromRGBO(40, 70, 130, 1),
+              // set border color
+              width: 6.0), // set border width
+          borderRadius: BorderRadius.all(Radius.circular(15.0)), // set rounded corner radius
+        ),
 
+        child: Center(child: Text(num_conrer[x].toString(),style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),)),
+
+      ),
+    );
+  }
   Widget select_corners() {
     return SafeArea(
       child: Column(
@@ -126,17 +186,23 @@ class Court_Screen_State extends State<Court_Screen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
+
+    print(ghost_box.corner_array);
+
     return Scaffold(
       body: Stack(
         children: [
+          draw_court(),
+          select_corners(),
           Positioned(
               top: -20,
               left: (MediaQuery.of(context).size.width - 170) / 2,
               child: SafeArea(
                 child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(corners),
+                  onTap: () => Navigator.of(context).pop(),
                   child: Container(
                       width: 170,
                       height: 60,
@@ -148,13 +214,11 @@ class Court_Screen_State extends State<Court_Screen> {
                           borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                       child: Center(
                           child: Text(
-                        "Close",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-                      ))),
+                            "Close",
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                          ))),
                 ),
               )),
-          draw_court(),
-          select_corners()
         ],
       ),
     );

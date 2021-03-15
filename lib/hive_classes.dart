@@ -44,9 +44,17 @@ class Ghosting extends HiveObject {
   DateTime end;
 
   @HiveField(2)
-  List<double> time_array;
+  int rest_time;
 
   @HiveField(3)
+  int rounds;
+
+
+
+  @HiveField(4)
+  List<double> time_array;
+
+  @HiveField(5)
   List<double> corner_array;
 }
 
@@ -59,6 +67,8 @@ class GhostingAdapter extends TypeAdapter<Ghosting> {
     return Ghosting()
       ..start = reader.read()
       ..end = reader.read()
+      ..rest_time = reader.read()
+      ..rounds = reader.read()
       ..time_array = reader.read()?.cast<double>()
       ..corner_array = reader.read()?.cast<double>();
   }
@@ -67,6 +77,8 @@ class GhostingAdapter extends TypeAdapter<Ghosting> {
   void write(BinaryWriter writer, Ghosting obj) {
     writer.write(obj.start);
     writer.write(obj.end);
+    writer.write(obj.rest_time);
+    writer.write(obj.rounds);
     writer.write(obj.time_array);
     writer.write(obj.corner_array);
   }
@@ -138,6 +150,27 @@ class CustomClipperImage2 extends CustomClipper<Path> {
     var endPoint = Offset(size.width * 0.1, 0);
     path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
     path.lineTo(0, 0);
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper oldClipper) {
+    return true;
+  }
+}
+
+class CustomClipperImage3 extends CustomClipper<Path> {
+  @override
+  getClip(Size size) {
+    var path = Path();
+    path.lineTo(0.0, 0);
+    path.lineTo(size.width, 0);
+
+    var endPoint = Offset(0, size.height);
+    var controlPoint = Offset(size.width / 0.7, size.height);
+    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
+    path.lineTo(0.0, size.height);
 
     return path;
   }

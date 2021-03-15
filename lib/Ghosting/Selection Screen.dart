@@ -14,6 +14,8 @@ import 'package:squash/Ghosting/Court.dart';
 import 'package:squash/Ghosting/home.dart';
 import 'package:tflite/tflite.dart';
 
+import '../hive_classes.dart';
+
 class GhostScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -60,15 +62,11 @@ class GhostScreenState extends State<GhostScreen> {
     if (Hive.isBoxOpen(box)) {
       Exersises = Hive.box<Custom>(box);
     }
-
   }
 
   GhostScreenState(this.cameras);
 
-
-  void saved(){
-
-
+  void saved() {
     var exersie = Custom()
       ..name = "default"
       ..number_set = number_set
@@ -81,8 +79,6 @@ class GhostScreenState extends State<GhostScreen> {
     Exersises.add(exersie); // Store this object for the first time
 
     _mylistkey.currentState.insertItem(Exersises.length - 1);
-
-
   }
 
   show_set_picker() {
@@ -106,6 +102,9 @@ class GhostScreenState extends State<GhostScreen> {
             height: 300,
             child: CupertinoPicker(
                 looping: true,
+                scrollController: FixedExtentScrollController(
+                    initialItem: number_set.toInt()-1
+                ),
                 backgroundColor: Colors.transparent,
                 onSelectedItemChanged: (value) {
                   setState(() {
@@ -161,7 +160,7 @@ class GhostScreenState extends State<GhostScreen> {
       "1 set",
     ));
 
-    for (int x = 1; x < 50; x++) {
+    for (int x = 2; x < 50; x++) {
       nums.add(Text(
         x.toString() + " sets",
       ));
@@ -172,11 +171,17 @@ class GhostScreenState extends State<GhostScreen> {
           borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
         ),
         context: context,
+
         builder: (BuildContext context) {
           return Container(
             height: 300,
             child: CupertinoPicker(
                 looping: true,
+
+                scrollController: FixedExtentScrollController(
+                  initialItem: round_num.toInt()-1
+                ),
+
                 backgroundColor: Colors.transparent,
                 onSelectedItemChanged: (value) {
                   setState(() {
@@ -293,9 +298,6 @@ class GhostScreenState extends State<GhostScreen> {
               Navigator.of(context).pop();
             },
           ),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-          ],
         );
       },
     );
@@ -315,18 +317,23 @@ class GhostScreenState extends State<GhostScreen> {
       height: 205,
       child: Stack(
         children: [
+          ClipPath(
+            child: Container(
+              decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 60, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+            ),
+          ),
+          ClipPath(
+            clipper: CustomClipperImage3(),
+            child: Container(
+              decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+            ),
+          ),
           Positioned(
             top: 5,
-            child: Container(
-                width: 200,
-                height: 200,
-                child: Card(
-                  color: Color.fromRGBO(40, 70, 130, 1),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                    Radius.circular(18),
-                  )),
+            child: ClipPath(
+              child: Container(
+                  width: 200,
+                  height: 200,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Column(
@@ -376,8 +383,8 @@ class GhostScreenState extends State<GhostScreen> {
                         )
                       ],
                     ),
-                  ),
-                )),
+                  )),
+            ),
           ),
           delete_mode
               ? Positioned(
@@ -390,10 +397,10 @@ class GhostScreenState extends State<GhostScreen> {
                         _mylistkey.currentState.removeItem(
                             index,
                             (context, Animation<double> animation) => ScaleTransition(
-
                                   scale: animation,
                                   child: test,
-                                ),duration: Duration(milliseconds: 500));
+                                ),
+                            duration: Duration(milliseconds: 500));
 
                         Hive.box<Custom>(box).getAt(index).delete();
                       },
@@ -424,12 +431,10 @@ class GhostScreenState extends State<GhostScreen> {
         future: load_hive(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (Hive.isBoxOpen(box)) {
-            if(Hive.box<Custom>(box).length==0){
+            if (Hive.box<Custom>(box).length == 0) {
               //saved();
 
-
             }
-
 
             return Container(
               color: Colors.white,
@@ -510,48 +515,42 @@ class GhostScreenState extends State<GhostScreen> {
                           ),
                         ),
                         Container(
-                          height: 240,
-                          child: AnimatedList(
-                                  key: _mylistkey,
-                                  scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.all(8),
-                                  initialItemCount: Hive.box<Custom>(box).length,
+                            height: 240,
+                            child: AnimatedList(
+                                key: _mylistkey,
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.all(8),
+                                initialItemCount: Hive.box<Custom>(box).length,
+                                itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                                  return SizeTransition(
+                                    sizeFactor: animation,
+                                    axis: Axis.horizontal,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GestureDetector(
+                                          onLongPress: () {
+                                            setState(() {});
+                                            delete_mode = true;
+                                          },
+                                          onTap: () async {
+                                            await loadModel();
 
-
-
-                                  itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                                    return SizeTransition(
-                                      sizeFactor: animation,
-                                      axis: Axis.horizontal,
-
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: GestureDetector(
-                                            onLongPress: () {
-                                              setState(() {});
-                                              delete_mode = true;
-                                            },
-                                            onTap: () async {
-                                              await loadModel();
-
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => HomePage(
-                                                        cameras,
-                                                        Hive.box<Custom>(box).getAt(index).number_set,
-                                                        Hive.box<Custom>(box).getAt(index).round_num,
-                                                        Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
-                                                        Hive.box<Custom>(box).getAt(index).corners,
-                                                        Hive.box<Custom>(box).getAt(index).start_time)),
-                                              );
-                                            },
-                                            child: Show_Custom_Card(index)),
-                                      ),
-                                    );
-                                  })
-
-                        ),
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                      cameras,
+                                                      Hive.box<Custom>(box).getAt(index).number_set,
+                                                      Hive.box<Custom>(box).getAt(index).round_num,
+                                                      Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
+                                                      Hive.box<Custom>(box).getAt(index).corners,
+                                                      Hive.box<Custom>(box).getAt(index).start_time)),
+                                            );
+                                          },
+                                          child: Show_Custom_Card(index)),
+                                    ),
+                                  );
+                                })),
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -625,9 +624,7 @@ class GhostScreenState extends State<GhostScreen> {
                                   padding: const EdgeInsets.all(10.0),
                                   child: GestureDetector(
                                     onTap: () async {
-                                      corners = await  Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
-
-
+                                      corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
 
                                       setState(() {});
                                     },
@@ -678,18 +675,22 @@ class GhostScreenState extends State<GhostScreen> {
                                           onTap: () async {
                                             await text_dialog();
 
-                                            var exersie = Custom()
-                                              ..name = name
-                                              ..number_set = number_set
-                                              ..round_num = round_num
-                                              ..rest_time = rest_time.inSeconds
-                                              ..start_time = start_time.inSeconds
-                                              ..corners = corners
-                                              ..color_index = Random().nextInt(title_color.length);
+                                            if(name!=null && name !=""){
 
-                                            Exersises.add(exersie); // Store this object for the first time
+                                              var exersie = Custom()
+                                                ..name = name
+                                                ..number_set = number_set
+                                                ..round_num = round_num
+                                                ..rest_time = rest_time.inSeconds
+                                                ..start_time = start_time.inSeconds
+                                                ..corners = corners
+                                                ..color_index = Random().nextInt(title_color.length);
 
-                                            _mylistkey.currentState.insertItem(Exersises.length - 1);
+                                              Exersises.add(exersie); // Store this object for the first time
+
+                                              _mylistkey.currentState.insertItem(Exersises.length - 1);
+                                            }
+
                                           },
                                           child: Container(
                                             width: 200,
