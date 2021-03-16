@@ -216,7 +216,14 @@ class SoloHomeState extends State<SoloHome> {
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
           if(is_working){
 
-            smartbounce_service_box(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+            if(current_side==1||current_side!=93){
+              smartbounce_service_box(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+
+            }else{
+
+              smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+
+            }
 
           }
         }
@@ -264,6 +271,8 @@ class SoloHomeState extends State<SoloHome> {
   }
   
   void smartbounce(x, y, h)   {
+
+
 
     if (y < dst_point[0].y - 30&&x>dst_point[0].x) {
       below = false;
@@ -334,6 +343,8 @@ class SoloHomeState extends State<SoloHome> {
 
         print(temp);
         bounces.add(temp);
+        total_bounces.add(new Bounce(temp.x,temp.y,current_side.toDouble(),DateTime.now()));
+
         //total_bounces.add(temp);
 
         last_bounce.clear();
@@ -383,7 +394,7 @@ class SoloHomeState extends State<SoloHome> {
 
 
 
-        List<int> c =  back_hand ?[0,290,920,1210]:[800,1090,920,1210];
+        List<int> c =  back_hand ?[0,280,930,1200]:[810,1080,930,1200];
 
 
 
@@ -608,7 +619,7 @@ class SoloHomeState extends State<SoloHome> {
   Widget draw_court() {
     Color court_color = Color.fromRGBO(40, 45, 81, 1);
 
-    double h = (MediaQuery.of(context).size.width * 1465) / 870;
+    double h = (MediaQuery.of(context).size.width * 1645) / 1080;
 
     double offset = MediaQuery.of(context).size.height - h;
 
@@ -695,11 +706,11 @@ class SoloHomeState extends State<SoloHome> {
       double y1 = ((bounces[i].y * h) / 1645) + offset;
 
       bounce.add(Positioned(
-        top: y1 - 10,
-        left: x1 - 10,
+        top: y1 ,
+        left: x1 ,
         child: Icon(
           Icons.circle,
-          size: 20,
+          size: 10,
         ),
       ));
     }

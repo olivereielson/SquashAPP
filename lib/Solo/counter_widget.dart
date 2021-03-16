@@ -30,7 +30,7 @@ class counter_widget extends StatefulWidget {
 }
 
 class counter_widget_state extends State<counter_widget> {
-  List<String> names = ["Forehand Drives", "Forehand Volleys", "BackHand Drives", "BackHand Volley"];
+  List<String> names = ["Forehand Drives", "Forehand ServiceBox", "BackHand Drives", "BackHand ServiceBox"];
 
   counter_widget_state(this._start, this.type);
 

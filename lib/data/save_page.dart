@@ -66,7 +66,7 @@ class SavedDataState extends State<SavedData> {
   Widget draw_court() {
     Color court_color = Color.fromRGBO(40, 45, 81, 1);
 
-    double h = (MediaQuery.of(context).size.width * 1465) / 870;
+    double h = (MediaQuery.of(context).size.width * 1645) / 1080;
 
     double offset = MediaQuery.of(context).size.height - h;
 
