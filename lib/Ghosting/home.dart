@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
-import 'package:squash/hive_classes.dart';
+import 'package:squash/extra/hive_classes.dart';
 import 'package:tflite/tflite.dart';
 import 'camera.dart';
 import 'bndbox.dart';

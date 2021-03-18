@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:squash/Solo/Solo%20home%20page.dart';
 import 'package:squash/Target_page.dart';
+import 'package:squash/extra/headers.dart';
 import 'package:tflite/tflite.dart';
 
 class SoloScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class SoloScreen extends StatefulWidget {
   SoloScreenState createState() => new SoloScreenState(cameras);
 }
 
-class SoloScreenState extends State<SoloScreen> {
+class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateMixin{
   SoloScreenState(this.cameras);
 
   bool delete_mode = false;
@@ -29,6 +30,7 @@ class SoloScreenState extends State<SoloScreen> {
   final _solokey = GlobalKey<AnimatedListState>();
 
   final List<CameraDescription> cameras;
+  TabController _tabController;
 
   bool use_round = false;
   bool use_time = false;
@@ -63,6 +65,8 @@ class SoloScreenState extends State<SoloScreen> {
 
   @override
   void initState() {
+    _tabController = new TabController(length: 2, vsync: this);
+
     super.initState();
   }
 
@@ -647,8 +651,249 @@ class SoloScreenState extends State<SoloScreen> {
     );
   }
 
+  Widget timed(){
+
+    return Column(
+
+      children: [
+
+
+     Expanded(
+       child: Stack(
+
+         children: [
+           Container(height:20,color:    Color.fromRGBO(50, 50, 100, 1)),
+
+           Container(
+
+               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+               child: Column(
+                 children: [
+                   Time_Input(),
+                   Padding(
+                     padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                     child: Row(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       children: [
+                         GestureDetector(
+                           onTap: () async {
+                             await loadModel();
+
+                             Navigator.push(
+                               context,
+                               MaterialPageRoute(
+                                   builder: (context) => SoloHome(
+                                     cameras: cameras,
+                                     start_camera: 0,
+                                     type: segmentedControlGroupValue,
+                                     time: total_time,
+                                     shot_count: shot_number,
+                                     sides: sides,
+                                   )),
+                             );
+                           },
+                           child: Center(
+                             child: Container(
+                               height: 50,
+                               width: 150,
+                               child: Card(
+                                   shape: RoundedRectangleBorder(
+                                       borderRadius: BorderRadius.all(
+                                         Radius.circular(18),
+                                       )),
+                                   elevation: 2,
+                                   color: main,
+                                   child: Center(
+                                       child: Text(
+                                         "Start",
+                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                       ))),
+                             ),
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+
+                 ],
+
+               )),
+         ],
+       ),
+     ),
+
+
+
+      ],
+
+
+    );
+
+
+  }
+
+  Widget count(){
+
+    return Column(
+
+      children: [
+
+
+        Expanded(
+          child: Stack(
+
+            children: [
+              Container(height:20,color:    Color.fromRGBO(50, 50, 100, 1)),
+
+              Container(
+
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+                  child: Column(
+                    children: [
+                      round(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                await loadModel();
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SoloHome(
+                                        cameras: cameras,
+                                        start_camera: 0,
+                                        type: segmentedControlGroupValue,
+                                        time: total_time,
+                                        shot_count: shot_number,
+                                        sides: sides,
+                                      )),
+                                );
+                              },
+                              child: Center(
+                                child: Container(
+                                  height: 50,
+                                  width: 150,
+                                  child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(18),
+                                          )),
+                                      elevation: 2,
+                                      color: main,
+                                      child: Center(
+                                          child: Text(
+                                            "Start",
+                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                          ))),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    ],
+
+                  )),
+            ],
+          ),
+        ),
+
+
+
+      ],
+
+
+    );
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    return NestedScrollView(
+
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+
+          SliverPersistentHeader(
+            pinned: true,
+            floating: false,
+
+            delegate: MyDynamicHeader("Solo","Exersise"),
+          ),
+
+          SliverPersistentHeader(
+              floating: false,
+              pinned: true,
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                    indicatorColor: Colors.lightBlueAccent,
+                    indicatorWeight: 1,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    tabs: [
+                      new Tab(
+                        //  icon: new Icon(Icons.sports_tennis),
+                        text: "Count",
+                      ),
+                      new Tab(
+                        text: "Timed",
+                      ),
+
+                    ],
+                    controller: _tabController),
+              ),
+            ),
+
+
+        ];
+
+
+
+      }, body:Column(
+
+        children: [
+          Stack(
+            children: [
+              Container(height:20,color:    Color.fromRGBO(20, 20, 60, 1),),
+              Container(
+                height: 250,
+                decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Service Box", true, 2), shot("Backhand Service Box", false, 3)],
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+
+            children: [
+
+              count(),timed()
+
+
+
+
+            ],
+            controller: _tabController,
+    ),
+          ),
+        ],
+      ),
+
+
+
+
+
+    );
+
 
     return Scaffold(
         body: Container(
@@ -799,49 +1044,30 @@ class SoloScreenState extends State<SoloScreen> {
   }
 }
 
-class LogoPainter extends CustomPainter {
+
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
   @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint();
-    Paint paint2 = Paint()..color = Colors.red;
+  double get minExtent => _tabBar.preferredSize.height;
 
-    var rect = Offset.zero & size;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
 
-    var path = Path();
-
-    var path2 = Path();
-    path2.lineTo(0, size.height / 3);
-
-    path2.moveTo(0, size.height / 3);
-    path2.quadraticBezierTo(size.width / 2, size.height, size.width, size.height / 1.1);
-    path2.lineTo(size.width, 0);
-    path2.lineTo(0, 0);
-
-    //path.lineTo(0, size.height - size.height / 5);
-    //path.lineTo(size.width / 1.2, size.height);
-    //Added this line
-
-    path.lineTo(0, size.height / 3);
-
-    path.moveTo(0, size.height / 1.5);
-    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height / 1.5);
-    path.lineTo(size.width, 0);
-    path.lineTo(0, 0);
-
-    path.close();
-    canvas.drawPath(path, paint);
-
-    paint.shader = RadialGradient(
-      center: Alignment.bottomCenter,
-      radius: 100,
-      colors: [Color.fromRGBO(40, 80, 150, 1), Color.fromRGBO(40, 70, 130, 1)],
-    ).createShader(rect);
-
-    canvas.drawPath(path, paint);
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return new Container(
+      color: Color.fromRGBO(20, 20, 50, 1),
+      child: _tabBar,
+    );
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
+
 }

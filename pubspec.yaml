@@ -48,7 +48,10 @@ dependencies:
   page_transition: "^1.1.7+6"
   blobs:
   fl_chart: ^0.20.1
-  extended_sliver:
+  flutter_sticky_header:
+  sliver_header_delegate:
+  animated_widgets: ^1.0.6
+
 
 
 

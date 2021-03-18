@@ -7,7 +7,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scidart/numdart.dart';
 
 import 'Saved Data Page.dart';
-import '../hive_classes.dart';
+import '../extra/hive_classes.dart';
 import '../main.dart';
 
 class SavedData extends StatefulWidget {

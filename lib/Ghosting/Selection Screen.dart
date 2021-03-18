@@ -12,9 +12,10 @@ import 'package:page_transition/page_transition.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:squash/Ghosting/Court.dart';
 import 'package:squash/Ghosting/home.dart';
+import 'package:squash/extra/headers.dart';
 import 'package:tflite/tflite.dart';
 
-import '../hive_classes.dart';
+import '../extra/hive_classes.dart';
 
 class GhostScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -60,7 +61,15 @@ class GhostScreenState extends State<GhostScreen> {
     super.initState();
 
     if (Hive.isBoxOpen(box)) {
-      Exersises = Hive.box<Custom>(box);
+      setState(() {
+        Exersises = Hive.box<Custom>(box);
+
+      });
+    }else{
+
+
+      load_hive();
+
     }
   }
 
@@ -311,6 +320,45 @@ class GhostScreenState extends State<GhostScreen> {
     );
   }
 
+  AnimatedList tw(){
+    return AnimatedList(
+        //key: _mylistkey,
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.all(8),
+        initialItemCount: Hive.box<Custom>(box).length,
+        itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+          return SizeTransition(
+            sizeFactor: animation,
+            axis: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                  onLongPress: () {
+                    setState(() {});
+                    delete_mode = true;
+                  },
+                  onTap: () async {
+                    await loadModel();
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomePage(
+                              cameras,
+                              Hive.box<Custom>(box).getAt(index).number_set,
+                              Hive.box<Custom>(box).getAt(index).round_num,
+                              Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
+                              Hive.box<Custom>(box).getAt(index).corners,
+                              Hive.box<Custom>(box).getAt(index).start_time)),
+                    );
+                  },
+                  child: Show_Custom_Card(index)),
+            ),
+          );
+        });
+
+  }
+
   Widget Show_Custom_Card(int index) {
     return Container(
       width: 205,
@@ -423,9 +471,439 @@ class GhostScreenState extends State<GhostScreen> {
       ),
     );
   }
+  SliverPersistentHeader makeHeader(String headerText) {
+    return SliverPersistentHeader(
+      pinned: true,
 
+      delegate: _SliverAppBarDelegate(
+        minHeight: 60.0,
+        maxHeight: 200.0,
+        child: Container(
+            color: Colors.lightBlue, child: Center(child:
+        Text(headerText))),
+      ),
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
+
+
+    return CustomScrollView(
+
+
+      slivers: [
+
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+
+          delegate: MyDynamicHeader("Solo", "Exersise"),
+        ),
+
+
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+
+          delegate: header_list(tw()),
+        ),
+        SliverFixedExtentList(
+          itemExtent: 150.0,
+          delegate: SliverChildListDelegate(
+            [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTap: () {
+                    show_initail_time_picker();
+                  },
+                  child: input(
+                      "Inital Count Down",
+                      start_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                      Icon(
+                        Icons.timer,
+                        color: Colors.white,
+                        size: 30,
+                      )),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTap: () {
+                    show_time_picker();
+                  },
+                  child: input(
+                      "Rest time",
+                      rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                      Icon(
+                        Icons.timer,
+                        color: Colors.white,
+                        size: 30,
+                      )),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTap: () {
+                    show_set_picker();
+                  },
+                  child: input(
+                      "Number of Ghosts",
+                      number_set.toInt().toString(),
+                      Icon(
+                        EvaIcons.hashOutline,
+                        color: Colors.white,
+                        size: 30,
+                      )),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTap: () {
+                    show_round_picker();
+                  },
+                  child: input(
+                      "Number of rounds",
+                      round_num.toInt().toString(),
+                      Icon(
+                        EvaIcons.hashOutline,
+                        color: Colors.white,
+                        size: 30,
+                      )),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTap: () async {
+                    corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
+
+                    setState(() {});
+                  },
+                  child: input(
+                      "Number of Corners",
+                      corners.length.toInt().toString(),
+                      Icon(
+                        Icons.apps,
+                        color: Colors.white,
+                        size: 30,
+                      )),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        await loadModel();
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
+                        );
+                      },
+                      child: Center(
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(18),
+                                  )),
+                              elevation: 2,
+                              color: main,
+                              child: Center(
+                                  child: Text(
+                                    "Start",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ))),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                        onTap: () async {
+                          await text_dialog();
+
+                          if(name!=null && name !=""){
+
+                            var exersie = Custom()
+                              ..name = name
+                              ..number_set = number_set
+                              ..round_num = round_num
+                              ..rest_time = rest_time.inSeconds
+                              ..start_time = start_time.inSeconds
+                              ..corners = corners
+                              ..color_index = Random().nextInt(title_color.length);
+
+                            Exersises.add(exersie); // Store this object for the first time
+
+                            _mylistkey.currentState.insertItem(Exersises.length - 1);
+                          }
+
+                        },
+                        child: Container(
+                          width: 200,
+                          height: 50,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(18),
+                                )),
+                            elevation: 2,
+                            color: main,
+                            child: Center(
+                                child: Text(
+                                  "Save Custom Set",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                )),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+      ],
+
+
+    );
+
+
+    return NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverPersistentHeader(
+              pinned: true,
+              floating: false,
+
+              delegate: MyDynamicHeader("Data", "Anyltiitcs"),
+            ),
+
+          ];
+        },
+      body: Column(
+
+        children: [
+
+          Container(
+              height: 240,
+              child: AnimatedList(
+                  key: _mylistkey,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.all(8),
+                  initialItemCount: Hive.box<Custom>(box).length,
+                  itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+                    return SizeTransition(
+                      sizeFactor: animation,
+                      axis: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                            onLongPress: () {
+                              setState(() {});
+                              delete_mode = true;
+                            },
+                            onTap: () async {
+                              await loadModel();
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                        cameras,
+                                        Hive.box<Custom>(box).getAt(index).number_set,
+                                        Hive.box<Custom>(box).getAt(index).round_num,
+                                        Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
+                                        Hive.box<Custom>(box).getAt(index).corners,
+                                        Hive.box<Custom>(box).getAt(index).start_time)),
+                              );
+                            },
+                            child: Show_Custom_Card(index)),
+                      ),
+                    );
+                  })),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        show_initail_time_picker();
+                      },
+                      child: input(
+                          "Inital Count Down",
+                          start_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                          Icon(
+                            Icons.timer,
+                            color: Colors.white,
+                            size: 30,
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        show_time_picker();
+                      },
+                      child: input(
+                          "Rest time",
+                          rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                          Icon(
+                            Icons.timer,
+                            color: Colors.white,
+                            size: 30,
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        show_set_picker();
+                      },
+                      child: input(
+                          "Number of Ghosts",
+                          number_set.toInt().toString(),
+                          Icon(
+                            EvaIcons.hashOutline,
+                            color: Colors.white,
+                            size: 30,
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        show_round_picker();
+                      },
+                      child: input(
+                          "Number of rounds",
+                          round_num.toInt().toString(),
+                          Icon(
+                            EvaIcons.hashOutline,
+                            color: Colors.white,
+                            size: 30,
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
+
+                        setState(() {});
+                      },
+                      child: input(
+                          "Number of Corners",
+                          corners.length.toInt().toString(),
+                          Icon(
+                            Icons.apps,
+                            color: Colors.white,
+                            size: 30,
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            await loadModel();
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
+                            );
+                          },
+                          child: Center(
+                            child: Container(
+                              height: 50,
+                              width: 150,
+                              child: Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(18),
+                                      )),
+                                  elevation: 2,
+                                  color: main,
+                                  child: Center(
+                                      child: Text(
+                                        "Start",
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                      ))),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                            onTap: () async {
+                              await text_dialog();
+
+                              if(name!=null && name !=""){
+
+                                var exersie = Custom()
+                                  ..name = name
+                                  ..number_set = number_set
+                                  ..round_num = round_num
+                                  ..rest_time = rest_time.inSeconds
+                                  ..start_time = start_time.inSeconds
+                                  ..corners = corners
+                                  ..color_index = Random().nextInt(title_color.length);
+
+                                Exersises.add(exersie); // Store this object for the first time
+
+                                _mylistkey.currentState.insertItem(Exersises.length - 1);
+                              }
+
+                            },
+                            child: Container(
+                              width: 200,
+                              height: 50,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(18),
+                                    )),
+                                elevation: 2,
+                                color: main,
+                                child: Center(
+                                    child: Text(
+                                      "Save Custom Set",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                    )),
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+
+        ],
+
+      )
+
+    );
+
     return Scaffold(
       body: FutureBuilder(
         future: load_hive(),
@@ -730,6 +1208,38 @@ class GhostScreenState extends State<GhostScreen> {
     );
   }
 }
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate({
+    @required this.minHeight,
+    @required this.maxHeight,
+    @required this.child,
+  });
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+  @override
+  double get minExtent => minHeight;
+  @override
+  double get maxExtent => maxHeight;
+  @override
+  Widget build(
+      BuildContext context,
+      double shrinkOffset,
+      bool overlapsContent)
+  {
+    return new SizedBox.expand(child: child);
+  }
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
+  }
+}
+
+
+
 
 @HiveType()
 class Custom extends HiveObject {

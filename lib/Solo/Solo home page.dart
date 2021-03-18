@@ -13,6 +13,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scidart/numdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squash/Solo/bndboxsolo.dart';
+import 'package:squash/extra/headers.dart';
 import 'package:squash/maginfine/magnifier.dart';
 import 'package:tflite/tflite.dart';
 
@@ -23,7 +24,7 @@ import '../maginfine/touchBubble.dart';
 import 'counter_widget.dart';
 import 'court_functions.dart';
 import 'court_painter.dart';
-import '../hive_classes.dart';
+import '../extra/hive_classes.dart';
 
 class SoloHome extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -886,7 +887,14 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+
+
+  {
+
+
+
+
     return PageView(
       scrollDirection: Axis.horizontal,
       physics: NeverScrollableScrollPhysics(),
@@ -933,6 +941,20 @@ class SoloHomeState extends State<SoloHome> {
                         done: (bool) async {
                           print(widget.sides);
                           await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+                          await save2();
+
                           Navigator.pop(context);
                         },
                         current_side: (int) {

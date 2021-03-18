@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-import '../hive_classes.dart';
+import '../extra/hive_classes.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

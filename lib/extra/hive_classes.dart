@@ -123,12 +123,12 @@ class CustomClipperImage extends CustomClipper<Path> {
   @override
   getClip(Size size) {
     var path = Path();
-    path.lineTo(0.0, 30);
+    path.lineTo(50, 0.0);
 
-    var endPoint = Offset(60, size.height);
-    var controlPoint = Offset(size.width / 0.6, size.height);
+    var endPoint = Offset(size.width*0.5, size.height);
+    var controlPoint = Offset(size.width *1.3, size.height*0.3);
     path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    path.lineTo(0.0, size.height);
+    path.lineTo(.0, size.height);
 
     return path;
   }
@@ -143,13 +143,12 @@ class CustomClipperImage2 extends CustomClipper<Path> {
   @override
   getClip(Size size) {
     var path = Path();
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, 0);
+    path.lineTo(size.width, 0.0);
 
-    var controlPoint = Offset(size.width, size.height * 0.9);
-    var endPoint = Offset(size.width * 0.1, 0);
+    var controlPoint = Offset(size.width, 0);
+    var endPoint = Offset(size.width ,size.height);
     path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    path.lineTo(0, 0);
+    path.lineTo(size.width*0.5, 0);
 
     return path;
   }
