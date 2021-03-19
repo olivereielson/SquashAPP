@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:animated_widgets/widgets/rotation_animated.dart';
+import 'package:animated_widgets/widgets/shake_animated_widget.dart';
 import 'package:camera/camera.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,8 +40,10 @@ class GhostScreenState extends State<GhostScreen> {
   String box = "Cutsom123";
   final _mylistkey = GlobalKey<AnimatedListState>();
   Color main_color = Colors.lightBlueAccent;
-  var Exersises;
+  Box<Custom> Exersises;
   Color main = Color.fromRGBO(40, 70, 130, 1);
+
+  bool is_shaking = false;
 
   List<Color> title_color = [
     //Colors.lightBlueAccent,
@@ -63,13 +67,9 @@ class GhostScreenState extends State<GhostScreen> {
     if (Hive.isBoxOpen(box)) {
       setState(() {
         Exersises = Hive.box<Custom>(box);
-
       });
-    }else{
-
-
+    } else {
       load_hive();
-
     }
   }
 
@@ -111,9 +111,7 @@ class GhostScreenState extends State<GhostScreen> {
             height: 300,
             child: CupertinoPicker(
                 looping: true,
-                scrollController: FixedExtentScrollController(
-                    initialItem: number_set.toInt()-1
-                ),
+                scrollController: FixedExtentScrollController(initialItem: number_set.toInt() - 1),
                 backgroundColor: Colors.transparent,
                 onSelectedItemChanged: (value) {
                   setState(() {
@@ -131,14 +129,17 @@ class GhostScreenState extends State<GhostScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
         height: 90,
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.09), borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(height: 50, width: 50, decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))), child: icon),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(height: 50, width: 50, decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))), child: icon),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -180,17 +181,12 @@ class GhostScreenState extends State<GhostScreen> {
           borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
         ),
         context: context,
-
         builder: (BuildContext context) {
           return Container(
             height: 300,
             child: CupertinoPicker(
                 looping: true,
-
-                scrollController: FixedExtentScrollController(
-                  initialItem: round_num.toInt()-1
-                ),
-
+                scrollController: FixedExtentScrollController(initialItem: round_num.toInt() - 1),
                 backgroundColor: Colors.transparent,
                 onSelectedItemChanged: (value) {
                   setState(() {
@@ -320,9 +316,9 @@ class GhostScreenState extends State<GhostScreen> {
     );
   }
 
-  AnimatedList tw(){
+  AnimatedList tw() {
     return AnimatedList(
-        //key: _mylistkey,
+        key: _mylistkey,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.all(8),
         initialItemCount: Hive.box<Custom>(box).length,
@@ -335,7 +331,7 @@ class GhostScreenState extends State<GhostScreen> {
               child: GestureDetector(
                   onLongPress: () {
                     setState(() {});
-                    delete_mode = true;
+                    is_shaking = true;
                   },
                   onTap: () async {
                     await loadModel();
@@ -343,126 +339,145 @@ class GhostScreenState extends State<GhostScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => HomePage(
-                              cameras,
-                              Hive.box<Custom>(box).getAt(index).number_set,
-                              Hive.box<Custom>(box).getAt(index).round_num,
-                              Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
-                              Hive.box<Custom>(box).getAt(index).corners,
-                              Hive.box<Custom>(box).getAt(index).start_time)),
+                          builder: (context) => HomePage(cameras, Hive.box<Custom>(box).getAt(index).number_set, Hive.box<Custom>(box).getAt(index).round_num,
+                              Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time), Hive.box<Custom>(box).getAt(index).corners, Hive.box<Custom>(box).getAt(index).start_time)),
                     );
                   },
                   child: Show_Custom_Card(index)),
             ),
           );
         });
-
   }
 
   Widget Show_Custom_Card(int index) {
-    return Container(
-      width: 205,
-      height: 205,
+    return ShakeAnimatedWidget(
+      enabled: is_shaking,
+      duration: Duration(milliseconds: 500),
+      shakeAngle: Rotation.deg(z: 1),
+      curve: Curves.linear,
       child: Stack(
         children: [
-          ClipPath(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Container(
-              decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 60, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
-            ),
-          ),
-          ClipPath(
-            clipper: CustomClipperImage3(),
-            child: Container(
-              decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
-            ),
-          ),
-          Positioned(
-            top: 5,
-            child: ClipPath(
-              child: Container(
-                  width: 200,
-                  height: 200,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            children: [
-                              Text(
-                                Hive.box<Custom>(box).getAt(index).name,
-                                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
-                              )
-                            ],
-                          ),
-                        ),
-                        Text(
-                          Hive.box<Custom>(box).getAt(index).start_time.toString() + " Second count down",
-                          style: TextStyle(
-                            color: Colors.white60,
-                          ),
-                        ),
-                        Text(
-                          Hive.box<Custom>(box).getAt(index).rest_time.toString() + " Second Rest",
-                          style: TextStyle(
-                            color: Colors.white60,
-                          ),
-                        ),
-                        Text(
-                          Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts",
-                          style: TextStyle(
-                            color: Colors.white60,
-                          ),
-                        ),
-                        Text(
-                          Hive.box<Custom>(box).getAt(index).round_num.toInt().toString() + " Rounds",
-                          style: TextStyle(
-                            color: Colors.white60,
-                          ),
-                        ),
-                        Text(
-                          Hive.box<Custom>(box).getAt(index).corners.length.toString() + " Corners ",
-                          style: TextStyle(
-                            color: Colors.white60,
-                          ),
-                        )
-                      ],
+              width: 205,
+              height: 205,
+              child: Stack(
+                children: [
+                  ClipPath(
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), borderRadius: BorderRadius.all(Radius.circular(20))),
                     ),
-                  )),
+                  ),
+                  ClipPath(
+                    clipper: CustomClipperImage3(),
+                    child: Container(
+                      decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+                    ),
+                  ),
+                  Positioned(
+                    top: 5,
+                    child: ClipPath(
+                      child: Container(
+                          width: 200,
+                          height: 200,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        Hive.box<Custom>(box).getAt(index).name,
+                                        style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  Hive.box<Custom>(box).getAt(index).start_time.toString() + " Second count down",
+                                  style: TextStyle(
+                                    color: Colors.white60,
+                                  ),
+                                ),
+                                Text(
+                                  Hive.box<Custom>(box).getAt(index).rest_time.toString() + " Second Rest",
+                                  style: TextStyle(
+                                    color: Colors.white60,
+                                  ),
+                                ),
+                                Text(
+                                  Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts",
+                                  style: TextStyle(
+                                    color: Colors.white60,
+                                  ),
+                                ),
+                                Text(
+                                  Hive.box<Custom>(box).getAt(index).round_num.toInt().toString() + " Rounds",
+                                  style: TextStyle(
+                                    color: Colors.white60,
+                                  ),
+                                ),
+                                Text(
+                                  Hive.box<Custom>(box).getAt(index).corners.length.toString() + " Corners ",
+                                  style: TextStyle(
+                                    color: Colors.white60,
+                                  ),
+                                )
+                              ],
+                            ),
+                          )),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          delete_mode
+          is_shaking
               ? Positioned(
-                  right: 0,
+                  left: 0,
                   top: 0,
                   child: GestureDetector(
                       onTap: () {
                         Widget test = Show_Custom_Card(index);
 
-                        _mylistkey.currentState.removeItem(
-                            index,
-                            (context, Animation<double> animation) => ScaleTransition(
-                                  scale: animation,
-                                  child: test,
-                                ),
-                            duration: Duration(milliseconds: 500));
+                        if (Exersises.length != 1) {
+                          _mylistkey.currentState.removeItem(
+                              index,
+                              (context, Animation<double> animation) => SizeTransition(
+                                    sizeFactor: animation,
+                                    child: test,
+                                  ),
+                              duration: Duration(milliseconds: 500));
 
-                        Hive.box<Custom>(box).getAt(index).delete();
+                          Hive.box<Custom>(box).getAt(index).delete();
+                        } else {
+
+                          final snackBar = SnackBar(
+
+                            content: Text('You must have at least one saved workout!'),
+
+                          );
+
+                          // Find the ScaffoldMessenger in the widget tree
+                          // and use it to show a SnackBar.
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
                       },
                       child: Container(
                         decoration: new BoxDecoration(
-                          color: Colors.grey,
+                          color: Colors.white,
                           shape: BoxShape.circle,
                         ),
                         child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Container(
-                              color: Colors.black,
-                              height: 2,
-                              width: 10,
+                            padding: const EdgeInsets.all(5.0),
+                            child: Icon(
+                              Icons.clear,
+                              size: 15,
                             )),
                       )),
                 )
@@ -471,727 +486,211 @@ class GhostScreenState extends State<GhostScreen> {
       ),
     );
   }
+
   SliverPersistentHeader makeHeader(String headerText) {
     return SliverPersistentHeader(
       pinned: true,
-
       delegate: _SliverAppBarDelegate(
         minHeight: 60.0,
         maxHeight: 200.0,
-        child: Container(
-            color: Colors.lightBlue, child: Center(child:
-        Text(headerText))),
+        child: Container(color: Colors.lightBlue, child: Center(child: Text(headerText))),
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
-
-
-    return CustomScrollView(
-
-
-      slivers: [
-
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-
-          delegate: MyDynamicHeader("Solo", "Exersise"),
-        ),
-
-
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-
-          delegate: header_list(tw()),
-        ),
-        SliverFixedExtentList(
-          itemExtent: 150.0,
-          delegate: SliverChildListDelegate(
-            [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_initail_time_picker();
-                  },
-                  child: input(
-                      "Inital Count Down",
-                      start_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                      Icon(
-                        Icons.timer,
-                        color: Colors.white,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_time_picker();
-                  },
-                  child: input(
-                      "Rest time",
-                      rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                      Icon(
-                        Icons.timer,
-                        color: Colors.white,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_set_picker();
-                  },
-                  child: input(
-                      "Number of Ghosts",
-                      number_set.toInt().toString(),
-                      Icon(
-                        EvaIcons.hashOutline,
-                        color: Colors.white,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    show_round_picker();
-                  },
-                  child: input(
-                      "Number of rounds",
-                      round_num.toInt().toString(),
-                      Icon(
-                        EvaIcons.hashOutline,
-                        color: Colors.white,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () async {
-                    corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
-
-                    setState(() {});
-                  },
-                  child: input(
-                      "Number of Corners",
-                      corners.length.toInt().toString(),
-                      Icon(
-                        Icons.apps,
-                        color: Colors.white,
-                        size: 30,
-                      )),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        await loadModel();
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
-                        );
-                      },
-                      child: Center(
-                        child: Container(
-                          height: 50,
-                          width: 150,
-                          child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(18),
-                                  )),
-                              elevation: 2,
-                              color: main,
-                              child: Center(
-                                  child: Text(
-                                    "Start",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                  ))),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                        onTap: () async {
-                          await text_dialog();
-
-                          if(name!=null && name !=""){
-
-                            var exersie = Custom()
-                              ..name = name
-                              ..number_set = number_set
-                              ..round_num = round_num
-                              ..rest_time = rest_time.inSeconds
-                              ..start_time = start_time.inSeconds
-                              ..corners = corners
-                              ..color_index = Random().nextInt(title_color.length);
-
-                            Exersises.add(exersie); // Store this object for the first time
-
-                            _mylistkey.currentState.insertItem(Exersises.length - 1);
-                          }
-
-                        },
-                        child: Container(
-                          width: 200,
-                          height: 50,
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(18),
-                                )),
-                            elevation: 2,
-                            color: main,
-                            child: Center(
-                                child: Text(
-                                  "Save Custom Set",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                )),
-                          ),
-                        )),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-
-      ],
-
-
-    );
-
-
-    return NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverPersistentHeader(
-              pinned: true,
-              floating: false,
-
-              delegate: MyDynamicHeader("Data", "Anyltiitcs"),
-            ),
-
-          ];
-        },
-      body: Column(
-
-        children: [
-
-          Container(
-              height: 240,
-              child: AnimatedList(
-                  key: _mylistkey,
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.all(8),
-                  initialItemCount: Hive.box<Custom>(box).length,
-                  itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                    return SizeTransition(
-                      sizeFactor: animation,
-                      axis: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                            onLongPress: () {
-                              setState(() {});
-                              delete_mode = true;
-                            },
-                            onTap: () async {
-                              await loadModel();
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage(
-                                        cameras,
-                                        Hive.box<Custom>(box).getAt(index).number_set,
-                                        Hive.box<Custom>(box).getAt(index).round_num,
-                                        Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
-                                        Hive.box<Custom>(box).getAt(index).corners,
-                                        Hive.box<Custom>(box).getAt(index).start_time)),
-                              );
-                            },
-                            child: Show_Custom_Card(index)),
-                      ),
-                    );
-                  })),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        show_initail_time_picker();
-                      },
-                      child: input(
-                          "Inital Count Down",
-                          start_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                          Icon(
-                            Icons.timer,
-                            color: Colors.white,
-                            size: 30,
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        show_time_picker();
-                      },
-                      child: input(
-                          "Rest time",
-                          rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                          Icon(
-                            Icons.timer,
-                            color: Colors.white,
-                            size: 30,
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        show_set_picker();
-                      },
-                      child: input(
-                          "Number of Ghosts",
-                          number_set.toInt().toString(),
-                          Icon(
-                            EvaIcons.hashOutline,
-                            color: Colors.white,
-                            size: 30,
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        show_round_picker();
-                      },
-                      child: input(
-                          "Number of rounds",
-                          round_num.toInt().toString(),
-                          Icon(
-                            EvaIcons.hashOutline,
-                            color: Colors.white,
-                            size: 30,
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: GestureDetector(
-                      onTap: () async {
-                        corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
-
-                        setState(() {});
-                      },
-                      child: input(
-                          "Number of Corners",
-                          corners.length.toInt().toString(),
-                          Icon(
-                            Icons.apps,
-                            color: Colors.white,
-                            size: 30,
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            await loadModel();
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
-                            );
-                          },
-                          child: Center(
-                            child: Container(
-                              height: 50,
-                              width: 150,
-                              child: Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(18),
-                                      )),
-                                  elevation: 2,
-                                  color: main,
-                                  child: Center(
-                                      child: Text(
-                                        "Start",
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                      ))),
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                            onTap: () async {
-                              await text_dialog();
-
-                              if(name!=null && name !=""){
-
-                                var exersie = Custom()
-                                  ..name = name
-                                  ..number_set = number_set
-                                  ..round_num = round_num
-                                  ..rest_time = rest_time.inSeconds
-                                  ..start_time = start_time.inSeconds
-                                  ..corners = corners
-                                  ..color_index = Random().nextInt(title_color.length);
-
-                                Exersises.add(exersie); // Store this object for the first time
-
-                                _mylistkey.currentState.insertItem(Exersises.length - 1);
-                              }
-
-                            },
-                            child: Container(
-                              width: 200,
-                              height: 50,
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    )),
-                                elevation: 2,
-                                color: main,
-                                child: Center(
-                                    child: Text(
-                                      "Save Custom Set",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                    )),
-                              ),
-                            )),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-
-        ],
-
-      )
-
-    );
-
-    return Scaffold(
-      body: FutureBuilder(
+    return FutureBuilder(
         future: load_hive(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (Hive.isBoxOpen(box)) {
-            if (Hive.box<Custom>(box).length == 0) {
-              //saved();
+            if (Exersises.length == 0) {
+              var exersie = Custom()
+                ..name = "defult"
+                ..number_set = number_set
+                ..round_num = round_num
+                ..rest_time = rest_time.inSeconds
+                ..start_time = start_time.inSeconds
+                ..corners = corners
+                ..color_index = Random().nextInt(title_color.length);
 
+              Exersises.add(exersie); // Store this object for the first time
+              _mylistkey.currentState.insertItem(0);
             }
 
-            return Container(
-              color: Colors.white,
-              child: Stack(
-                children: [
-                  Container(
-                    height: 500,
-                    decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  is_shaking = false;
+                });
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverPersistentHeader(
+                    pinned: true,
+                    floating: false,
+                    delegate: MyDynamicHeader("Ghosting", "Workout",true),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      height: 550,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
-                    ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    floating: false,
+                    delegate: header_list(tw()),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      height: 420,
-                      width: MediaQuery.of(context).size.width,
-                    ),
-                  ),
-                  SafeArea(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                  SliverFixedExtentList(
+                    itemExtent: 130.0,
+                    delegate: SliverChildListDelegate(
+                      [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Ghosting",
-                                    style: TextStyle(
-                                      fontSize: 50,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Workout",
-                                    style: TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white54,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              delete_mode
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          delete_mode = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey,
-                                            border: Border.all(
-                                              color: Colors.grey,
-                                            ),
-                                            borderRadius: BorderRadius.all(Radius.circular(20))),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                                          child: Text("done"),
-                                        ),
-                                      ),
-                                    )
-                                  : Text("")
-                            ],
+                          padding: const EdgeInsets.all(10.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              show_initail_time_picker();
+                            },
+                            child: input(
+                                "Inital Count Down",
+                                start_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                                Icon(
+                                  Icons.timer,
+                                  color: Colors.white,
+                                  size: 30,
+                                )),
                           ),
                         ),
-                        Container(
-                            height: 240,
-                            child: AnimatedList(
-                                key: _mylistkey,
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.all(8),
-                                initialItemCount: Hive.box<Custom>(box).length,
-                                itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-                                  return SizeTransition(
-                                    sizeFactor: animation,
-                                    axis: Axis.horizontal,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GestureDetector(
-                                          onLongPress: () {
-                                            setState(() {});
-                                            delete_mode = true;
-                                          },
-                                          onTap: () async {
-                                            await loadModel();
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              show_time_picker();
+                            },
+                            child: input(
+                                "Rest time",
+                                rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                                Icon(
+                                  Icons.timer,
+                                  color: Colors.white,
+                                  size: 30,
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              show_set_picker();
+                            },
+                            child: input(
+                                "Number of Ghosts",
+                                number_set.toInt().toString(),
+                                Icon(
+                                  EvaIcons.hashOutline,
+                                  color: Colors.white,
+                                  size: 30,
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              show_round_picker();
+                            },
+                            child: input(
+                                "Number of rounds",
+                                round_num.toInt().toString(),
+                                Icon(
+                                  EvaIcons.hashOutline,
+                                  color: Colors.white,
+                                  size: 30,
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: GestureDetector(
+                            onTap: () async {
+                              corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
 
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => HomePage(
-                                                      cameras,
-                                                      Hive.box<Custom>(box).getAt(index).number_set,
-                                                      Hive.box<Custom>(box).getAt(index).round_num,
-                                                      Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
-                                                      Hive.box<Custom>(box).getAt(index).corners,
-                                                      Hive.box<Custom>(box).getAt(index).start_time)),
-                                            );
-                                          },
-                                          child: Show_Custom_Card(index)),
-                                    ),
+                              setState(() {});
+                            },
+                            child: input(
+                                "Number of Corners",
+                                corners.length.toInt().toString(),
+                                Icon(
+                                  Icons.apps,
+                                  color: Colors.white,
+                                  size: 30,
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  await loadModel();
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
                                   );
-                                })),
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
-                            child: ListView(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      show_initail_time_picker();
-                                    },
-                                    child: input(
-                                        "Inital Count Down",
-                                        start_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                        Icon(
-                                          Icons.timer,
-                                          color: Colors.white,
-                                          size: 30,
+                                },
+                                child: Center(
+                                  child: Container(
+                                    height: 50,
+                                    width: 150,
+                                    child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                          Radius.circular(18),
                                         )),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      show_time_picker();
-                                    },
-                                    child: input(
-                                        "Rest time",
-                                        rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                        Icon(
-                                          Icons.timer,
-                                          color: Colors.white,
-                                          size: 30,
-                                        )),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      show_set_picker();
-                                    },
-                                    child: input(
-                                        "Number of Ghosts",
-                                        number_set.toInt().toString(),
-                                        Icon(
-                                          EvaIcons.hashOutline,
-                                          color: Colors.white,
-                                          size: 30,
-                                        )),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      show_round_picker();
-                                    },
-                                    child: input(
-                                        "Number of rounds",
-                                        round_num.toInt().toString(),
-                                        Icon(
-                                          EvaIcons.hashOutline,
-                                          color: Colors.white,
-                                          size: 30,
-                                        )),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
-
-                                      setState(() {});
-                                    },
-                                    child: input(
-                                        "Number of Corners",
-                                        corners.length.toInt().toString(),
-                                        Icon(
-                                          Icons.apps,
-                                          color: Colors.white,
-                                          size: 30,
-                                        )),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          await loadModel();
-
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
-                                          );
-                                        },
+                                        elevation: 2,
+                                        color: main,
                                         child: Center(
-                                          child: Container(
-                                            height: 50,
-                                            width: 150,
-                                            child: Card(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.all(
-                                                  Radius.circular(18),
-                                                )),
-                                                elevation: 2,
-                                                color: main,
-                                                child: Center(
-                                                    child: Text(
-                                                  "Start",
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                                ))),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                          onTap: () async {
-                                            await text_dialog();
-
-                                            if(name!=null && name !=""){
-
-                                              var exersie = Custom()
-                                                ..name = name
-                                                ..number_set = number_set
-                                                ..round_num = round_num
-                                                ..rest_time = rest_time.inSeconds
-                                                ..start_time = start_time.inSeconds
-                                                ..corners = corners
-                                                ..color_index = Random().nextInt(title_color.length);
-
-                                              Exersises.add(exersie); // Store this object for the first time
-
-                                              _mylistkey.currentState.insertItem(Exersises.length - 1);
-                                            }
-
-                                          },
-                                          child: Container(
-                                            width: 200,
-                                            height: 50,
-                                            child: Card(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.all(
-                                                Radius.circular(18),
-                                              )),
-                                              elevation: 2,
-                                              color: main,
-                                              child: Center(
-                                                  child: Text(
-                                                "Save Custom Set",
-                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                              )),
-                                            ),
-                                          )),
-                                    ],
+                                            child: Text(
+                                          "Start",
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                        ))),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              GestureDetector(
+                                  onTap: () async {
+                                    await text_dialog();
+
+                                    if (name != null && name != "") {
+                                      var exersie = Custom()
+                                        ..name = name
+                                        ..number_set = number_set
+                                        ..round_num = round_num
+                                        ..rest_time = rest_time.inSeconds
+                                        ..start_time = start_time.inSeconds
+                                        ..corners = corners
+                                        ..color_index = Random().nextInt(title_color.length);
+
+                                      Exersises.add(exersie); // Store this object for the first time
+                                      _mylistkey.currentState.insertItem(0);
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    height: 50,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                        Radius.circular(18),
+                                      )),
+                                      elevation: 2,
+                                      color: main,
+                                      child: Center(
+                                          child: Text(
+                                        "Save Custom Set",
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                      )),
+                                    ),
+                                  )),
+                            ],
                           ),
                         ),
                       ],
@@ -1201,11 +700,9 @@ class GhostScreenState extends State<GhostScreen> {
               ),
             );
           } else {
-            return Center(child: Text(""));
+            return Text("");
           }
-        },
-      ),
-    );
+        });
   }
 }
 
@@ -1215,31 +712,27 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     @required this.maxHeight,
     @required this.child,
   });
+
   final double minHeight;
   final double maxHeight;
   final Widget child;
+
   @override
   double get minExtent => minHeight;
+
   @override
   double get maxExtent => maxHeight;
+
   @override
-  Widget build(
-      BuildContext context,
-      double shrinkOffset,
-      bool overlapsContent)
-  {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new SizedBox.expand(child: child);
   }
+
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
+    return maxHeight != oldDelegate.maxHeight || minHeight != oldDelegate.minHeight || child != oldDelegate.child;
   }
 }
-
-
-
 
 @HiveType()
 class Custom extends HiveObject {

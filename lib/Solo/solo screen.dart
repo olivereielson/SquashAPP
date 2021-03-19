@@ -653,80 +653,66 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
 
   Widget timed(){
 
-    return Column(
+    return Stack(
 
       children: [
+        Container(height:20,color:    Color.fromRGBO(50, 50, 100, 1)),
 
+        Container(
 
-     Expanded(
-       child: Stack(
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+            child: Column(
+              children: [
+                Time_Input(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          await loadModel();
 
-         children: [
-           Container(height:20,color:    Color.fromRGBO(50, 50, 100, 1)),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SoloHome(
+                                  cameras: cameras,
+                                  start_camera: 0,
+                                  type: segmentedControlGroupValue,
+                                  time: total_time,
+                                  shot_count: shot_number,
+                                  sides: sides,
+                                )),
+                          );
+                        },
+                        child: Center(
+                          child: Container(
+                            height: 50,
+                            width: 150,
+                            child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(18),
+                                    )),
+                                elevation: 2,
+                                color: main,
+                                child: Center(
+                                    child: Text(
+                                      "Start",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ))),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
-           Container(
+              ],
 
-               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
-               child: Column(
-                 children: [
-                   Time_Input(),
-                   Padding(
-                     padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-                     child: Row(
-                       mainAxisAlignment: MainAxisAlignment.center,
-                       children: [
-                         GestureDetector(
-                           onTap: () async {
-                             await loadModel();
-
-                             Navigator.push(
-                               context,
-                               MaterialPageRoute(
-                                   builder: (context) => SoloHome(
-                                     cameras: cameras,
-                                     start_camera: 0,
-                                     type: segmentedControlGroupValue,
-                                     time: total_time,
-                                     shot_count: shot_number,
-                                     sides: sides,
-                                   )),
-                             );
-                           },
-                           child: Center(
-                             child: Container(
-                               height: 50,
-                               width: 150,
-                               child: Card(
-                                   shape: RoundedRectangleBorder(
-                                       borderRadius: BorderRadius.all(
-                                         Radius.circular(18),
-                                       )),
-                                   elevation: 2,
-                                   color: main,
-                                   child: Center(
-                                       child: Text(
-                                         "Start",
-                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                       ))),
-                             ),
-                           ),
-                         ),
-                       ],
-                     ),
-                   ),
-
-                 ],
-
-               )),
-         ],
-       ),
-     ),
-
-
-
+            )),
       ],
-
-
     );
 
 
@@ -825,7 +811,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             pinned: true,
             floating: false,
 
-            delegate: MyDynamicHeader("Solo","Exersise"),
+            delegate: MyDynamicHeader("Solo","Exersise",false),
           ),
 
           SliverPersistentHeader(
@@ -855,37 +841,41 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
 
 
 
-      }, body:Column(
+      }, body: SingleChildScrollView(
+        child: Column(
 
-        children: [
-          Stack(
-            children: [
-              Container(height:20,color:    Color.fromRGBO(20, 20, 60, 1),),
-              Container(
-                height: 250,
-                decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Service Box", true, 2), shot("Backhand Service Box", false, 3)],
+
+          children: [
+            Stack(
+              children: [
+                Container(height:20,color:    Color.fromRGBO(20, 20, 60, 1),),
+                Container(
+                  height: 250,
+                  decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Service Box", true, 2), shot("Backhand Service Box", false, 3)],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
+              ],
+            ),
+            Container(
+              height: 400,
+              child: TabBarView(
 
-            children: [
+              children: [
 
-              count(),timed()
-
-
+                count(),timed()
 
 
-            ],
-            controller: _tabController,
+
+
+              ],
+              controller: _tabController,
     ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
 
 

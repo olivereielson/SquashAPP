@@ -5,22 +5,30 @@ import 'package:flutter/material.dart';
 class MyDynamicHeader extends SliverPersistentHeaderDelegate {
 
 
-  MyDynamicHeader(this.text1,this.text2);
+  MyDynamicHeader(this.text1,this.text2,this.ghosting);
 
   String text1;
   String text2;
 
+  bool ghosting;
+
   int index = 0;
 
   Tween pos_x = Tween<double>(begin: 20, end: 20);
+
+
   Tween pos_y = Tween<double>(begin: 30, end: 20);
 
   Tween pos_x2 = Tween<double>(begin: 20, end: 85);
+  Tween pos_x2_g = Tween<double>(begin: 20, end: 130);
+
   Tween pos_y2 = Tween<double>(begin: 80, end: 20);
 
-  Tween Font =
+  Tween Font = Tween<double>(begin: 50, end: 25);
+  Tween Font2 = Tween<double>(begin: 40, end: 25);
 
-  Tween<double>(begin: 50, end: 25);
+
+
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -29,9 +37,10 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
 
       final double posx = pos_x.lerp(percentage);
       final double posy = pos_y.lerp(percentage);
-      final double posx2 = pos_x2.lerp(percentage);
+      final double posx2 = ghosting?pos_x2_g.lerp(percentage):pos_x2.lerp(percentage);
       final double posy2 = pos_y2.lerp(percentage);
       final double font = Font.lerp(percentage);
+      final double font2 = Font2.lerp(percentage);
 
       if (++index > Colors.primaries.length - 1) index = 0;
 
@@ -47,7 +56,7 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                     text1,
                     style: TextStyle(color: Colors.white, fontSize: font, fontWeight: FontWeight.bold),
                   )),
-              Positioned(left: posx2, top: posy2, child: Text(text2, style: TextStyle(color: percentage == 1 ? Colors.white : Colors.white70, fontSize: font, fontWeight: FontWeight.bold)))
+              Positioned(left: posx2, top: posy2, child: Text(text2, style: TextStyle(color: percentage == 1 ? Colors.white : Colors.white70, fontSize: font2, fontWeight: FontWeight.bold)))
             ],
           ),
         ),
@@ -91,21 +100,37 @@ class header_list extends SliverPersistentHeaderDelegate {
 
       if (++index > Colors.primaries.length - 1) index = 0;
 
-      return Container(
-        color: Color.fromRGBO(20, 20, 50, 1),
-        child: Stack(
-          children: [
-            Positioned(
-                left: 0,
-                top: posy,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                    height: 250,
-                    child: am)),
+      return Stack(
+
+        children: [
+          Positioned(
+              left: 0,
+              bottom: 0,
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+              )),
+          Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(15.0),bottomLeft: Radius.circular(15.0))),
+
+            child: Stack(
+              children: [
+
+                Positioned(
+                    left: 0,
+                    top: posy,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                        height: 250,
+                        child: am)),
 
 
-          ],
-        ),
+
+              ],
+            ),
+          ),
+        ],
       );
     });
   }
@@ -119,3 +144,5 @@ class header_list extends SliverPersistentHeaderDelegate {
   @override
   double get minExtent => 20.0;
 }
+
+

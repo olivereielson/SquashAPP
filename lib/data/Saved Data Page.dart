@@ -1009,11 +1009,15 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   // This is the flip side of the SliverOverlapAbsorber
                   // above.
                   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+
+
                 ),
+
 
 
                 SliverAnimatedList(
                     key: _listKey, initialItemCount: solo_storage_box.length, itemBuilder: (context, index, animation) => SizeTransition(sizeFactor: animation, child: Solo_Saved(index))),
+
                 SliverAnimatedList(
                     key: _listKey2,
                     initialItemCount: ghosting_box.length, itemBuilder: (context, index, animation) => SizeTransition(sizeFactor: animation, child: ghost_saved(index))),
@@ -1032,7 +1036,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     return FutureBuilder(
       future: load_ghost_hive(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (Hive.isBoxOpen("Ghosting1")) {
+        if (Hive.isBoxOpen("Ghosting1")&&ghosting_box.length!=0) {
           return ListView(
             children: [
               Padding(
@@ -1054,7 +1058,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
             ],
           );
         } else {
-          return Text("");
+          return Center(child: Text("No Data to Analyze",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),));
         }
       },
     );
@@ -1064,7 +1068,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     return FutureBuilder(
       future: load_hive(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (Hive.isBoxOpen("Solo1")) {
+        if (Hive.isBoxOpen("Solo1")&&solo_storage_box.length!=0) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView(
@@ -1084,7 +1088,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
             ),
           );
         } else {
-          return Text("");
+          return Center(child: Text("No Data to Analyze",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),));
         }
       },
     );
@@ -1094,6 +1098,10 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
     return Scaffold(
       body: GestureDetector(
         onTap: (){
@@ -1105,20 +1113,23 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
           });
 
         },
-        child: DefaultTabController(
-          length: 3,
-          child: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverPersistentHeader(
+        child: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+
+
+              SliverPersistentHeader(
                   pinned: true,
                   floating: false,
 
-                  delegate: MyDynamicHeader("Data", "Anyltiitcs"),
+                  delegate: MyDynamicHeader("Data", "Anyltiitcs",false),
                 ),
-                SliverOverlapAbsorber(
-                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                  sliver: SliverPersistentHeader(
+
+
+              SliverOverlapAbsorber(
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+
+                sliver: SliverPersistentHeader(
                     floating: false,
                     pinned: true,
                     delegate: _SliverAppBarDelegate(
@@ -1141,19 +1152,19 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     ),
                   ),
                 ),
-              ];
-            },
-            floatHeaderSlivers: false,
 
-            body: TabBarView(
+            ];
+          },
+          floatHeaderSlivers: false,
 
-              children: [
-                solo_stat(),
-                ghost_stat(),
-                page_2(),
-              ],
-              controller: _tabController,
-            ),
+          body: TabBarView(
+
+            children: [
+              solo_stat(),
+              ghost_stat(),
+              page_2(),
+            ],
+            controller: _tabController,
           ),
         ),
       ),
@@ -1183,5 +1194,34 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
     return false;
+  }
+}
+
+class _SliverAppBarDelegate2 extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate2({
+    @required this.minHeight,
+    @required this.maxHeight,
+    @required this.child,
+  });
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+  @override
+  double get minExtent => minHeight;
+  @override
+  double get maxExtent => maxHeight;
+  @override
+  Widget build(
+      BuildContext context,
+      double shrinkOffset,
+      bool overlapsContent)
+  {
+    return new SizedBox.expand(child: child);
+  }
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate2 oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }
