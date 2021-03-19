@@ -51,8 +51,9 @@ dependencies:
   flutter_sticky_header:
   sliver_header_delegate:
   animated_widgets: ^1.0.6
-  flutter_slidable:
-
+  animated_icon_button:
+  extended_nested_scroll_view:
+  loading_more_list:
 
 
 

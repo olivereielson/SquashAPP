@@ -11,7 +11,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -851,7 +850,9 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     left: 0,
                     child: GestureDetector(
                       onTap: () {
-                        _listKey2.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: ghost_saved(index)), duration: Duration(milliseconds: 500));
+                        Widget temp=ghost_saved(index);
+
+                        _listKey2.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: temp), duration: Duration(milliseconds: 500));
                         setState(() {
                           ghosting_box.deleteAt(index);
                         });
@@ -948,9 +949,10 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 left: 0,
                 child: is_shaking?GestureDetector(
                   onTap: () {
+                    Widget temp=Solo_Saved(index);
                     solo_storage_box.deleteAt(index);
 
-                    _listKey.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: Solo_Saved(index)), duration: Duration(milliseconds: 500));
+                    _listKey.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: temp), duration: Duration(milliseconds: 500));
                   },
                   child: Container(
                       width: 40,
@@ -1030,6 +1032,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 SliverOverlapInjector(
                   // This is the flip side of the SliverOverlapAbsorber
                   // above.
+
                   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                 ),
                 SliverAnimatedList(

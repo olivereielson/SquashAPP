@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 import 'dart:math';
 import 'dart:ui';
+import 'package:animated_icon_button/animated_icon_button.dart';
 
+import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +72,9 @@ class SoloHomeState extends State<SoloHome> {
   bool magnifierVisible = false;
 
   bool back_hand = false;
+
+  bool pause=false;
+
 
   List<dynamic> scr_forehand = [
     [810, 1200],
@@ -215,7 +220,7 @@ class SoloHomeState extends State<SoloHome> {
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
           ball_conf = ((re["confidenceInClass"] * 100).toString());
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
-          if(is_working){
+          if(is_working&&!pause){
 
             if(current_side==1||current_side==3){
               smartbounce_service_box(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
@@ -533,12 +538,17 @@ class SoloHomeState extends State<SoloHome> {
                     Navigator.pop(context);
                   }),
               IconButton(
-                  icon: Icon(Icons.pause, color: Colors.white),
+                  icon: Icon(pause?Icons.play_arrow:Icons.pause, color: Colors.white),
                   onPressed: () {
+
                     setState(() {
-                      show_stuff = !show_stuff;
+
+                      pause=!pause;
+
                     });
+
                   }),
+
 
               IconButton(
                   icon: Icon(Icons.camera_alt, color: Colors.white),
@@ -929,6 +939,8 @@ class SoloHomeState extends State<SoloHome> {
                         counter_value: bounces.length,
                         counter_goal: widget.shot_count,
                         activities: widget.sides,
+
+                        pause: pause,
 
                         is_working: (bool){
 

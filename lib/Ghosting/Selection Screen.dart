@@ -59,10 +59,7 @@ class GhostScreenState extends State<GhostScreen> {
     Exersises = await Hive.openBox<Custom>(box);
     print("1");
 
-    setState(() {
-
-    });
-
+    setState(() {});
   }
 
   @override
@@ -450,32 +447,25 @@ class GhostScreenState extends State<GhostScreen> {
                     left: 0,
                     top: 0,
                     child: GestureDetector(
-                        onTap: ()  {
-
+                        onTap: () {
                           if (Exersises.length != 1) {
+                            Widget temp = Show_Custom_Card(index);
 
+                            _mylistkey.currentState.removeItem(
+                              index,
+                              (context, Animation<double> animation) => ScaleTransition(
+                                scale: animation,
+                                child: temp,
+                              ),
+                              duration: Duration(milliseconds: 700),
+                            );
 
-
-
-
-                             _mylistkey.currentState.removeItem(
-                                index,
-                                (context, Animation<double> animation) => ScaleTransition(
-                                      scale: animation,
-                                      child: Show_Custom_Card(index),
-                                    ),
-                                duration: Duration(milliseconds: 700));
-
-                             setState(() {
-                               Exersises.deleteAt(index);
-
-                             });
+                            setState(() {
+                              Exersises.deleteAt(index);
+                            });
                           } else {
-
                             final snackBar = SnackBar(
-
                               content: Text('You must have at least one saved workout!'),
-
                             );
 
                             // Find the ScaffoldMessenger in the widget tree
@@ -545,7 +535,7 @@ class GhostScreenState extends State<GhostScreen> {
                   SliverPersistentHeader(
                     pinned: true,
                     floating: false,
-                    delegate: MyDynamicHeader("Ghosting", "Workout",true),
+                    delegate: MyDynamicHeader("Ghosting", "Workout", true),
                   ),
                   SliverPersistentHeader(
                     pinned: true,
@@ -555,8 +545,8 @@ class GhostScreenState extends State<GhostScreen> {
                   SliverFixedExtentList(
                     itemExtent: 130.0,
                     delegate: SliverChildListDelegate(
-
-                      [                       Padding(
+                      [
+                        Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: GestureDetector(
                             onTap: () {

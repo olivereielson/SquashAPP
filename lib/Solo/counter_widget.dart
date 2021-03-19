@@ -22,8 +22,9 @@ class counter_widget extends StatefulWidget {
   int counter_value;
   int counter_goal;
   int type;
+  bool pause;
 
-  counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side});
+  counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side,this.pause});
 
   @override
   counter_widget_state createState() => new counter_widget_state(time.inSeconds, type,counter_value);
@@ -73,9 +74,13 @@ class counter_widget_state extends State<counter_widget> {
             }
           });
         } else {
-          setState(() {
-            _start--;
-          });
+          if(!widget.pause){
+
+            setState(() {
+              _start--;
+            });
+          }
+
         }
       },
     );
@@ -99,7 +104,7 @@ class counter_widget_state extends State<counter_widget> {
         ]),
         animateFromLastPercent: true,
         addAutomaticKeepAlive: true,
-        animationDuration: 1200,
+        animationDuration: 1000,
         backgroundWidth: 20,
         center: Text(
           Duration(seconds: _start).toString().substring(2, 7),
