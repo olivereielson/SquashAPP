@@ -37,11 +37,11 @@ class SoloHome extends StatefulWidget {
   SoloHome({this.cameras, this.start_camera, this.shot_count, this.time, this.type, this.sides});
 
   @override
-  SoloHomeState createState() => new SoloHomeState(cameras);
+  SoloHomeState createState() => new SoloHomeState(cameras,start_camera);
 }
 
 class SoloHomeState extends State<SoloHome> {
-  SoloHomeState(this.cameras);
+  SoloHomeState(this.cameras,this.camera);
 
   List<dynamic> _recognitions;
 
@@ -125,7 +125,7 @@ class SoloHomeState extends State<SoloHome> {
   double threshold = 0.4;
   int numResultsPerClass = 1;
   ResolutionPreset res = ResolutionPreset.high;
-  int camera = 1;
+  int camera ;
   final List<CameraDescription> cameras;
 
   //bouce
@@ -217,7 +217,7 @@ class SoloHomeState extends State<SoloHome> {
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
           if(is_working){
 
-            if(current_side==1||current_side!=93){
+            if(current_side==1||current_side==3){
               smartbounce_service_box(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
 
             }else{
@@ -342,8 +342,11 @@ class SoloHomeState extends State<SoloHome> {
           temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
         }
 
-        print(temp);
-        bounces.add(temp);
+
+        setState(() {
+          bounces.add(temp);
+
+        });
         total_bounces.add(new Bounce(temp.x,temp.y,current_side.toDouble(),DateTime.now()));
 
         //total_bounces.add(temp);
@@ -536,12 +539,7 @@ class SoloHomeState extends State<SoloHome> {
                       show_stuff = !show_stuff;
                     });
                   }),
-              IconButton(
-                  icon: Icon(Icons.rotate_right, color: Colors.white),
-                  onPressed: () {
-                    ball.clear();
-                    bounces.clear();
-                  }),
+
               IconButton(
                   icon: Icon(Icons.camera_alt, color: Colors.white),
                   onPressed: () {
@@ -809,6 +807,8 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   Future<void> save2() async {
+    print("done3");
+
     String box = "Solo1";
 
     if(!Hive.isAdapterRegistered(5)){
@@ -933,27 +933,19 @@ class SoloHomeState extends State<SoloHome> {
                         is_working: (bool){
 
                           is_working=bool;
+                          if(!is_working){
+                            bounces.clear();
+
+                          }
 
 
                         },
 
 
                         done: (bool) async {
-                          print(widget.sides);
                           await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
-                          await save2();
+                          print("done2");
+
 
                           Navigator.pop(context);
                         },
@@ -971,8 +963,11 @@ class SoloHomeState extends State<SoloHome> {
                               generate_cout_point();
                             });
                           }
-                          bounces.clear();
-                          ball.clear();
+                          setState(() {
+                            bounces.clear();
+                            ball.clear();
+                          });
+
                         },
                       ),
 

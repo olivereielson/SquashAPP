@@ -58,6 +58,11 @@ class GhostScreenState extends State<GhostScreen> {
 
     Exersises = await Hive.openBox<Custom>(box);
     print("1");
+
+    setState(() {
+
+    });
+
   }
 
   @override
@@ -350,139 +355,150 @@ class GhostScreenState extends State<GhostScreen> {
   }
 
   Widget Show_Custom_Card(int index) {
-    return ShakeAnimatedWidget(
-      enabled: is_shaking,
-      duration: Duration(milliseconds: 500),
-      shakeAngle: Rotation.deg(z: 1),
-      curve: Curves.linear,
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              width: 205,
-              height: 205,
-              child: Stack(
-                children: [
-                  ClipPath(
-                    child: Container(
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), borderRadius: BorderRadius.all(Radius.circular(20))),
-                    ),
-                  ),
-                  ClipPath(
-                    clipper: CustomClipperImage3(),
-                    child: Container(
-                      decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
-                    ),
-                  ),
-                  Positioned(
-                    top: 5,
-                    child: ClipPath(
+    return Container(
+      width: 215,
+      height: 215,
+      child: ShakeAnimatedWidget(
+        enabled: is_shaking,
+        duration: Duration(milliseconds: 500),
+        shakeAngle: Rotation.deg(z: 1),
+        curve: Curves.linear,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: 205,
+                height: 205,
+                child: Stack(
+                  children: [
+                    ClipPath(
                       child: Container(
-                          width: 200,
-                          height: 200,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        Hive.box<Custom>(box).getAt(index).name,
-                                        style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  Hive.box<Custom>(box).getAt(index).start_time.toString() + " Second count down",
-                                  style: TextStyle(
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                                Text(
-                                  Hive.box<Custom>(box).getAt(index).rest_time.toString() + " Second Rest",
-                                  style: TextStyle(
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                                Text(
-                                  Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts",
-                                  style: TextStyle(
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                                Text(
-                                  Hive.box<Custom>(box).getAt(index).round_num.toInt().toString() + " Rounds",
-                                  style: TextStyle(
-                                    color: Colors.white60,
-                                  ),
-                                ),
-                                Text(
-                                  Hive.box<Custom>(box).getAt(index).corners.length.toString() + " Corners ",
-                                  style: TextStyle(
-                                    color: Colors.white60,
-                                  ),
-                                )
-                              ],
-                            ),
-                          )),
+                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), borderRadius: BorderRadius.all(Radius.circular(20))),
+                      ),
                     ),
-                  ),
-                ],
+                    ClipPath(
+                      clipper: CustomClipperImage3(),
+                      child: Container(
+                        decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+                      ),
+                    ),
+                    Positioned(
+                      top: 5,
+                      child: ClipPath(
+                        child: Container(
+                            width: 200,
+                            height: 200,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          Hive.box<Custom>(box).getAt(index).name,
+                                          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    Hive.box<Custom>(box).getAt(index).start_time.toString() + " Second count down",
+                                    style: TextStyle(
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                  Text(
+                                    Hive.box<Custom>(box).getAt(index).rest_time.toString() + " Second Rest",
+                                    style: TextStyle(
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                  Text(
+                                    Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts",
+                                    style: TextStyle(
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                  Text(
+                                    Hive.box<Custom>(box).getAt(index).round_num.toInt().toString() + " Rounds",
+                                    style: TextStyle(
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                  Text(
+                                    Hive.box<Custom>(box).getAt(index).corners.length.toString() + " Corners ",
+                                    style: TextStyle(
+                                      color: Colors.white60,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          is_shaking
-              ? Positioned(
-                  left: 0,
-                  top: 0,
-                  child: GestureDetector(
-                      onTap: () {
-                        Widget test = Show_Custom_Card(index);
+            is_shaking
+                ? Positioned(
+                    left: 0,
+                    top: 0,
+                    child: GestureDetector(
+                        onTap: ()  {
 
-                        if (Exersises.length != 1) {
-                          _mylistkey.currentState.removeItem(
-                              index,
-                              (context, Animation<double> animation) => SizeTransition(
-                                    sizeFactor: animation,
-                                    child: test,
-                                  ),
-                              duration: Duration(milliseconds: 500));
+                          if (Exersises.length != 1) {
 
-                          Hive.box<Custom>(box).getAt(index).delete();
-                        } else {
 
-                          final snackBar = SnackBar(
 
-                            content: Text('You must have at least one saved workout!'),
 
-                          );
 
-                          // Find the ScaffoldMessenger in the widget tree
-                          // and use it to show a SnackBar.
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-                      },
-                      child: Container(
-                        decoration: new BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Icon(
-                              Icons.clear,
-                              size: 15,
-                            )),
-                      )),
-                )
-              : Text(""),
-        ],
+                             _mylistkey.currentState.removeItem(
+                                index,
+                                (context, Animation<double> animation) => ScaleTransition(
+                                      scale: animation,
+                                      child: Show_Custom_Card(index),
+                                    ),
+                                duration: Duration(milliseconds: 700));
+
+                             setState(() {
+                               Exersises.deleteAt(index);
+
+                             });
+                          } else {
+
+                            final snackBar = SnackBar(
+
+                              content: Text('You must have at least one saved workout!'),
+
+                            );
+
+                            // Find the ScaffoldMessenger in the widget tree
+                            // and use it to show a SnackBar.
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          }
+                        },
+                        child: Container(
+                          decoration: new BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Icon(
+                                Icons.clear,
+                                size: 15,
+                              )),
+                        )),
+                  )
+                : Text(""),
+          ],
+        ),
       ),
     );
   }
@@ -506,7 +522,7 @@ class GhostScreenState extends State<GhostScreen> {
           if (Hive.isBoxOpen(box)) {
             if (Exersises.length == 0) {
               var exersie = Custom()
-                ..name = "defult"
+                ..name = "Default"
                 ..number_set = number_set
                 ..round_num = round_num
                 ..rest_time = rest_time.inSeconds
@@ -539,8 +555,8 @@ class GhostScreenState extends State<GhostScreen> {
                   SliverFixedExtentList(
                     itemExtent: 130.0,
                     delegate: SliverChildListDelegate(
-                      [
-                        Padding(
+
+                      [                       Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: GestureDetector(
                             onTap: () {

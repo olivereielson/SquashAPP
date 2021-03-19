@@ -20,7 +20,7 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
   Tween pos_y = Tween<double>(begin: 30, end: 20);
 
   Tween pos_x2 = Tween<double>(begin: 20, end: 85);
-  Tween pos_x2_g = Tween<double>(begin: 20, end: 130);
+  Tween pos_x2_g = Tween<double>(begin: 20, end: 140);
 
   Tween pos_y2 = Tween<double>(begin: 80, end: 20);
 
@@ -94,11 +94,9 @@ class header_list extends SliverPersistentHeaderDelegate {
     return LayoutBuilder(builder: (context, constraints) {
       final double percentage = 1 - (constraints.maxHeight - minExtent) / (maxExtent - minExtent);
 
-      final double post = pos_t.lerp(percentage);
       final double posy = pos_y.lerp(percentage);
 
 
-      if (++index > Colors.primaries.length - 1) index = 0;
 
       return Stack(
 

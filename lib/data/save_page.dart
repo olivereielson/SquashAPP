@@ -21,6 +21,7 @@ class SavedData extends StatefulWidget {
 
 class SavedDataState extends State<SavedData> {
   SavedDataState(this.solo_storage_box);
+  Color court_color = Color.fromRGBO(40, 45, 81, 1);
 
   Solo_stroage solo_storage_box;
 
@@ -46,7 +47,11 @@ class SavedDataState extends State<SavedData> {
           }
         },
         child: Container(
-          decoration: BoxDecoration(color: showing.contains(index) ? Colors.white : Colors.white10, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+
+          decoration: BoxDecoration(color: showing.contains(index) ? Color.fromRGBO(40, 70, 130, 1):Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
+            (color: Colors.white,
+              width: 3)
+          ),
           height: 60,
           width: 130,
           child: Padding(
@@ -54,7 +59,7 @@ class SavedDataState extends State<SavedData> {
             child: Center(
                 child: Text(
               name,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.black : Colors.white),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.white : Colors.black),
               textAlign: TextAlign.center,
             )),
           ),
@@ -72,123 +77,6 @@ class SavedDataState extends State<SavedData> {
 
     return Stack(
       children: [
-        Positioned(
-            top: 0,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              decoration: BoxDecoration(color: court_color, borderRadius: BorderRadius.only(bottomRight: Radius.circular(40), bottomLeft: Radius.circular(40))),
-              width: MediaQuery.of(context).size.width,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    ExpansionTile(
-                      leading: IconButton(
-                        icon: Icon(Icons.close,color: Colors.white,),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-
-                      trailing:Icon(expanded?Icons.keyboard_arrow_up:Icons.keyboard_arrow_down,color: Colors.white,) ,
-
-                      onExpansionChanged: (bool) {
-                        setState(() {
-                          expanded = bool;
-                        });
-                      },
-                      title: Center(
-                          child: Text(
-                        'Statistics',
-                        style: TextStyle(color: Colors.white, fontSize: 30),
-                      )),
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                            height: 90,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: Container(
-                                    height: 60,
-                                    width: 60,
-                                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                                    child: Icon(Icons.timer),
-                                  ),
-                                ),
-                                Text(
-                                  "Duration",
-                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
-                                Spacer(),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                                  child: Text(
-                                    solo_storage_box.end.difference(solo_storage_box.start).toString().substring(2, 7),
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                            height: 90,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: Container(
-                                    height: 60,
-                                    width: 60,
-                                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                                    child: Icon(EvaIcons.hashOutline),
-                                  ),
-                                ),
-                                Text(
-                                  "Total Shots",
-                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
-                                Spacer(),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                                  child: Text(
-                                    solo_storage_box.bounces.length.toString(),
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  button_box("Forehand Drives", 0),
-                                  button_box("BackHand Drives", 1),
-                                ],
-                              ),
-                              Column(
-                                children: [button_box("Forehand Service Box", 2), button_box("Backhand Service Box", 3)],
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )),
         Positioned(
             top: h * 0.56 + offset,
             child: Container(
@@ -304,6 +192,124 @@ class SavedDataState extends State<SavedData> {
         children: [
           draw_court(),
           flat_bounce(),
+          Positioned(
+              top: 0,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                decoration: BoxDecoration(color: court_color, borderRadius: BorderRadius.only(bottomRight: Radius.circular(40), bottomLeft: Radius.circular(40))),
+                width: MediaQuery.of(context).size.width,
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      ExpansionTile(
+                        leading: IconButton(
+                          icon: Icon(Icons.close,color: Colors.white,),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+
+                        trailing:Icon(expanded?Icons.keyboard_arrow_up:Icons.keyboard_arrow_down,color: Colors.white,) ,
+
+                        onExpansionChanged: (bool) {
+                          setState(() {
+                            expanded = bool;
+                          });
+                        },
+                        title: Center(
+                            child: Text(
+                              'Statistics',
+                              style: TextStyle(color: Colors.white, fontSize: 30),
+                            )),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                              height: 90,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    child: Container(
+                                      height: 60,
+                                      width: 60,
+                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                                      child: Icon(Icons.timer),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Duration",
+                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                  Spacer(),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                                    child: Text(
+                                      solo_storage_box.end.difference(solo_storage_box.start).toString().substring(2, 7),
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                              height: 90,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    child: Container(
+                                      height: 60,
+                                      width: 60,
+                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                                      child: Icon(EvaIcons.hashOutline),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Total Shots",
+                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                  Spacer(),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                                    child: Text(
+                                      solo_storage_box.bounces.length.toString(),
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  children: [
+                                    button_box("Forehand Drives", 0),
+                                    button_box("BackHand Drives", 2),
+                                  ],
+                                ),
+                                Column(
+                                  children: [button_box("Forehand Service Box", 1), button_box("Backhand Service Box", 3)],
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )),
+
         ],
       ),
     );

@@ -26,13 +26,13 @@ class counter_widget extends StatefulWidget {
   counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side});
 
   @override
-  counter_widget_state createState() => new counter_widget_state(time.inSeconds, type);
+  counter_widget_state createState() => new counter_widget_state(time.inSeconds, type,counter_value);
 }
 
 class counter_widget_state extends State<counter_widget> {
   List<String> names = ["Forehand Drives", "Forehand ServiceBox", "BackHand Drives", "BackHand ServiceBox"];
 
-  counter_widget_state(this._start, this.type);
+  counter_widget_state(this._start, this.type,this.counter_value);
 
   int type;
 
@@ -43,6 +43,9 @@ class counter_widget_state extends State<counter_widget> {
   Widget t;
   Timer _timer;
   int _start;
+  int counter_value;
+
+  bool stop_done=true;
 
   bool is_working = false;
 
@@ -50,6 +53,7 @@ class counter_widget_state extends State<counter_widget> {
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
+
     _timer = new Timer.periodic(
       oneSec,
       (Timer timer) {
@@ -65,7 +69,7 @@ class counter_widget_state extends State<counter_widget> {
               //widget.done(false);
 
               sides_done++;
-              widget.current_side(sides_done);
+              widget.current_side(widget.activities[sides_done]);
             }
           });
         } else {
@@ -77,19 +81,7 @@ class counter_widget_state extends State<counter_widget> {
     );
   }
 
-  void StopWatch() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
-      oneSec,
-      (Timer timer) {
-        setState(() {
-          _start++;
-        });
-      },
-    );
-  }
 
-  CountDownController _countDownController = CountDownController();
 
   Widget timer() {
     if (is_working) {
@@ -161,12 +153,21 @@ class counter_widget_state extends State<counter_widget> {
     if (is_working) {
       if (widget.counter_value == widget.counter_goal) {
         if (sides_done == widget.activities.length - 1) {
-          widget.done(true);
+
+          if(stop_done){
+            widget.done(true);
+            stop_done=false;
+            print("done");
+
+          }
+
         } else {
+          print(widget.counter_value);
           is_working = false;
           widget.is_working(is_working);
           sides_done++;
-          widget.current_side(sides_done);
+          print("sides done $sides_done");
+          widget.current_side(widget.activities[sides_done]);
         }
       }
 
@@ -214,7 +215,7 @@ class counter_widget_state extends State<counter_widget> {
                   widget.is_working(is_working);
 
                   _start = 0;
-                  StopWatch();
+                  //StopWatch();
                 });
               },
               child: Container(
@@ -259,6 +260,7 @@ class counter_widget_state extends State<counter_widget> {
     if (_timer != null) {
       _timer.cancel();
     }
+    sc.dispose();
     super.dispose();
   }
 }

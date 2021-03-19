@@ -51,6 +51,7 @@ dependencies:
   flutter_sticky_header:
   sliver_header_delegate:
   animated_widgets: ^1.0.6
+  flutter_slidable:
 
 
 

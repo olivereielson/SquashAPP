@@ -308,6 +308,72 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 90,
+            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            start_camera==0?"Front Camera":"Back Camera",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    CupertinoSwitch(
+
+                        activeColor: Color.fromRGBO(40, 70, 130, 1),
+                        value: start_camera==0?true:false, onChanged: (bool){
+
+                      if(start_camera==0){
+
+                        setState(() {
+                          start_camera=1;
+
+                        });
+                      }else{
+
+
+                        setState(() {
+                          start_camera=0;
+
+                        });
+
+                      }
+
+
+                    })
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        /*
         GestureDetector(
           onTap: () {
             show_rest_picker();
@@ -353,6 +419,8 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             ),
           ),
         ),
+
+         */
       ],
     );
   }
@@ -405,6 +473,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             ),
           ),
         ),
+        /*
         GestureDetector(
           onTap: () {
             show_rest_picker();
@@ -450,6 +519,8 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             ),
           ),
         ),
+
+         */
       ],
     );
   }
@@ -507,6 +578,72 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 90,
+            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            start_camera==0?"Front Camera":"Back Camera",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    CupertinoSwitch(
+
+                      activeColor: Color.fromRGBO(40, 70, 130, 1),
+                        value: start_camera==0?true:false, onChanged: (bool){
+
+                        if(start_camera==0){
+
+                          setState(() {
+                            start_camera=1;
+
+                          });
+                        }else{
+
+
+                          setState(() {
+                            start_camera=0;
+
+                          });
+
+                        }
+
+
+                    })
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        /*
         GestureDetector(
           onTap: () {
             show_rest_picker();
@@ -552,6 +689,8 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             ),
           ),
         ),
+
+         */
       ],
     );
   }
@@ -665,7 +804,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
               children: [
                 Time_Input(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -678,31 +817,29 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                             MaterialPageRoute(
                                 builder: (context) => SoloHome(
                                   cameras: cameras,
-                                  start_camera: 0,
-                                  type: segmentedControlGroupValue,
+                                  start_camera: start_camera,
+                                  type: 0,
                                   time: total_time,
                                   shot_count: shot_number,
                                   sides: sides,
                                 )),
                           );
                         },
-                        child: Center(
-                          child: Container(
-                            height: 50,
-                            width: 150,
-                            child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    )),
-                                elevation: 2,
-                                color: main,
-                                child: Center(
-                                    child: Text(
-                                      "Start",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ))),
-                          ),
+                        child: Container(
+                          height: 50,
+                          width: 150,
+                          child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(18),
+                                  )),
+                              elevation: 2,
+                              color: main,
+                              child: Center(
+                                  child: Text(
+                                    "Start",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ))),
                         ),
                       ),
                     ],
@@ -751,8 +888,8 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                                   MaterialPageRoute(
                                       builder: (context) => SoloHome(
                                         cameras: cameras,
-                                        start_camera: 0,
-                                        type: segmentedControlGroupValue,
+                                        start_camera: start_camera,
+                                        type:1,
                                         time: total_time,
                                         shot_count: shot_number,
                                         sides: sides,
@@ -841,41 +978,39 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
 
 
 
-      }, body: SingleChildScrollView(
-        child: Column(
+      }, body: Column(
 
 
-          children: [
-            Stack(
-              children: [
-                Container(height:20,color:    Color.fromRGBO(20, 20, 60, 1),),
-                Container(
-                  height: 250,
-                  decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Service Box", true, 2), shot("Backhand Service Box", false, 3)],
-                  ),
+        children: [
+          Stack(
+            children: [
+              Container(height:20,color:    Color.fromRGBO(20, 20, 60, 1),),
+              Container(
+                height: 250,
+                decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1),shot("Backhand Drives", true, 2),  shot("Backhand Service Box", false, 3)],
                 ),
-              ],
-            ),
-            Container(
-              height: 400,
-              child: TabBarView(
+              ),
+            ],
+          ),
+          Container(
+            height: 310,
+            child: TabBarView(
 
-              children: [
+            children: [
 
-                count(),timed()
-
-
+              count(),timed()
 
 
-              ],
-              controller: _tabController,
+
+
+            ],
+            controller: _tabController,
     ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
 
 

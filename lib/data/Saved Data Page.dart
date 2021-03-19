@@ -11,11 +11,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:scidart/numdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
 import 'package:squash/data/save_page.dart';
@@ -66,6 +68,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   int ave_ghost_dur;
   int ave_ghost_num;
+  double accuracy;
 
   List<double> solo_type_pie_chart_data = [0, 0, 0, 0];
   List<double> ghost_type_pie_chart_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -100,11 +103,35 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   }
 
   void calculate_solo() {
+
+    var n = Array([]);
+
+    List<double> xL =[];
+    List<double> yL =[];
+
+
+
+
     for (int i = 0; i < solo_storage_box.length; i++) {
       for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
         solo_type_pie_chart_data[solo_storage_box.getAt(i).bounces[x].type.toInt()]++;
+
+        //xL.add(solo_storage_box.getAt(i).bounces[x].x_pos);
+        //yL.add(solo_storage_box.getAt(i).bounces[x].y_pos);
+
+        //print(hypotenuse(solo_storage_box.getAt(i).bounces[x].y_pos,solo_storage_box.getAt(i).bounces[x].x_pos));
+        n.add(hypotenuse(solo_storage_box.getAt(i).bounces[x].y_pos,solo_storage_box.getAt(i).bounces[x].x_pos));
+
+
       }
     }
+
+    //double x_avge= xL.reduce((a, b) => a + b)/xL.length;
+    //double y_avge=yL.reduce((a, b) => a + b)/yL.length;
+
+
+    print(100-(standardDeviation(n)*100/mean(n)));
+    accuracy=100-(standardDeviation(n)*100/mean(n));
 
     for (int i = 0; i < solo_storage_box.length; i++) {
       if (ave_solo_dur == null) {
@@ -119,7 +146,15 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
         ave_shot_num = (solo_storage_box.getAt(i).bounces.length + ave_shot_num) ~/ 2;
       }
     }
-  }
+
+    for (int i = 0; i < solo_storage_box.length; i++) {
+
+
+
+
+    }
+
+    }
 
   void calculate_ghost() {
     speed.clear();
@@ -429,7 +464,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         value: solo_type_pie_chart_data[0],
                         title: ((solo_type_pie_chart_data[0] / sum) * 100).toInt().toString() + '%',
                         radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color:((solo_type_pie_chart_data[0] / sum) * 100).toInt()==0?Colors.transparent: Colors.white),
                         titlePositionPercentageOffset: 0.55,
                       ),
                       PieChartSectionData(
@@ -437,7 +472,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         value: solo_type_pie_chart_data[1],
                         title: ((solo_type_pie_chart_data[1] / sum) * 100).toInt().toString() + '%',
                         radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color:((solo_type_pie_chart_data[1] / sum) * 100).toInt()==0?Colors.transparent: Colors.white),
                         titlePositionPercentageOffset: 0.55,
                       ),
                       PieChartSectionData(
@@ -445,7 +480,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         value: solo_type_pie_chart_data[2],
                         title: ((solo_type_pie_chart_data[2] / sum) * 100).toInt().toString() + '%',
                         radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color:((solo_type_pie_chart_data[2] / sum) * 100).toInt()==0?Colors.transparent: Colors.white),
                         titlePositionPercentageOffset: 0.55,
                       ),
                       PieChartSectionData(
@@ -454,7 +489,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         title: ((solo_type_pie_chart_data[3] / sum) * 100).toInt().toString() + '%',
                         radius: 50,
                         showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color:((solo_type_pie_chart_data[3] / sum) * 100).toInt()==0?Colors.transparent: Colors.white),
                         titlePositionPercentageOffset: 0.55,
                       )
                     ]),
@@ -563,6 +598,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     borderData: FlBorderData(
                       show: false,
                     ),
+
                     sections: [
                       PieChartSectionData(
                         color: type_pie_color[0],
@@ -596,6 +632,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         showTitle: true,
                         titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                         titlePositionPercentageOffset: 0.55,
+
                       ),
                       PieChartSectionData(
                         color: type_pie_color[4],
@@ -780,7 +817,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
-
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -796,14 +832,12 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-
                                   Text(DateFormat('MMMMd').format(ghosting_box.getAt(index).start).toString(), style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold)),
                                   Text(DateFormat('jm').format(ghosting_box.getAt(index).start).toString(), style: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.bold)),
                                 ],
-
                               ),
-                              Spacer(),Icon(Icons.chevron_right)
-
+                              Spacer(),
+                              Icon(Icons.chevron_right)
                             ],
                           ),
                         ),
@@ -817,12 +851,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     left: 0,
                     child: GestureDetector(
                       onTap: () {
-                        _listKey2.currentState.removeItem(
-                            index,
-                                (context, animation) => SizeTransition(
-                                sizeFactor: animation,
-                                child: ghost_saved(index)),
-                            duration: Duration(milliseconds: 500));
+                        _listKey2.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: ghost_saved(index)), duration: Duration(milliseconds: 500));
                         setState(() {
                           ghosting_box.deleteAt(index);
                         });
@@ -877,14 +906,13 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         child: ClipPath(
                           clipper: CustomClipperImage(),
                           child: Container(
-                           decoration: BoxDecoration(color: Color.fromRGBO(40, 40, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                            decoration: BoxDecoration(color: Color.fromRGBO(40, 40, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
                           ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
-
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -898,13 +926,15 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
                                 Text(DateFormat('MMMMd').format(solo_storage_box.getAt(index).start).toString(), style: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold)),
                                 Text(DateFormat('jm').format(solo_storage_box.getAt(index).start).toString(), style: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.bold)),
                               ],
                             ),
                             Spacer(),
-                            Icon(Icons.chevron_right,color: Colors.black,)
+                            Icon(
+                              Icons.chevron_right,
+                              color: Colors.black,
+                            )
                           ],
                         ),
                       ),
@@ -913,33 +943,25 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 ),
               ),
             ),
-            is_shaking
-                ? Positioned(
-                    top: 0,
-                    left: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        _listKey.currentState.removeItem(
-                            index,
-                            (context, animation) => SizeTransition(
-                                sizeFactor: animation,
-                                child: Solo_Saved(index)),
-                            duration: Duration(milliseconds: 500));
+             Positioned(
+                top: 0,
+                left: 0,
+                child: is_shaking?GestureDetector(
+                  onTap: () {
+                    solo_storage_box.deleteAt(index);
 
-                        setState(() {
-                          solo_storage_box.deleteAt(index);
-                        });
-                      },
-                      child: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.grey,
-                          )),
-                    ))
-                : Text("")
+                    _listKey.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: Solo_Saved(index)), duration: Duration(milliseconds: 500));
+                  },
+                  child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                      )),
+                ):Text(""))
+
           ],
         ),
       ),
@@ -1002,30 +1024,25 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
       },
       child: FutureBuilder(
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1")) {
+          if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1") && solo_storage_box.length + ghosting_box.length != 0) {
             return CustomScrollView(
               slivers: [
                 SliverOverlapInjector(
                   // This is the flip side of the SliverOverlapAbsorber
                   // above.
                   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-
-
                 ),
-
-
-
                 SliverAnimatedList(
                     key: _listKey, initialItemCount: solo_storage_box.length, itemBuilder: (context, index, animation) => SizeTransition(sizeFactor: animation, child: Solo_Saved(index))),
-
-                SliverAnimatedList(
-                    key: _listKey2,
-                    initialItemCount: ghosting_box.length, itemBuilder: (context, index, animation) => SizeTransition(sizeFactor: animation, child: ghost_saved(index))),
-
+                SliverAnimatedList(key: _listKey2, initialItemCount: ghosting_box.length, itemBuilder: (context, index, animation) => SizeTransition(sizeFactor: animation, child: ghost_saved(index))),
               ],
             );
           } else {
-            return Text("");
+            return Center(
+                child: Text(
+              "No Saved Data",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ));
           }
         },
       ),
@@ -1036,7 +1053,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     return FutureBuilder(
       future: load_ghost_hive(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (Hive.isBoxOpen("Ghosting1")&&ghosting_box.length!=0) {
+        if (Hive.isBoxOpen("Ghosting1") && ghosting_box.length != 0) {
           return ListView(
             children: [
               Padding(
@@ -1058,7 +1075,11 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
             ],
           );
         } else {
-          return Center(child: Text("No Data to Analyze",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),));
+          return Center(
+              child: Text(
+            "No Data to Analyze",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ));
         }
       },
     );
@@ -1068,7 +1089,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     return FutureBuilder(
       future: load_hive(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (Hive.isBoxOpen("Solo1")&&solo_storage_box.length!=0) {
+        if (Hive.isBoxOpen("Solo1") && solo_storage_box.length != 0) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView(
@@ -1084,81 +1105,125 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     ],
                   ),
                 ),
+                percsion()
               ],
             ),
           );
         } else {
-          return Center(child: Text("No Data to Analyze",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),));
+          return Center(
+              child: Text(
+            "No Data to Analyze",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ));
         }
       },
     );
+  }
+
+  Widget percsion(){
+
+    return Container(
+
+      width: MediaQuery.of(context).size.width,
+      height: 200,
+
+      child: Card(
+        elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+            children: [
+              Column(
+
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  Text("Shot",                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+                  Text("Precision",                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  )
+
+
+
+                ],
+
+
+              ),
+
+              Padding(
+                padding: const EdgeInsets.only(right: 30),
+                child: Container(
+                  decoration: BoxDecoration(color: Color.fromRGBO(40, 40, 120, 1), borderRadius: BorderRadius.all(Radius.circular(40))),
+
+
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(accuracy.floor().toString()+"%",style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold,color: Colors.white)),
+                  ),
+
+                ),
+              )
+
+            ],
+          ),
+        ),
+
+      ),
+
+    );
+
   }
 
   int pagenum = 0;
 
   @override
   Widget build(BuildContext context) {
-
-
-
-
     return Scaffold(
       body: GestureDetector(
-        onTap: (){
-
+        onTap: () {
           setState(() {
-
-            is_shaking=false;
-
+            is_shaking = false;
           });
-
         },
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-
-
               SliverPersistentHeader(
-                  pinned: true,
-                  floating: false,
-
-                  delegate: MyDynamicHeader("Data", "Anyltiitcs",false),
-                ),
-
-
+                pinned: true,
+                floating: false,
+                delegate: MyDynamicHeader("Data", "Analytics", false),
+              ),
               SliverOverlapAbsorber(
                 handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-
                 sliver: SliverPersistentHeader(
-                    floating: false,
-                    pinned: true,
-                    delegate: _SliverAppBarDelegate(
-                      TabBar(
-                          indicatorColor: Colors.lightBlueAccent,
-                          tabs: [
-                            new Tab(
-                              //  icon: new Icon(Icons.sports_tennis),
-                              text: "Solo",
-                            ),
-                            new Tab(
-                              text: "Ghosting",
-                            ),
-                            new Tab(
-                              // icon: new Icon(Icons.save),
-                              text: "Saved",
-                            ),
-                          ],
-                          controller: _tabController),
-                    ),
+                  floating: false,
+                  pinned: true,
+                  delegate: _SliverAppBarDelegate(
+                    TabBar(
+                        indicatorColor: Colors.lightBlueAccent,
+                        tabs: [
+                          new Tab(
+                            //  icon: new Icon(Icons.sports_tennis),
+                            text: "Solo",
+                          ),
+                          new Tab(
+                            text: "Ghosting",
+                          ),
+                          new Tab(
+                            // icon: new Icon(Icons.save),
+                            text: "Saved",
+                          ),
+                        ],
+                        controller: _tabController),
                   ),
                 ),
-
+              ),
             ];
           },
           floatHeaderSlivers: false,
-
           body: TabBarView(
-
             children: [
               solo_stat(),
               ghost_stat(),
@@ -1197,31 +1262,3 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-class _SliverAppBarDelegate2 extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate2({
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
-  });
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-  @override
-  double get minExtent => minHeight;
-  @override
-  double get maxExtent => maxHeight;
-  @override
-  Widget build(
-      BuildContext context,
-      double shrinkOffset,
-      bool overlapsContent)
-  {
-    return new SizedBox.expand(child: child);
-  }
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate2 oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
-  }
-}
