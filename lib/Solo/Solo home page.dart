@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scidart/numdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +28,7 @@ import 'counter_widget.dart';
 import 'court_functions.dart';
 import 'court_painter.dart';
 import '../extra/hive_classes.dart';
+import 'finish_solo.dart';
 
 class SoloHome extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -604,7 +606,7 @@ class SoloHomeState extends State<SoloHome> {
 
     controller.startImageStream((CameraImage img) async {
       if (!isDetecting) {
-        isDetecting = true;
+        //isDetecting = true;
 
         Tflite.detectObjectOnFrame(
                 bytesList: img.planes.map((plane) {
@@ -956,7 +958,10 @@ class SoloHomeState extends State<SoloHome> {
 
                         done: (bool) async {
                           await save2();
-                          print("done2");
+                          await Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: Finish_Screen_Solo(total_bounces.length,DateTime.now().difference(start_time).toString()
+                              .substring(0,7))));
+
+
 
 
                           Navigator.pop(context);

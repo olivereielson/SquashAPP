@@ -87,11 +87,9 @@ class counter_widget_state extends State<counter_widget> {
   }
 
 
-
   Widget timer() {
     if (is_working) {
       return CircularPercentIndicator(
-        arcType: ArcType.FULL,
         circularStrokeCap: CircularStrokeCap.round,
         lineWidth: 20,
         backgroundColor: Colors.white54,
@@ -180,7 +178,6 @@ class counter_widget_state extends State<counter_widget> {
       }
 
       return CircularPercentIndicator(
-        arcType: ArcType.FULL,
         circularStrokeCap: CircularStrokeCap.round,
         lineWidth: 20,
         backgroundColor: Colors.white54,

@@ -128,7 +128,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
       acc.add(100-(standardDeviation(n)*100/mean(n)));
     }
 
-    print(acc);
+    //print(acc);
 
     accuracy=acc.reduce((a, b) => a + b)/acc.length;
 
@@ -160,11 +160,13 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
     for (int i = 0; i < ghosting_box.length; i++) {
       if (ghosting_box.getAt(i).rest_time != null && ghosting_box.getAt(i).rounds != null) {
+
         if (rest == 0 && work == 0) {
-          rest = (ghosting_box.getAt(i).rest_time * (ghosting_box.getAt(i).rounds)).toDouble();
+          rest = (ghosting_box.getAt(i).rest_time * (ghosting_box.getAt(i).rounds+1)).toDouble();
           work = ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds - rest;
         } else {
-          rest = (rest + (ghosting_box.getAt(i).rest_time * (ghosting_box.getAt(i).rounds)).toDouble()) / 2;
+         //print(ghosting_box.getAt(i).rounds);
+          rest = (rest + (ghosting_box.getAt(i).rest_time * (ghosting_box.getAt(i).rounds+1)).toDouble()) / 2;
           work = (work + ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds - rest) / 2;
         }
 
@@ -173,11 +175,11 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
       }
 
       if (ghosting_box.getAt(i).time_array.length > 0) {
-        print(ghosting_box.getAt(i).time_array);
+        //print(ghosting_box.getAt(i).time_array);
 
         var result = ghosting_box.getAt(i).time_array.reduce((num a, num b) => a + b) / ghosting_box.getAt(i).time_array.length;
         speed.add(FlSpot(i.toDouble(), result));
-        print(result);
+        //print(result);
       } else {
         speed.add(FlSpot(i.toDouble(), 8.0));
       }
@@ -207,7 +209,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
         ghost_type_pie_chart_data[ghosting_box.getAt(i).corner_array[x].toInt()]++;
       }
     }
-    print(ghost_type_pie_chart_data);
+    //
+    // print(ghost_type_pie_chart_data);
   }
 
   Future<void> load_hive() async {
@@ -264,7 +267,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 child: LineChart(
                   LineChartData(
                       gridData: FlGridData(
-                        show: false,
+                        show: true,
                         drawHorizontalLine: true,
                         getDrawingVerticalLine: (value) {
                           return FlLine(
@@ -308,7 +311,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                           },
                           reservedSize: 28,
                           margin: 12,
-                          interval: 5,
+                          interval: 0.5,
                         ),
                       ),
                       borderData: FlBorderData(
@@ -351,6 +354,9 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   }
 
   Widget resting() {
+
+    //(rest);
+
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

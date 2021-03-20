@@ -41,6 +41,9 @@ class _CountDownState extends State<CountDown> {
             setState(
                   () {
                 if (_start < 1) {
+                  timer.cancel();
+                  print("hehee");
+                  _start=100;
                   _timer.cancel();
                   widget.done(true);
                 } else {

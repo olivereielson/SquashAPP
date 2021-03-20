@@ -6,6 +6,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:squash/Solo/Solo%20home%20page.dart';
@@ -700,6 +701,8 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: GestureDetector(
         onTap: () {
+          HapticFeedback.lightImpact();
+
           if (sides.contains(index)) {
             setState(() {
               sides.remove(index);

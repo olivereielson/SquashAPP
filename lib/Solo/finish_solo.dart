@@ -8,19 +8,18 @@ import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:flutter/services.dart';
 
-class Finish_Screen extends StatefulWidget {
-  Finish_Screen(this.total_ghost, this.total_time, this.time_array);
+class Finish_Screen_Solo extends StatefulWidget {
+  Finish_Screen_Solo(this.total_shots, this.total_time);
 
-  List<double> time_array = [];
 
   String total_time;
-  int total_ghost;
+  int total_shots;
 
   @override
   _Finish_ScreenState createState() => _Finish_ScreenState();
 }
 
-class _Finish_ScreenState extends State<Finish_Screen> {
+class _Finish_ScreenState extends State<Finish_Screen_Solo> {
   ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
   Widget confeti() {
@@ -85,7 +84,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: 150,
+                height: 200,
                 decoration: BoxDecoration(
                   color: Color.fromRGBO(40, 45, 81, 1),
                   border: Border.all(
@@ -115,9 +114,9 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                   )
 
                   ,
-                   child: Padding(
-                     padding: const EdgeInsets.all(20.0),
-                     child: Row(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
 
                       children: [
@@ -153,19 +152,19 @@ class _Finish_ScreenState extends State<Finish_Screen> {
 
                             linearGradient: LinearGradient(
 
-                              colors: [
+                                colors: [
 
-                                Colors.indigo
-                                ,Color.fromRGBO(40, 45, 81, 1)
-                              ]
+                                  Colors.indigo
+                                  ,Color.fromRGBO(40, 45, 81, 1)
+                                ]
 
                             ),
                             //progressColor: Color.fromRGBO(40, 45, 81, 1)
                           ),
                         ),
                       ],
+                    ),
                   ),
-                   ),
                 ),
               ),
               Padding(
@@ -173,11 +172,11 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                 child: Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                    
-                    borderRadius: BorderRadius.all(Radius.circular(20.0))
-                    
+
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+
                   )
-                  
+
                   ,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -207,7 +206,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                             lineWidth: 20.0,
                             percent: 1,
                             center: new Text(
-                              widget.time_array.length.toString(),
+                              widget.total_shots.toString(),
                               style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
                             ),
                             circularStrokeCap: CircularStrokeCap.round,

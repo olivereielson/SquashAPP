@@ -26,6 +26,7 @@ class HomePage extends StatefulWidget {
   Duration rest_time;
   List<double> corners;
   int start_time;
+
   HomePage(this.cameras, this.number_set, this.round_num, this.rest_time, this.corners, this.start_time);
 
   @override
@@ -36,7 +37,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   List<dynamic> _recognitions;
 
   _HomePageState(this.number_set, this.round_num, this.rest_time, this.corners, this.start_countdown);
-  Color main= Color.fromRGBO(40, 45, 81, 1);
+
+  Color main = Color.fromRGBO(40, 45, 81, 1);
 
   List<double> corners;
   int start_countdown;
@@ -52,7 +54,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Duration rest_time;
   bool resting = false;
 
-
   bool onT = false;
   AnimationController controller;
 
@@ -63,13 +64,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Point p1 = new Point(200, 500);
 
-
-  DateTime start_time, end_time,application_start;
+  DateTime start_time, end_time, application_start;
   List<double> time_array = [];
   List<double> time_array2 = [];
 
   List<double> corner_array = [];
-
 
   double precent_effort = 0;
   double xpoint;
@@ -77,44 +76,42 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Widget center;
 
-
   List<TargetFocus> targets = [];
   GlobalKey keyButton = GlobalKey();
   GlobalKey keyButton4 = GlobalKey();
   GlobalKey keyButton5 = GlobalKey();
 
+
   void showTutorial() {
     TutorialCoachMark(
       context,
-      targets: targets, // List<TargetFocus>
-      colorShadow: Color.fromRGBO(40, 45, 81, 1), // DEFAULT Colors.black
+      targets: targets,
+      // List<TargetFocus>
+      colorShadow: Color.fromRGBO(40, 45, 81, 1),
+      // DEFAULT Colors.black
       // alignSkip: Alignment.bottomRight,
       // textSkip: "SKIP",
       // paddingFocus: 10,
       // opacityShadow: 0.8,
-      onClickTarget: (target){
+      onClickTarget: (target) {
         print(target);
       },
-      onClickOverlay: (target){
+      onClickOverlay: (target) {
         print(target);
       },
       hideSkip: true,
 
-      onSkip: (){
+      onSkip: () {
         print("Finish");
       },
-      onFinish: (){
+      onFinish: () {
         print("finish");
       },
     )..show();
   }
 
   @override
-  void initState()
-
-
-  {
-
+  void initState() {
     make_targets();
 
     super.initState();
@@ -130,52 +127,33 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     ]);
   }
 
-
-  void make_targets(){
-
-    targets.add(
-        TargetFocus(
-            identify: "Target 1",
-            keyTarget: keyButton,
-            contents: [
-              TargetContent(
-
-                  align: ContentAlign.bottom,
-                  child: Container(
-
-                    child:Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "Ghosting Setup",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 20.0
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text("Place your phone in the center of the Tin and drag this box over the T.  This help the artificial intelligence know when you have completed a ghost and are "
-                              "ready "
-                              "for "
-                              "the next one.",
-                            style: TextStyle(
-                                color: Colors.white
-                            ),),
-                        )
-                      ],
-                    ),
-                  )
-              )
-            ]
-        )
-    );
-
-
-
-
+  void make_targets() {
+    targets.add(TargetFocus(identify: "Target 1", keyTarget: keyButton, contents: [
+      TargetContent(
+          align: ContentAlign.bottom,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Ghosting Setup",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Place your phone in the center of the Tin and drag this box over the T.  This help the artificial intelligence know when you have completed a ghost and are "
+                    "ready "
+                    "for "
+                    "the next one.",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ))
+    ]));
   }
 
   Future<void> kill() async {
@@ -326,8 +304,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Widget count_down_timer() {
 
-
-
     return Container(
       width: 200,
       child: Center(
@@ -345,6 +321,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ),
       ),
     );
+
+
+
   }
 
   Widget rest_timer() {
@@ -367,7 +346,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               center = precent_complete_indicator(time_array.length / number_set);
               corner = corners[new Random().nextInt(corners.length)].toInt();
             });
-          }, ringColor: Colors.white,
+          },
+          ringColor: Colors.white,
         ),
       ),
     );
@@ -381,7 +361,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         child: CircularPercentIndicator(
           progressColor: main,
           arcBackgroundColor: Colors.white,
-          arcType: ArcType.FULL,
           lineWidth: 20,
           backgroundColor: Colors.white,
           percent: precent,
@@ -400,43 +379,33 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Future<void> save_data() async {
-
     String box = "Ghosting1";
 
-    if(!Hive.isAdapterRegistered(9)){
-
+    if (!Hive.isAdapterRegistered(9)) {
       Hive.registerAdapter(GhostingAdapter());
-
     }
-
 
     Box<Ghosting> ghost;
 
-    if(Hive.isBoxOpen(box)){
-
-      ghost=Hive.box<Ghosting>(box);
-
-    }else{
-
+    if (Hive.isBoxOpen(box)) {
+      ghost = Hive.box<Ghosting>(box);
+    } else {
       ghost = await Hive.openBox<Ghosting>(box);
-
     }
 
     print(time_array2);
 
-    Ghosting s = Ghosting()..start=application_start..end=DateTime.now()..rest_time=rest_time.inSeconds..rounds=round_num.toInt()..time_array=time_array2..corner_array=corner_array;
+    Ghosting s = Ghosting()
+      ..start = application_start
+      ..end = DateTime.now()
+      ..rest_time = rest_time.inSeconds
+      ..rounds = round_num.toInt()
+      ..time_array = time_array2
+      ..corner_array = corner_array;
 
     print(s.time_array);
 
-
     ghost.add(s);
-
-
-
-
-
-
-
   }
 
   Widget draw_court() {
@@ -499,16 +468,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       //print(recognitions);
 
       try {
+        var x = (recognitions[0]["rect"]["x"] * MediaQuery.of(context).size.width);
+        var w = recognitions[0]["rect"]["w"] * MediaQuery.of(context).size.width;
+        var y = recognitions[0]["rect"]["y"] * MediaQuery.of(context).size.height;
+        var h = recognitions[0]["rect"]["h"] * MediaQuery.of(context).size.height;
 
-        var x = (recognitions[0]["rect"]["x"]*MediaQuery.of(context).size.width);
-        var w = recognitions[0]["rect"]["w"]*MediaQuery.of(context).size.width;
-        var y = recognitions[0]["rect"]["y"]*MediaQuery.of(context).size.height;
-        var h = recognitions[0]["rect"]["h"]*MediaQuery.of(context).size.height;
-
-        double xpos=x+(w~/2);
-        double ypos=y+h;
-
-
+        double xpos = x + (w ~/ 2);
+        double ypos = y + h;
 
         if (is_exersising) {
           if (p1.x < xpos && xpos < p1.x + t_size && p1.y < ypos && ypos < p1.y + t_size) {
@@ -556,8 +522,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 if (round_num <= 0) {
                   kill();
 
-                   Navigator.pop(context);
-
+                  Navigator.pop(context);
                 }
               }
             }
@@ -580,52 +545,49 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       children: [
         Camera(widget.cameras, setRecognitions, showcam, false, 1),
         showcam ? BndBox(_recognitions == null ? [] : _recognitions) : Text(""),
-
         showcam ? t_box() : draw_court(),
-
-       Positioned(
-
-         top: 0,
-
-           right: 20,
-
-           child: SafeArea(
-             child: showcam?IconButton(
-
-               icon: Icon(Icons.help,color: Colors.white,size: 30,),
-               onPressed: (){
-                 showTutorial();
-               },
-
-             ):Text(""),
-           )),
-
+        Positioned(
+            top: 0,
+            right: 20,
+            child: SafeArea(
+              child: showcam
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.help,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        showTutorial();
+                      },
+                    )
+                  : Text(""),
+            )),
         Corner_tree(),
-             Positioned(
-                top: -20,
-                left: (MediaQuery.of(context).size.width - 170) / 2,
-                child: SafeArea(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                        width: 170,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: Color.fromRGBO(40, 45, 81, 1),
-                            border: Border.all(
-                              color: Color.fromRGBO(40, 45, 81, 1),
-                            ),
-                            borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
-                        child: Center(
-                            child: Text(
-                          "Close",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
-                        ))),
-                  ),
-                ))
-           ,
+        Positioned(
+            top: -20,
+            left: (MediaQuery.of(context).size.width - 170) / 2,
+            child: SafeArea(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                    width: 170,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: Color.fromRGBO(40, 45, 81, 1),
+                        border: Border.all(
+                          color: Color.fromRGBO(40, 45, 81, 1),
+                        ),
+                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
+                    child: Center(
+                        child: Text(
+                      "Close",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                    ))),
+              ),
+            )),
         GestureDetector(
           onDoubleTap: () {
             setState(() {
@@ -634,7 +596,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           },
           onLongPress: () async {
             await save_data();
-
             Navigator.pop(context);
           },
           child: SafeArea(
@@ -647,7 +608,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     children: [
                       AnimatedSwitcher(
                         key: keyButton4,
-
                         duration: Duration(milliseconds: 400),
                         child: center,
                         transitionBuilder: (Widget child, Animation<double> animation) {
@@ -665,11 +625,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     ));
   }
 
-
   @override
   dispose() {
     controller.dispose(); // you need this
     super.dispose();
   }
-
 }

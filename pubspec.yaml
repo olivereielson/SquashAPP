@@ -56,6 +56,8 @@ dependencies:
   loading_more_list:
   cool_alert: ^1.0.3
   tutorial_coach_mark:
+  confetti: ^0.5.5
+
 
 
 

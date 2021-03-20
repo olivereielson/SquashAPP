@@ -8,6 +8,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:page_transition/page_transition.dart';
@@ -550,6 +551,9 @@ class GhostScreenState extends State<GhostScreen> {
                           padding: const EdgeInsets.all(10.0),
                           child: GestureDetector(
                             onTap: () {
+
+                              HapticFeedback.lightImpact();
+
                               show_initail_time_picker();
                             },
                             child: input(
@@ -566,6 +570,8 @@ class GhostScreenState extends State<GhostScreen> {
                           padding: const EdgeInsets.all(10.0),
                           child: GestureDetector(
                             onTap: () {
+                              HapticFeedback.lightImpact();
+
                               show_time_picker();
                             },
                             child: input(
@@ -581,8 +587,9 @@ class GhostScreenState extends State<GhostScreen> {
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: GestureDetector(
-                            onTap: () {
-                              show_set_picker();
+                            onTap: () {                              HapticFeedback.lightImpact();
+
+                            show_set_picker();
                             },
                             child: input(
                                 "Number of Ghosts",
@@ -597,8 +604,9 @@ class GhostScreenState extends State<GhostScreen> {
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: GestureDetector(
-                            onTap: () {
-                              show_round_picker();
+                            onTap: () {                              HapticFeedback.lightImpact();
+
+                            show_round_picker();
                             },
                             child: input(
                                 "Number of rounds",
