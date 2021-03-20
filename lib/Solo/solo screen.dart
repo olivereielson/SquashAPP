@@ -948,7 +948,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             pinned: true,
             floating: false,
 
-            delegate: MyDynamicHeader("Solo","Exersise",false),
+            delegate: MyDynamicHeader("Solo","Exercise",false,true),
           ),
 
           SliverPersistentHeader(

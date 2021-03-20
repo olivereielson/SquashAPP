@@ -1,3 +1,4 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 
 
@@ -5,12 +6,13 @@ import 'package:flutter/material.dart';
 class MyDynamicHeader extends SliverPersistentHeaderDelegate {
 
 
-  MyDynamicHeader(this.text1,this.text2,this.ghosting);
+  MyDynamicHeader(this.text1,this.text2,this.ghosting,[this.info=false]);
 
   String text1;
   String text2;
 
   bool ghosting;
+  bool info=false;
 
   int index = 0;
 
@@ -49,6 +51,32 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
         child: SafeArea(
           child: Stack(
             children: [
+
+              Positioned(
+                  top: posy2,
+                  right: 20,
+                  child:info? Row(
+                    children: [
+                      Text("Beta",style: TextStyle(color: Colors.white),),
+                      IconButton(icon: Icon(Icons.info_outline,color: Colors.white,),onPressed: (){
+                        CoolAlert.show(
+                          context: context,
+                          confirmBtnColor: Color.fromRGBO(20, 20, 50, 1),
+                          animType: CoolAlertAnimType.scale,
+                          backgroundColor:Color.fromRGBO(50, 50, 100, 1),
+
+                          title: "Important Information",
+                          flareAnimationName:"play",
+                          flareAsset: "assets/info_check.flr",
+                          type: CoolAlertType.success,
+                          text: "Solo Exercise is still in beta testing.  The Artificial Intelligence has only been taught to play squash on a few courts and might have trouble on your court. ",
+
+                        );
+
+                      },),
+                    ],
+                  ):Text("")),
+
               Positioned(
                   left: posx,
                   top: posy,

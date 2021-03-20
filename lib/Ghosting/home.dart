@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -13,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
 import 'package:squash/extra/hive_classes.dart';
 import 'package:tflite/tflite.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'camera.dart';
 import 'bndbox.dart';
 import 'countdown.dart';
@@ -75,8 +77,46 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Widget center;
 
+
+  List<TargetFocus> targets = [];
+  GlobalKey keyButton = GlobalKey();
+  GlobalKey keyButton4 = GlobalKey();
+  GlobalKey keyButton5 = GlobalKey();
+
+  void showTutorial() {
+    TutorialCoachMark(
+      context,
+      targets: targets, // List<TargetFocus>
+      colorShadow: Color.fromRGBO(40, 45, 81, 1), // DEFAULT Colors.black
+      // alignSkip: Alignment.bottomRight,
+      // textSkip: "SKIP",
+      // paddingFocus: 10,
+      // opacityShadow: 0.8,
+      onClickTarget: (target){
+        print(target);
+      },
+      onClickOverlay: (target){
+        print(target);
+      },
+      hideSkip: true,
+
+      onSkip: (){
+        print("Finish");
+      },
+      onFinish: (){
+        print("finish");
+      },
+    )..show();
+  }
+
   @override
-  void initState() {
+  void initState()
+
+
+  {
+
+    make_targets();
+
     super.initState();
 
     center = count_down_timer();
@@ -88,6 +128,54 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+  }
+
+
+  void make_targets(){
+
+    targets.add(
+        TargetFocus(
+            identify: "Target 1",
+            keyTarget: keyButton,
+            contents: [
+              TargetContent(
+
+                  align: ContentAlign.bottom,
+                  child: Container(
+
+                    child:Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "Ghosting Setup",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 20.0
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text("Place your phone in the center of the Tin and drag this box over the T.  This help the artificial intelligence know when you have completed a ghost and are "
+                              "ready "
+                              "for "
+                              "the next one.",
+                            style: TextStyle(
+                                color: Colors.white
+                            ),),
+                        )
+                      ],
+                    ),
+                  )
+              )
+            ]
+        )
+    );
+
+
+
+
   }
 
   Future<void> kill() async {
@@ -184,6 +272,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         top: p1.y.toDouble(),
         child: Draggable(
           child: Container(
+            key: keyButton,
             width: t_size.toDouble(),
             height: t_size.toDouble(),
             decoration: BoxDecoration(
@@ -493,6 +582,24 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         showcam ? BndBox(_recognitions == null ? [] : _recognitions) : Text(""),
 
         showcam ? t_box() : draw_court(),
+
+       Positioned(
+
+         top: 0,
+
+           right: 20,
+
+           child: SafeArea(
+             child: showcam?IconButton(
+
+               icon: Icon(Icons.help,color: Colors.white,size: 30,),
+               onPressed: (){
+                 showTutorial();
+               },
+
+             ):Text(""),
+           )),
+
         Corner_tree(),
              Positioned(
                 top: -20,
@@ -539,6 +646,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       AnimatedSwitcher(
+                        key: keyButton4,
+
                         duration: Duration(milliseconds: 400),
                         child: center,
                         transitionBuilder: (Widget child, Animation<double> animation) {

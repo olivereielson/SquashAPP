@@ -54,6 +54,8 @@ dependencies:
   animated_icon_button:
   extended_nested_scroll_view:
   loading_more_list:
+  cool_alert: ^1.0.3
+  tutorial_coach_mark:
 
 
 
@@ -82,6 +84,8 @@ flutter:
     - assets/ghost_icon.png
     - assets/ssd_mobilenet.tflite
     - assets/ssd_mobilenet.txt
+    - assets/info_check.flr
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

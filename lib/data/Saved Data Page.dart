@@ -103,15 +103,15 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   void calculate_solo() {
 
-    var n = Array([]);
-
-    List<double> xL =[];
-    List<double> yL =[];
 
 
 
 
+
+    List<double> acc= [];
     for (int i = 0; i < solo_storage_box.length; i++) {
+      var n = Array([]);
+
       for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
         solo_type_pie_chart_data[solo_storage_box.getAt(i).bounces[x].type.toInt()]++;
 
@@ -123,14 +123,14 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
 
       }
+      //print(100-(standardDeviation(n)*100/mean(n)));
+      //accuracy=100-(standardDeviation(n)*100/mean(n));
+      acc.add(100-(standardDeviation(n)*100/mean(n)));
     }
 
-    //double x_avge= xL.reduce((a, b) => a + b)/xL.length;
-    //double y_avge=yL.reduce((a, b) => a + b)/yL.length;
+    print(acc);
 
-
-    print(100-(standardDeviation(n)*100/mean(n)));
-    accuracy=100-(standardDeviation(n)*100/mean(n));
+    accuracy=acc.reduce((a, b) => a + b)/acc.length;
 
     for (int i = 0; i < solo_storage_box.length; i++) {
       if (ave_solo_dur == null) {

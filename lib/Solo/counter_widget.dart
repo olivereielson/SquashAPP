@@ -172,7 +172,10 @@ class counter_widget_state extends State<counter_widget> {
           widget.is_working(is_working);
           sides_done++;
           print("sides done $sides_done");
-          widget.current_side(widget.activities[sides_done]);
+          Future.delayed(Duration.zero, () async {
+            widget.current_side(widget.activities[sides_done]);
+          });
+
         }
       }
 
