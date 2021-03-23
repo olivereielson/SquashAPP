@@ -138,7 +138,7 @@ class header_list extends SliverPersistentHeaderDelegate {
                 height: 50,
               )),
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(15.0),bottomLeft: Radius.circular(15.0))),
+            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(0),bottomLeft: Radius.circular(0))),
 
             child: Stack(
               children: [
@@ -168,7 +168,7 @@ class header_list extends SliverPersistentHeaderDelegate {
   double get maxExtent => 300.0;
 
   @override
-  double get minExtent => 20.0;
+  double get minExtent => 10.0;
 }
 
 

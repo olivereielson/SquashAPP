@@ -29,16 +29,17 @@ class GhostScreen extends StatefulWidget {
   GhostScreenState createState() => new GhostScreenState(cameras);
 }
 
-class GhostScreenState extends State<GhostScreen> {
+class GhostScreenState extends State<GhostScreen> with SingleTickerProviderStateMixin {
   double number_set = 10;
   double round_num = 2;
   Duration rest_time = Duration(seconds: 30);
   final List<CameraDescription> cameras;
   Duration start_time = Duration(seconds: 10);
   List<double> corners = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  Duration round_time = Duration(minutes: 1);
   bool delete_mode = false;
   String name = "";
-  String box = "Cutsom123";
+  String box = "Cutsom1234";
   final _mylistkey = GlobalKey<AnimatedListState>();
   Color main_color = Colors.lightBlueAccent;
   Box<Custom> Exersises;
@@ -53,6 +54,7 @@ class GhostScreenState extends State<GhostScreen> {
     //Colors.pinkAccent,
     Color.fromRGBO(4, 12, 128, 1)
   ];
+  TabController _tabController;
 
   Future<void> load_hive() async {
     Hive.registerAdapter(CustomAdapter());
@@ -65,6 +67,11 @@ class GhostScreenState extends State<GhostScreen> {
 
   @override
   void initState() {
+    _tabController = new TabController(
+      vsync: this,
+      length: 2,
+    );
+
     super.initState();
 
     if (Hive.isBoxOpen(box)) {
@@ -86,7 +93,8 @@ class GhostScreenState extends State<GhostScreen> {
       ..rest_time = rest_time.inSeconds
       ..start_time = start_time.inSeconds
       ..corners = corners
-      ..color_index = Random().nextInt(title_color.length);
+      ..type = 0
+      ..round_time = round_time.inSeconds;
 
     Exersises.add(exersie); // Store this object for the first time
 
@@ -224,6 +232,28 @@ class GhostScreenState extends State<GhostScreen> {
         });
   }
 
+  show_time_set_picker() {
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
+        ),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 250,
+            child: CupertinoTimerPicker(
+              mode: CupertinoTimerPickerMode.ms,
+              initialTimerDuration: round_time,
+              onTimerDurationChanged: (data) {
+                setState(() {
+                  round_time = data;
+                });
+              },
+            ),
+          );
+        });
+  }
+
   show_initail_time_picker() {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
@@ -342,8 +372,16 @@ class GhostScreenState extends State<GhostScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => HomePage(cameras, Hive.box<Custom>(box).getAt(index).number_set, Hive.box<Custom>(box).getAt(index).round_num,
-                              Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time), Hive.box<Custom>(box).getAt(index).corners, Hive.box<Custom>(box).getAt(index).start_time)),
+                          builder: (context) => HomePage(
+                                cameras,
+                                Hive.box<Custom>(box).getAt(index).number_set,
+                                Hive.box<Custom>(box).getAt(index).round_num,
+                                Duration(seconds: Hive.box<Custom>(box).getAt(index).rest_time),
+                                Hive.box<Custom>(box).getAt(index).corners,
+                                Hive.box<Custom>(box).getAt(index).start_time,
+                                Duration(seconds: Hive.box<Custom>(box).getAt(index).round_time),
+                                Hive.box<Custom>(box).getAt(index).type,
+                              )),
                     );
                   },
                   child: Show_Custom_Card(index)),
@@ -417,7 +455,9 @@ class GhostScreenState extends State<GhostScreen> {
                                     ),
                                   ),
                                   Text(
-                                    Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts",
+                                    Hive.box<Custom>(box).getAt(index).type == 1
+                                        ? Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts"
+                                        : Duration(seconds: Hive.box<Custom>(box).getAt(index).round_time).toString().substring(2, 7) + " Round Time",
                                     style: TextStyle(
                                       color: Colors.white60,
                                     ),
@@ -519,7 +559,8 @@ class GhostScreenState extends State<GhostScreen> {
                 ..rest_time = rest_time.inSeconds
                 ..start_time = start_time.inSeconds
                 ..corners = corners
-                ..color_index = Random().nextInt(title_color.length);
+                ..type = 0
+                ..round_time = round_time.inSeconds;
 
               Exersises.add(exersie); // Store this object for the first time
               _mylistkey.currentState.insertItem(0);
@@ -543,169 +584,365 @@ class GhostScreenState extends State<GhostScreen> {
                     floating: false,
                     delegate: header_list(tw()),
                   ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    floating: false,
+                    delegate: _SliverAppBarDelegate2(TabBar(
+                      controller: _tabController,
+                      unselectedLabelStyle: TextStyle(color: Colors.pink),
+                      automaticIndicatorColorAdjustment: false,
+                      indicatorColor: Colors.blue,
+                      labelColor: Colors.white,
+                      tabs: [
+                        new Tab(
+                          text: "Timed",
+                        ),
+                        new Tab(
+                          text: "Count",
+                        ),
+                      ],
+                    )),
+                  ),
                   SliverFixedExtentList(
-                    itemExtent: 130.0,
+                    itemExtent: 700.0,
                     delegate: SliverChildListDelegate(
                       [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GestureDetector(
-                            onTap: () {
+                        TabBarView(
+                          children: [
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
 
-                              HapticFeedback.lightImpact();
-
-                              show_initail_time_picker();
-                            },
-                            child: input(
-                                "Inital Count Down",
-                                start_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                Icon(
-                                  Icons.timer,
-                                  color: Colors.white,
-                                  size: 30,
-                                )),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-
-                              show_time_picker();
-                            },
-                            child: input(
-                                "Rest time",
-                                rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                Icon(
-                                  Icons.timer,
-                                  color: Colors.white,
-                                  size: 30,
-                                )),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GestureDetector(
-                            onTap: () {                              HapticFeedback.lightImpact();
-
-                            show_set_picker();
-                            },
-                            child: input(
-                                "Number of Ghosts",
-                                number_set.toInt().toString(),
-                                Icon(
-                                  EvaIcons.hashOutline,
-                                  color: Colors.white,
-                                  size: 30,
-                                )),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GestureDetector(
-                            onTap: () {                              HapticFeedback.lightImpact();
-
-                            show_round_picker();
-                            },
-                            child: input(
-                                "Number of rounds",
-                                round_num.toInt().toString(),
-                                Icon(
-                                  EvaIcons.hashOutline,
-                                  color: Colors.white,
-                                  size: 30,
-                                )),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: GestureDetector(
-                            onTap: () async {
-                              corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
-
-                              setState(() {});
-                            },
-                            child: input(
-                                "Number of Corners",
-                                corners.length.toInt().toString(),
-                                Icon(
-                                  Icons.apps,
-                                  color: Colors.white,
-                                  size: 30,
-                                )),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  await loadModel();
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds)),
-                                  );
-                                },
-                                child: Center(
-                                  child: Container(
-                                    height: 50,
-                                    width: 150,
-                                    child: Card(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                          Radius.circular(18),
+                                      show_initail_time_picker();
+                                    },
+                                    child: input(
+                                        "Inital Count Down",
+                                        start_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                                        Icon(
+                                          Icons.timer,
+                                          color: Colors.white,
+                                          size: 30,
                                         )),
-                                        elevation: 2,
-                                        color: main,
-                                        child: Center(
-                                            child: Text(
-                                          "Start",
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                        ))),
                                   ),
                                 ),
-                              ),
-                              GestureDetector(
-                                  onTap: () async {
-                                    await text_dialog();
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
 
-                                    if (name != null && name != "") {
-                                      var exersie = Custom()
-                                        ..name = name
-                                        ..number_set = number_set
-                                        ..round_num = round_num
-                                        ..rest_time = rest_time.inSeconds
-                                        ..start_time = start_time.inSeconds
-                                        ..corners = corners
-                                        ..color_index = Random().nextInt(title_color.length);
+                                      show_time_picker();
+                                    },
+                                    child: input(
+                                        "Rest time",
+                                        rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                                        Icon(
+                                          Icons.timer,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
 
-                                      Exersises.add(exersie); // Store this object for the first time
-                                      _mylistkey.currentState.insertItem(0);
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 200,
-                                    height: 50,
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                        Radius.circular(18),
-                                      )),
-                                      elevation: 2,
-                                      color: main,
-                                      child: Center(
-                                          child: Text(
-                                        "Save Custom Set",
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                      )),
-                                    ),
-                                  )),
-                            ],
-                          ),
+                                      show_time_set_picker();
+                                    },
+                                    child: input(
+                                        "Time Per Round",
+                                        round_time.toString().substring(2, 7),
+                                        Icon(
+                                          Icons.timer,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+
+                                      show_round_picker();
+                                    },
+                                    child: input(
+                                        "Number of rounds",
+                                        round_num.toInt().toString(),
+                                        Icon(
+                                          EvaIcons.hashOutline,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
+
+                                      setState(() {});
+                                    },
+                                    child: input(
+                                        "Number of Corners",
+                                        corners.length.toInt().toString(),
+                                        Icon(
+                                          Icons.apps,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          await loadModel();
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds, round_time, 0)),
+                                          );
+                                        },
+                                        child: Center(
+                                          child: Container(
+                                            height: 50,
+                                            width: 150,
+                                            child: Card(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                  Radius.circular(18),
+                                                )),
+                                                elevation: 2,
+                                                color: main,
+                                                child: Center(
+                                                    child: Text(
+                                                  "Start",
+                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                                ))),
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                          onTap: () async {
+                                            await text_dialog();
+
+                                            if (name != null && name != "") {
+                                              var exersie = Custom()
+                                                ..name = name
+                                                ..number_set = number_set
+                                                ..round_num = round_num
+                                                ..rest_time = rest_time.inSeconds
+                                                ..start_time = start_time.inSeconds
+                                                ..corners = corners
+                                                ..type = _tabController.index
+                                                ..round_time = round_time.inSeconds;
+
+                                              Exersises.add(exersie); // Store this object for the first time
+                                              _mylistkey.currentState.insertItem(0);
+                                            }
+                                          },
+                                          child: Container(
+                                            width: 200,
+                                            height: 50,
+                                            child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.all(
+                                                Radius.circular(18),
+                                              )),
+                                              elevation: 2,
+                                              color: main,
+                                              child: Center(
+                                                  child: Text(
+                                                "Save Custom Set",
+                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                              )),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+
+                                      show_initail_time_picker();
+                                    },
+                                    child: input(
+                                        "Inital Count Down",
+                                        start_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                                        Icon(
+                                          Icons.timer,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+
+                                      show_time_picker();
+                                    },
+                                    child: input(
+                                        "Rest time",
+                                        rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                                        Icon(
+                                          Icons.timer,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+
+                                      show_set_picker();
+                                    },
+                                    child: input(
+                                        "Number of Ghosts",
+                                        number_set.toInt().toString(),
+                                        Icon(
+                                          EvaIcons.hashOutline,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+
+                                      show_round_picker();
+                                    },
+                                    child: input(
+                                        "Number of rounds",
+                                        round_num.toInt().toString(),
+                                        Icon(
+                                          EvaIcons.hashOutline,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
+
+                                      setState(() {});
+                                    },
+                                    child: input(
+                                        "Number of Corners",
+                                        corners.length.toInt().toString(),
+                                        Icon(
+                                          Icons.apps,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          await loadModel();
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds, round_time, 1)),
+                                          );
+                                        },
+                                        child: Center(
+                                          child: Container(
+                                            height: 50,
+                                            width: 150,
+                                            child: Card(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                  Radius.circular(18),
+                                                )),
+                                                elevation: 2,
+                                                color: main,
+                                                child: Center(
+                                                    child: Text(
+                                                  "Start",
+                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                                ))),
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                          onTap: () async {
+                                            await text_dialog();
+
+                                            if (name != null && name != "") {
+                                              var exersie = Custom()
+                                                ..name = name
+                                                ..number_set = number_set
+                                                ..round_num = round_num
+                                                ..rest_time = rest_time.inSeconds
+                                                ..start_time = start_time.inSeconds
+                                                ..corners = corners
+                                                ..type = _tabController.index
+                                                ..round_time = round_time.inSeconds;
+
+                                              Exersises.add(exersie); // Store this object for the first time
+                                              _mylistkey.currentState.insertItem(0);
+                                            }
+                                          },
+                                          child: Container(
+                                            width: 200,
+                                            height: 50,
+                                            child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.all(
+                                                Radius.circular(18),
+                                              )),
+                                              elevation: 2,
+                                              color: main,
+                                              child: Center(
+                                                  child: Text(
+                                                "Save Custom Set",
+                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                              )),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          controller: _tabController,
                         ),
                       ],
                     ),
@@ -769,7 +1006,10 @@ class Custom extends HiveObject {
   List<double> corners;
 
   @HiveField(6)
-  int color_index;
+  int type;
+
+  @HiveField(7)
+  int round_time;
 }
 
 class CustomAdapter extends TypeAdapter<Custom> {
@@ -785,7 +1025,8 @@ class CustomAdapter extends TypeAdapter<Custom> {
       ..rest_time = reader.read()
       ..start_time = reader.read()
       ..corners = reader.read()
-      ..color_index = reader.read();
+      ..type = reader.read()
+      ..round_time = reader.read();
   }
 
   @override
@@ -796,7 +1037,8 @@ class CustomAdapter extends TypeAdapter<Custom> {
     writer.write(obj.rest_time);
     writer.write(obj.start_time);
     writer.write(obj.corners);
-    writer.write(obj.color_index);
+    writer.write(obj.type);
+    writer.write(obj.round_time);
   }
 }
 
@@ -838,5 +1080,30 @@ class LogoPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
+  }
+}
+
+class _SliverAppBarDelegate2 extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate2(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return new Container(
+      color: Color.fromRGBO(20, 20, 50, 1),
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate2 oldDelegate) {
+    return false;
   }
 }

@@ -41,11 +41,11 @@ class SoloHome extends StatefulWidget {
   SoloHome({this.cameras, this.start_camera, this.shot_count, this.time, this.type, this.sides});
 
   @override
-  SoloHomeState createState() => new SoloHomeState(cameras,start_camera);
+  SoloHomeState createState() => new SoloHomeState(cameras, start_camera);
 }
 
 class SoloHomeState extends State<SoloHome> {
-  SoloHomeState(this.cameras,this.camera);
+  SoloHomeState(this.cameras, this.camera);
 
   List<dynamic> _recognitions;
 
@@ -57,9 +57,12 @@ class SoloHomeState extends State<SoloHome> {
   bool show_stuff = true;
   bool front_Camera = true;
 
-  bool is_working=false;
+  bool is_working = false;
 
   String ball_conf = "";
+
+
+  DateTime detection;
 
   CameraController controller;
   bool isDetecting = false;
@@ -75,8 +78,7 @@ class SoloHomeState extends State<SoloHome> {
 
   bool back_hand = false;
 
-  bool pause=false;
-
+  bool pause = false;
 
   List<dynamic> scr_forehand = [
     [810, 1200],
@@ -111,7 +113,7 @@ class SoloHomeState extends State<SoloHome> {
 
   bool on_ground = false;
 
-  int current_side=0;
+  int current_side = 0;
 
   var H;
 
@@ -132,7 +134,11 @@ class SoloHomeState extends State<SoloHome> {
   double threshold = 0.4;
   int numResultsPerClass = 1;
   ResolutionPreset res = ResolutionPreset.high;
-  int camera ;
+  int camera;
+
+  int dets=0;
+
+
   final List<CameraDescription> cameras;
 
   //bouce
@@ -143,6 +149,12 @@ class SoloHomeState extends State<SoloHome> {
   @override
   void initState() {
     currentBubbleSize = touchBubbleSize;
+    current_side = widget.sides[0];
+    if (current_side < 2) {
+      back_hand = false;
+    } else {
+      back_hand = true;
+    }
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       //DeviceOrientation.landscapeLeft,
@@ -158,40 +170,28 @@ class SoloHomeState extends State<SoloHome> {
   Future<void> saved_points() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if(!prefs.containsKey("p2.y")){
-
+    if (!prefs.containsKey("p2.y")) {
       prefs.setDouble("p0.x", 324.0);
-      prefs.setDouble("p0.y",  489.0);
+      prefs.setDouble("p0.y", 489.0);
 
-      prefs.setDouble("p1.x",  157.0);
-      prefs.setDouble("p1.y",  498.0);
+      prefs.setDouble("p1.x", 157.0);
+      prefs.setDouble("p1.y", 498.0);
 
-      prefs.setDouble("p2.x",  349.0);
-      prefs.setDouble("p2.y",  535.0);
+      prefs.setDouble("p2.x", 349.0);
+      prefs.setDouble("p2.y", 535.0);
 
-      prefs.setDouble("p3.x",  133.0);
-      prefs.setDouble("p3.y",  543.0);
-
-
-
-
-
-    }else{
-
+      prefs.setDouble("p3.x", 133.0);
+      prefs.setDouble("p3.y", 543.0);
+    } else {
       points[0] = Point(prefs.getDouble("p0.x"), prefs.getDouble("p0.y"));
       points[1] = Point(prefs.getDouble("p1.x"), prefs.getDouble("p1.y"));
       points[2] = Point(prefs.getDouble("p2.x"), prefs.getDouble("p2.y"));
       points[3] = Point(prefs.getDouble("p3.x"), prefs.getDouble("p3.y"));
 
-
-
       generate_cout_point();
 
       setState(() {});
-
     }
-
-
   }
 
   void generate_cout_point() {
@@ -222,17 +222,12 @@ class SoloHomeState extends State<SoloHome> {
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
           ball_conf = ((re["confidenceInClass"] * 100).toString());
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
-          if(is_working&&!pause){
-
-            if(current_side==1||current_side==3){
+          if (is_working && !pause) {
+            if (current_side == 1 || current_side == 3) {
               smartbounce_service_box(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
-
-            }else{
-
+            } else {
               smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
-
             }
-
           }
         }
       });
@@ -256,6 +251,9 @@ class SoloHomeState extends State<SoloHome> {
 
         controller.startImageStream((CameraImage img) async {
           if (!isDetecting) {
+
+            detection=DateTime.now();
+
             isDetecting = true;
             Tflite.detectObjectOnFrame(
                     bytesList: img.planes.map((plane) {
@@ -267,7 +265,8 @@ class SoloHomeState extends State<SoloHome> {
                     threshold: threshold,
                     numResultsPerClass: numResultsPerClass)
                 .then((recognitions) {
-              //print(recognitions);
+
+                  print(DateTime.now().difference(detection));
 
               setRecognitions2(recognitions, img.height, img.width);
               isDetecting = false;
@@ -277,12 +276,9 @@ class SoloHomeState extends State<SoloHome> {
       });
     }
   }
-  
-  void smartbounce(x, y, h)   {
 
-
-
-    if (y < dst_point[0].y - 30&&x>dst_point[0].x) {
+  void smartbounce(x, y, h) {
+    if (y < dst_point[0].y - 30 && x > dst_point[0].x) {
       below = false;
     }
 
@@ -298,12 +294,9 @@ class SoloHomeState extends State<SoloHome> {
           dst_point[0].y - 30 < mid_om &&
           mid_om - last_bounce[len - 5].y > 15 &&
           !below) {
-
-
         double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
 
         double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
-
 
         List<dynamic> dst = [
           [points[2].x, points[2].y],
@@ -349,12 +342,10 @@ class SoloHomeState extends State<SoloHome> {
           temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
         }
 
-
         setState(() {
           bounces.add(temp);
-
         });
-        total_bounces.add(new Bounce(temp.x,temp.y,current_side.toDouble(),DateTime.now()));
+        total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
 
         //total_bounces.add(temp);
 
@@ -368,9 +359,8 @@ class SoloHomeState extends State<SoloHome> {
     last_bounce.add(Point(x, y));
   }
 
-  void smartbounce_service_box(x, y, h)   {
-
-    if (y < dst_point[0].y - 30&&x>dst_point[0].x) {
+  void smartbounce_service_box(x, y, h) {
+    if (y < dst_point[0].y - 30 && x > dst_point[0].x) {
       below = false;
     }
 
@@ -386,8 +376,6 @@ class SoloHomeState extends State<SoloHome> {
           dst_point[0].y - 30 < mid_om &&
           mid_om - last_bounce[len - 5].y > 15 &&
           !below) {
-
-
         List<dynamic> dst = [
           [points[2].x, points[2].y],
           [points[3].x, points[3].y],
@@ -403,14 +391,9 @@ class SoloHomeState extends State<SoloHome> {
 
         temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
 
+        List<int> c = back_hand ? [0, 280, 930, 1200] : [810, 1080, 930, 1200];
 
-
-        List<int> c =  back_hand ?[0,280,930,1200]:[810,1080,930,1200];
-
-
-
-        if(temp.x>c[0] && temp.x<c[1] && temp.y>c[2]  && temp.y<c[3] ){
-
+        if (temp.x > c[0] && temp.x < c[1] && temp.y > c[2] && temp.y < c[3]) {
           ball.add(Positioned(
               left: last_bounce[last_bounce.length - 3].x,
               top: last_bounce[last_bounce.length - 3].y - h,
@@ -420,15 +403,9 @@ class SoloHomeState extends State<SoloHome> {
                 color: Colors.black,
               )));
 
-
-
           bounces.add(temp);
-          total_bounces.add(new Bounce(temp.x,temp.y,current_side.toDouble(),DateTime.now()));
-
-
-        }else{
-
-
+          total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
+        } else {
           ball.add(Positioned(
               left: last_bounce[last_bounce.length - 3].x,
               top: last_bounce[last_bounce.length - 3].y - h,
@@ -437,13 +414,9 @@ class SoloHomeState extends State<SoloHome> {
                 size: 15,
                 color: Colors.redAccent,
               )));
-
-
         }
         last_bounce.clear();
         below = true;
-
-
       } else {
         last_bounce.removeAt(len - 7);
       }
@@ -451,8 +424,6 @@ class SoloHomeState extends State<SoloHome> {
 
     last_bounce.add(Point(x, y));
   }
-
-
 
   Point hom_trans(x, y, H) {
     var nums = Array2d([
@@ -469,10 +440,6 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   Widget extra() {
-
-
-
-
     return Stack(
       children: [
         CustomPaint(
@@ -540,18 +507,12 @@ class SoloHomeState extends State<SoloHome> {
                     Navigator.pop(context);
                   }),
               IconButton(
-                  icon: Icon(pause?Icons.play_arrow:Icons.pause, color: Colors.white),
+                  icon: Icon(pause ? Icons.play_arrow : Icons.pause, color: Colors.white),
                   onPressed: () {
-
                     setState(() {
-
-                      pause=!pause;
-
+                      pause = !pause;
                     });
-
                   }),
-
-
               IconButton(
                   icon: Icon(Icons.camera_alt, color: Colors.white),
                   onPressed: () {
@@ -606,7 +567,7 @@ class SoloHomeState extends State<SoloHome> {
 
     controller.startImageStream((CameraImage img) async {
       if (!isDetecting) {
-        //isDetecting = true;
+        isDetecting = true;
 
         Tflite.detectObjectOnFrame(
                 bytesList: img.planes.map((plane) {
@@ -619,6 +580,10 @@ class SoloHomeState extends State<SoloHome> {
                 numResultsPerClass: numResultsPerClass)
             .then((recognitions) {
           //print(recognitions);
+
+
+
+
 
           setRecognitions2(recognitions, img.height, img.width);
           isDetecting = false;
@@ -717,8 +682,8 @@ class SoloHomeState extends State<SoloHome> {
       double y1 = ((bounces[i].y * h) / 1645) + offset;
 
       bounce.add(Positioned(
-        top: y1 ,
-        left: x1 ,
+        top: y1,
+        left: x1,
         child: Icon(
           Icons.circle,
           size: 10,
@@ -823,41 +788,29 @@ class SoloHomeState extends State<SoloHome> {
 
     String box = "Solo1";
 
-    if(!Hive.isAdapterRegistered(5)){
-
+    if (!Hive.isAdapterRegistered(5)) {
       Hive.registerAdapter(Solo_stroage_Adapter());
-
     }
 
-    if(!Hive.isAdapterRegistered(6)){
-
+    if (!Hive.isAdapterRegistered(6)) {
       Hive.registerAdapter(BounceAdapter());
-
     }
-
 
     var solo;
 
-    if(Hive.isBoxOpen(box)){
-
-      solo=Hive.box<Solo_stroage>(box);
-
-    }else{
-
+    if (Hive.isBoxOpen(box)) {
+      solo = Hive.box<Solo_stroage>(box);
+    } else {
       solo = await Hive.openBox<Solo_stroage>(box);
-
     }
 
-    var s = Solo_stroage()..start=start_time..end=DateTime.now()..bounces=total_bounces;
-
-
+    var s = Solo_stroage()
+      ..start = start_time
+      ..end = DateTime.now()
+      ..bounces = total_bounces;
 
     solo.add(s);
-
-
-
   }
-
 
   void _startDragging(Offset newPosition) {
     setState(() {
@@ -899,14 +852,7 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   @override
-  Widget build(BuildContext context)
-
-
-  {
-
-
-
-
+  Widget build(BuildContext context) {
     return PageView(
       scrollDirection: Axis.horizontal,
       physics: NeverScrollableScrollPhysics(),
@@ -926,7 +872,6 @@ class SoloHomeState extends State<SoloHome> {
                   child: camera_preview(),
                 ),
 
-                BndBoxSolo(_recognitions == null ? [] : _recognitions),
 
                 show_stuff ? extra() : Text(""),
 
@@ -941,33 +886,22 @@ class SoloHomeState extends State<SoloHome> {
                         counter_value: bounces.length,
                         counter_goal: widget.shot_count,
                         activities: widget.sides,
-
                         pause: pause,
-
-                        is_working: (bool){
-
-                          is_working=bool;
-                          if(!is_working){
+                        is_working: (bool) {
+                          is_working = bool;
+                          if (!is_working) {
                             bounces.clear();
-
                           }
-
-
                         },
-
-
                         done: (bool) async {
                           await save2();
-                          await Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: Finish_Screen_Solo(total_bounces.length,DateTime.now().difference(start_time).toString()
-                              .substring(0,7))));
-
-
-
+                          await Navigator.push(context,
+                              PageTransition(type: PageTransitionType.bottomToTop, child: Finish_Screen_Solo(total_bounces.length, DateTime.now().difference(start_time).toString().substring(0, 7))));
 
                           Navigator.pop(context);
                         },
                         current_side: (int) {
-                          current_side=int;
+                          //current_side=int;
 
                           print(int);
 
@@ -984,17 +918,19 @@ class SoloHomeState extends State<SoloHome> {
                             bounces.clear();
                             ball.clear();
                           });
-
                         },
                       ),
 
                 Positioned(top: 400, right: 40, child: Text(ball_conf)),
 
-                show_stuff
-                    ? Stack(
+
+                Stack(
                         children: ball,
-                      )
-                    : Text(""),
+                      ),
+
+                BndBoxSolo(_recognitions == null ? [] : _recognitions),
+
+
               ]),
             ),
           ],

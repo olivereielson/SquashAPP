@@ -52,7 +52,7 @@ class MyPainter extends CustomPainter {
 
     final paint = Paint()
       ..color =Color.fromRGBO(40, 45, 81, 1)
-      ..strokeWidth = 9
+      ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
     final paint2 = Paint()

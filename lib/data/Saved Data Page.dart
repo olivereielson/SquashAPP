@@ -77,14 +77,17 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     Colors.grey,
     Color.fromRGBO(20, 20, 60, 1),
     Color(0xff044d7c),
-    Colors.lightBlue,
-    Colors.lightBlue,
-    Colors.lightBlue,
-    Colors.lightBlue,
-    Colors.lightBlue,
-    Colors.lightBlue,
-    Colors.lightBlue,
+    Color.fromRGBO(20, 20, 60, 1),
+    Colors.lightBlueAccent,
+    Color.fromRGBO(20, 20, 80, 1),
+    Colors.indigoAccent,
+    Colors.blueGrey,
+    Color.fromRGBO(20, 50, 120, 1),
+    Colors.indigo
   ];
+
+  List<BarChartGroupData> barchrt=[];
+  List<double> single_corner_speed=[0,0,0,0,0,0,0,0,0,0];
 
   TabController _tabController;
 
@@ -113,6 +116,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
       var n = Array([]);
 
       for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
+
         solo_type_pie_chart_data[solo_storage_box.getAt(i).bounces[x].type.toInt()]++;
 
         //xL.add(solo_storage_box.getAt(i).bounces[x].x_pos);
@@ -125,10 +129,19 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
       }
       //print(100-(standardDeviation(n)*100/mean(n)));
       //accuracy=100-(standardDeviation(n)*100/mean(n));
-      acc.add(100-(standardDeviation(n)*100/mean(n)));
+
+
+      if(n.length!=0){
+
+        acc.add(100-(standardDeviation(n)*100/mean(n)));
+
+      }
+
+
     }
 
     //print(acc);
+
 
     accuracy=acc.reduce((a, b) => a + b)/acc.length;
 
@@ -207,10 +220,54 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     for (int i = 0; i < ghosting_box.length; i++) {
       for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
         ghost_type_pie_chart_data[ghosting_box.getAt(i).corner_array[x].toInt()]++;
+
+        int con_index=ghosting_box.getAt(i).corner_array[x].toInt();
+
+        if(single_corner_speed[con_index]==0){
+
+          single_corner_speed[con_index]=ghosting_box.getAt(i).time_array[x];
+
+        }else{
+
+          single_corner_speed[con_index]=(single_corner_speed[con_index]+ghosting_box.getAt(i).time_array[x])/2;
+
+
+        }
+
+
       }
     }
-    //
-    // print(ghost_type_pie_chart_data);
+
+    barchrt.clear();
+    for (int i = 0; i < single_corner_speed.length; i++) {
+
+      barchrt.add( BarChartGroupData(
+        x: i,
+
+        barRods: [
+          BarChartRodData(
+            y:single_corner_speed[i],
+            colors: [type_pie_color[9]] ,
+            width: 20,
+
+            backDrawRodData: BackgroundBarChartRodData(
+              show: true,
+              y: 20,
+
+
+              colors: [Colors.grey.withOpacity(0.2)],
+            ),
+          ),
+        ],
+      ),
+      );
+
+
+    }
+
+
+
+
   }
 
   Future<void> load_hive() async {
@@ -267,7 +324,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 child: LineChart(
                   LineChartData(
                       gridData: FlGridData(
-                        show: true,
+                        show: false,
                         drawHorizontalLine: true,
                         getDrawingVerticalLine: (value) {
                           return FlLine(
@@ -283,7 +340,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         },
                       ),
                       lineTouchData: LineTouchData(
-                          enabled: true,
+                          enabled: false,
                           touchTooltipData: LineTouchTooltipData(
                             tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
                           )),
@@ -307,10 +364,10 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                             fontSize: 10,
                           ),
                           getTitles: (val) {
-                            return val.toInt().toString() + " secs";
+                            return val.toStringAsFixed(1)+ " secs";
                           },
                           reservedSize: 28,
-                          margin: 12,
+                          margin: 20,
                           interval: 0.5,
                         ),
                       ),
@@ -445,6 +502,129 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     );
   }
 
+  Widget speed2(){
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+
+
+      children: [
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Average Conner Ghosting Speed",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+          child: BarChart(
+            BarChartData(
+
+
+
+              barGroups: barchrt,
+
+              borderData: FlBorderData(
+                show: false,
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: SideTitles(
+                  showTitles: true,
+                  getTextStyles: (value) =>
+                  const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14),
+                  margin: 16,
+                  rotateAngle: 90,
+                  getTitles: (double value) {
+                    switch (value.toInt()) {
+                      case 0:
+                        return 'FL';
+                      case 1:
+                        return 'FR';
+                      case 2:
+                        return 'FML';
+                      case 3:
+                        return 'FMR';
+                      case 4:
+                        return 'ML';
+                      case 5:
+                        return 'MR';
+                      case 6:
+                        return 'BML';
+                      case 7:
+                        return 'BMR';
+                      case 8:
+                        return 'BL';
+                      case 9:
+                        return 'BR';
+                      case 10:
+                        return 'S';
+                      default:
+                        return '';
+                    }
+                  },
+                ),
+                leftTitles: SideTitles(
+                  showTitles: false,
+                ),
+              ),
+              barTouchData: BarTouchData(
+                touchTooltipData: BarTouchTooltipData(
+                    tooltipBgColor:     Color.fromRGBO(20, 20, 60, 1),
+
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      String weekDay;
+                      switch (group.x.toInt()) {
+                        case 0:
+                          weekDay = 'Front Left';
+                          break;
+                        case 1:
+                          weekDay = 'Front Right';
+                          break;
+                        case 2:
+                          weekDay = 'Front Middle Left';
+                          break;
+                        case 3:
+                          weekDay = 'Front Middle Right';
+                          break;
+                        case 4:
+                          weekDay = 'Left Middle';
+                          break;
+                        case 5:
+                          weekDay = 'Right Middle';
+                          break;
+                        case 6:
+                          weekDay = 'Left Back Middle';
+                          break;
+                        case 7:
+                          weekDay = 'right Back Middle';
+                          break;
+                        case 8:
+                          weekDay = 'Left Back';
+                          break;
+                        case 9:
+                          weekDay = 'Right Back';
+                          break;
+
+                      }
+                      return BarTooltipItem(
+                          weekDay + '\n' + (rod.y.toInt() ).toString()+" Seconds", TextStyle(color: Colors.white));
+                    }),
+                touchCallback: (barTouchResponse) {
+                },
+              ),
+            ),
+
+
+          ),
+        ),
+      ],
+    );
+
+
+
+  }
+
   Widget type_pie_chart() {
     var sum = solo_type_pie_chart_data.reduce((a, b) => a + b);
 
@@ -534,7 +714,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     Container(
                       height: 25,
                       width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[1], borderRadius: BorderRadius.all(Radius.circular(5))),
+                      decoration: BoxDecoration(color: type_pie_color[2], borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -550,7 +730,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     Container(
                       height: 25,
                       width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[2], borderRadius: BorderRadius.all(Radius.circular(5))),
+                      decoration: BoxDecoration(color: type_pie_color[1], borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -1079,8 +1259,15 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   ],
                 ),
               ),
-              Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: Speed())),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: Speed())),
+              ),
               //Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: ghost_type_pie_chart())),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),child: speed2(),),
+              )
             ],
           );
         } else {
@@ -1131,6 +1318,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   Widget percsion(){
 
+    //print(accuracy);
     return Container(
 
       width: MediaQuery.of(context).size.width,

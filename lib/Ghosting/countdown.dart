@@ -10,6 +10,7 @@ class CountDown extends StatefulWidget {
 
   CountDown(this._start,{this.done});
 
+
   @override
   _CountDownState createState() => new _CountDownState(_start);
 }
@@ -38,20 +39,26 @@ class _CountDownState extends State<CountDown> {
           oneSec,
           (Timer timer) {
 
-            setState(
-                  () {
-                if (_start < 1) {
-                  timer.cancel();
-                  print("hehee");
-                  _start=100;
-                  _timer.cancel();
-                  widget.done(true);
-                } else {
-                  _start = _start - 1;
 
-                }
-              },
-            );
+            if(_timer!=null){
+              setState(
+                    () {
+                  if (_start < 1) {
+                    timer.cancel();
+                    print("hehee");
+                    _start=100;
+                    _timer.cancel();
+                    widget.done(true);
+                    dispose();
+
+                  } else {
+                    _start = _start - 1;
+
+                  }
+                },
+              );
+            }
+
           },
         );
       },
@@ -86,6 +93,7 @@ class _CountDownState extends State<CountDown> {
     if(_timer!=null){
       _timer.cancel();
     }
+
 
     super.dispose();
   }

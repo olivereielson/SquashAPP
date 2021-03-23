@@ -85,7 +85,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: 150,
+                height: 200,
                 decoration: BoxDecoration(
                   color: Color.fromRGBO(40, 45, 81, 1),
                   border: Border.all(

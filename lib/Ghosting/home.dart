@@ -24,10 +24,12 @@ class HomePage extends StatefulWidget {
   double number_set = 0;
   double round_num = 0;
   Duration rest_time;
+  Duration round_time;
   List<double> corners;
   int start_time;
+  int type;
 
-  HomePage(this.cameras, this.number_set, this.round_num, this.rest_time, this.corners, this.start_time);
+  HomePage(this.cameras, this.number_set, this.round_num, this.rest_time, this.corners, this.start_time,this.round_time,this.type);
 
   @override
   _HomePageState createState() => new _HomePageState(number_set, round_num, rest_time, corners, start_time);
@@ -312,7 +314,20 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           done: (t) {
             setState(() {
               is_exersising = true;
-              center = precent_complete_indicator(time_array.length / number_set);
+
+              if(widget.type==0){
+
+                center=work_timer();
+
+
+              }else{
+
+                center = precent_complete_indicator(time_array.length / number_set);
+
+              }
+
+
+
               corner = corners[new Random().nextInt(corners.length)].toInt();
               start_time = DateTime.now();
               showcam = false;
@@ -326,6 +341,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   }
 
+
+
+
   Widget rest_timer() {
     return Container(
       key: Key("time"),
@@ -337,13 +355,24 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           width: 320,
           duration: rest_time.inSeconds,
           fillColor: main,
-          strokeWidth: 10,
+          strokeWidth: 30,
+
           isReverse: true,
           textStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 70),
           onComplete: () {
             setState(() {
               resting = !resting;
-              center = precent_complete_indicator(time_array.length / number_set);
+
+              if(widget.type==0){
+
+                center=work_timer();
+
+              }else{
+
+                center = precent_complete_indicator(time_array.length / number_set);
+
+              }
+
               corner = corners[new Random().nextInt(corners.length)].toInt();
             });
           },
@@ -353,14 +382,54 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
+  Widget work_timer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Container(
+          width: 200,
+          height: 200,
+          child: Center(
+            child: CircularCountDownTimer(
+              height: 200,
+              width: 200,
+              duration: widget.round_time.inSeconds,
+              fillColor: main,
+              strokeWidth: 20,
+              isReverse: true,
+              textStyle: TextStyle(color: Colors.black38, fontWeight: FontWeight.bold, fontSize: 70),
+              onComplete: () {
+                setState(() {
+                  resting = true;
+                  time_array.clear();
+                  round_num--;
+                  corner = 10;
+                  center = rest_timer();
+                });
+                if (round_num <= 0) {
+                  kill();
+
+                  Navigator.pop(context);
+                }
+              },
+              ringColor: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
   Widget precent_complete_indicator(double precent) {
+
+
     return Center(
       child: Container(
         width: 200,
         height: 200,
         child: CircularPercentIndicator(
           progressColor: main,
-          arcBackgroundColor: Colors.white,
           lineWidth: 20,
           backgroundColor: Colors.white,
           percent: precent,
@@ -509,7 +578,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 //time_array
                 print(time_array);
 
-                if (time_array.length == number_set) {
+                if (time_array.length == number_set && widget.type==1) {
                   resting = true;
                   time_array.clear();
                   round_num--;

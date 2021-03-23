@@ -131,7 +131,7 @@ class counter_widget_state extends State<counter_widget> {
                 setState(() {
                   is_working = true;
                   widget.is_working(is_working);
-
+                  widget.current_side(widget.activities[sides_done]);
                   _start = widget.time.inSeconds;
                   startTimer();
                 });
@@ -217,6 +217,7 @@ class counter_widget_state extends State<counter_widget> {
               onTap: () {
                 setState(() {
                   is_working = true;
+                  widget.current_side(widget.activities[sides_done]);
                   widget.is_working(is_working);
 
                   _start = 0;
@@ -241,6 +242,7 @@ class counter_widget_state extends State<counter_widget> {
 
   @override
   Widget build(BuildContext context) {
+
     return Positioned(
       top: 0,
       left: (MediaQuery.of(context).size.width - 320) / 2,
@@ -258,6 +260,7 @@ class counter_widget_state extends State<counter_widget> {
   @override
   void initState() {
     super.initState();
+
   }
 
   @override
