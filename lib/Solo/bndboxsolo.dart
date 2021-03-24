@@ -62,7 +62,16 @@ class BndBoxSolo extends StatelessWidget {
     }
 
 
-    return results.length > 0 ? Stack(children: _renderBoxes()) : Container(child: Center(child: Text("")),);
+
+    return results.length > 0 ? Stack(children: _renderBoxes()) : Container(
+
+      height: 50,
+      width: 50,
+      color: Colors.greenAccent,
+
+
+
+      child: Center(child: Text("")),);
   }
 }
 

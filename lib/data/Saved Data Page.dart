@@ -314,7 +314,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
               padding: const EdgeInsets.all(25.0),
               child: Text(
                 "Average Ghosting Speed",
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
+                style: TextStyle( fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
             Container(
@@ -532,7 +532,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 bottomTitles: SideTitles(
                   showTitles: true,
                   getTextStyles: (value) =>
-                  const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14),
+                      TextStyle( fontWeight: FontWeight.bold, fontSize: 14,color: Colors.grey),
                   margin: 16,
                   rotateAngle: 90,
                   getTitles: (double value) {
@@ -1215,12 +1215,16 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
           if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1") && solo_storage_box.length + ghosting_box.length != 0) {
             return CustomScrollView(
               slivers: [
-                SliverOverlapInjector(
+
+
+                 SliverOverlapInjector(
                   // This is the flip side of the SliverOverlapAbsorber
                   // above.
 
                   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                 ),
+
+
                 SliverAnimatedList(
                     key: _listKey, initialItemCount: solo_storage_box.length, itemBuilder: (context, index, animation) => SizeTransition(sizeFactor: animation, child: Solo_Saved(index))),
                 SliverAnimatedList(key: _listKey2, initialItemCount: ghosting_box.length, itemBuilder: (context, index, animation) => SizeTransition(sizeFactor: animation, child: ghost_saved(index))),
@@ -1247,7 +1251,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                child: Card(elevation: 10, color: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: resting())),
+                child: Card(elevation: 10,  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: resting())),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -1377,6 +1381,9 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -1430,6 +1437,69 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
           ),
         ),
       ),
+    );
+
+    return CustomScrollView(
+
+      slivers: [
+
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+          delegate: MyDynamicHeader("Data", "Analytics", false),
+        ),
+
+        SliverPersistentHeader(
+          floating: false,
+          pinned: true,
+          delegate: _SliverAppBarDelegate(
+            TabBar(
+                indicatorColor: Colors.lightBlueAccent,
+                tabs: [
+                  new Tab(
+                    //  icon: new Icon(Icons.sports_tennis),
+                    text: "Solo",
+                  ),
+                  new Tab(
+                    text: "Ghosting",
+                  ),
+                  new Tab(
+                    // icon: new Icon(Icons.save),
+                    text: "Saved",
+                  ),
+                ],
+                controller: _tabController),
+          ),
+        ),
+
+
+        SliverFixedExtentList(
+
+          delegate: SliverChildListDelegate(
+
+              [
+
+                TabBarView(
+                  children: [
+                    solo_stat(),
+                    ghost_stat(),
+                    page_2(),
+                  ],
+                  controller: _tabController,
+                ),
+
+              ]
+
+          ),
+
+          itemExtent: 700.0,
+
+        ),
+
+
+      ],
+
+
     );
   }
 }

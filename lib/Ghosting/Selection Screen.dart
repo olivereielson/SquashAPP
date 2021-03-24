@@ -136,6 +136,9 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
   }
 
   Widget input(String title, String value, Icon icon) {
+
+    print(ThemeData().textTheme.caption.color.blue);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -149,7 +152,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(height: 50, width: 50, decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))), child: icon),
+                  child: Container(height: 50, width: 50, decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))), child: icon),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -160,7 +163,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                       Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       Text(
                         value,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.caption.color),
                       ),
                     ],
                   ),
@@ -516,7 +519,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                         },
                         child: Container(
                           decoration: new BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).backgroundColor,
                             shape: BoxShape.circle,
                           ),
                           child: Padding(
@@ -580,7 +583,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                     delegate: MyDynamicHeader("Ghosting", "Workout", true),
                   ),
                   SliverPersistentHeader(
-                    pinned: true,
+                    pinned: false,
                     floating: false,
                     delegate: header_list(tw()),
                   ),
@@ -589,7 +592,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                     floating: false,
                     delegate: _SliverAppBarDelegate2(TabBar(
                       controller: _tabController,
-                      unselectedLabelStyle: TextStyle(color: Colors.pink),
                       automaticIndicatorColorAdjustment: false,
                       indicatorColor: Colors.blue,
                       labelColor: Colors.white,
@@ -725,7 +727,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                                   Radius.circular(18),
                                                 )),
                                                 elevation: 2,
-                                                color: main,
+                                                color: Theme.of(context).splashColor,
                                                 child: Center(
                                                     child: Text(
                                                   "Start",
@@ -762,7 +764,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                                 Radius.circular(18),
                                               )),
                                               elevation: 2,
-                                              color: main,
+                                              color: Theme.of(context).splashColor,
                                               child: Center(
                                                   child: Text(
                                                 "Save Custom Set",
@@ -891,7 +893,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                                   Radius.circular(18),
                                                 )),
                                                 elevation: 2,
-                                                color: main,
+                                                color: Theme.of(context).splashColor,
                                                 child: Center(
                                                     child: Text(
                                                   "Start",
@@ -928,7 +930,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                                 Radius.circular(18),
                                               )),
                                               elevation: 2,
-                                              color: main,
+                                              color: Theme.of(context).splashColor,
                                               child: Center(
                                                   child: Text(
                                                 "Save Custom Set",

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:io' show Platform;
 
 import 'package:camera/camera.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class SoloScreen extends StatefulWidget {
   SoloScreenState createState() => new SoloScreenState(cameras);
 }
 
-class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateMixin{
+class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMixin {
   SoloScreenState(this.cameras);
 
   bool delete_mode = false;
@@ -75,7 +76,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
     await Tflite.loadModel(
       model: "assets/converted_model.tflite",
       labels: "assets/ball.txt",
-      useGpuDelegate: Platform.isAndroid?false:true,
+      useGpuDelegate: Platform.isAndroid ? false : true,
     );
   }
 
@@ -269,7 +270,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             show_shot_picker();
           },
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            padding: const EdgeInsets.all(8.0),
             child: Container(
               height: 90,
               decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -281,10 +282,9 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                     Container(
                       height: 50,
                       width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Icon(
                         EvaIcons.hash,
-                        color: Colors.white,
                       ),
                     ),
                     Padding(
@@ -293,10 +293,14 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Number of Shots", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text("Number of Shots",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              )),
                           Text(
                             shot_number.toString(),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.caption.color),
                           ),
                         ],
                       ),
@@ -323,10 +327,9 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                     Container(
                       height: 50,
                       width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Icon(
                         Icons.camera_alt,
-                        color: Colors.white,
                       ),
                     ),
                     Padding(
@@ -336,37 +339,30 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            start_camera==0?"Front Camera":"Back Camera",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                            start_camera == 0 ? "Front Camera" : "Back Camera",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-
                         ],
                       ),
                     ),
                     Spacer(),
                     CupertinoSwitch(
-
-                        activeColor: Color.fromRGBO(40, 70, 130, 1),
-                        value: start_camera==0?true:false, onChanged: (bool){
-
-                      if(start_camera==0){
-
-                        setState(() {
-                          start_camera=1;
-
-                        });
-                      }else{
-
-
-                        setState(() {
-                          start_camera=0;
-
-                        });
-
-                      }
-
-
-                    })
+                        activeColor: Theme.of(context).splashColor,
+                        value: start_camera == 0 ? true : false,
+                        onChanged: (bool) {
+                          if (start_camera == 0) {
+                            setState(() {
+                              start_camera = 1;
+                            });
+                          } else {
+                            setState(() {
+                              start_camera = 0;
+                            });
+                          }
+                        })
                   ],
                 ),
               ),
@@ -529,51 +525,56 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
   Widget Time_Input() {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            show_time_picker();
-          },
-          child: Container(
-            height: 90,
-            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () {
+              show_time_picker();
+            },
             child: Container(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        Icons.timer,
-                        color: Colors.white,
+              height: 90,
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+                        child: Icon(
+                          Icons.timer,
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Time on Side",
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
-                          ),
-                          Text(
-                            total_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Time on Side",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              total_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.caption.color),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Spacer(),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 30,
-                    )
-                  ],
+                      Spacer(),
+                      Icon(
+                        Icons.chevron_right,
+                        size: 30,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -593,10 +594,9 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                     Container(
                       height: 50,
                       width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
+                      decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Icon(
                         Icons.camera_alt,
-                        color: Colors.white,
                       ),
                     ),
                     Padding(
@@ -606,37 +606,30 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            start_camera==0?"Front Camera":"Back Camera",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                            start_camera == 0 ? "Front Camera" : "Back Camera",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-
                         ],
                       ),
                     ),
                     Spacer(),
                     CupertinoSwitch(
-
-                      activeColor: Color.fromRGBO(40, 70, 130, 1),
-                        value: start_camera==0?true:false, onChanged: (bool){
-
-                        if(start_camera==0){
-
-                          setState(() {
-                            start_camera=1;
-
-                          });
-                        }else{
-
-
-                          setState(() {
-                            start_camera=0;
-
-                          });
-
-                        }
-
-
-                    })
+                        activeColor: Theme.of(context).splashColor,
+                        value: start_camera == 0 ? true : false,
+                        onChanged: (bool) {
+                          if (start_camera == 0) {
+                            setState(() {
+                              start_camera = 1;
+                            });
+                          } else {
+                            setState(() {
+                              start_camera = 0;
+                            });
+                          }
+                        })
                   ],
                 ),
               ),
@@ -719,11 +712,11 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
             color: Color.fromRGBO(40, 70, 130, 1),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
-              side: BorderSide(color: sides.contains(index) ? Colors.white : Color.fromRGBO(40, 70, 130, 1), width: 5),
+              side: BorderSide(color: sides.contains(index) ? Theme.of(context).primaryColorLight : Color.fromRGBO(40, 70, 130, 1), width: 5),
             ),
             child: Container(
               height: 175,
-              width: 120,
+              width: 110,
               child: Column(
                 children: [
                   Padding(
@@ -731,7 +724,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                     child: Text(
                       name,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColorLight),
                     ),
                   ),
                   Spacer(),
@@ -740,12 +733,12 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                     width: 130,
                     child: Stack(
                       children: [
-                        Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: Colors.white)),
-                        Positioned(left: 50.0, top: 15, child: Container(width: 5, height: 100, color: Colors.white)),
-                        Positioned(left: 25.0, top: 15, child: Container(width: 5, height: 30, color: Colors.white)),
-                        Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: Colors.white)),
-                        Positioned(right: 25.0, top: 15, child: Container(width: 5, height: 30, color: Colors.white)),
-                        Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: Colors.white)),
+                        Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: Theme.of(context).primaryColorLight)),
+                        Positioned(left: 50.0, top: 15, child: Container(width: 5, height: 100, color: Theme.of(context).primaryColorLight)),
+                        Positioned(left: 25.0, top: 15, child: Container(width: 5, height: 30, color: Theme.of(context).primaryColorLight)),
+                        Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: Theme.of(context).primaryColorLight)),
+                        Positioned(right: 25.0, top: 15, child: Container(width: 5, height: 30, color: Theme.of(context).primaryColorLight)),
+                        Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: Theme.of(context).primaryColorLight)),
                       ],
                     ),
                   )
@@ -793,16 +786,11 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
     );
   }
 
-  Widget timed(){
-
+  Widget timed() {
     return Stack(
-
       children: [
-        Container(height:20,color:    Color.fromRGBO(50, 50, 100, 1)),
-
         Container(
-
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+            decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
             child: Column(
               children: [
                 Time_Input(),
@@ -819,13 +807,13 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SoloHome(
-                                  cameras: cameras,
-                                  start_camera: start_camera,
-                                  type: 0,
-                                  time: total_time,
-                                  shot_count: shot_number,
-                                  sides: sides,
-                                )),
+                                      cameras: cameras,
+                                      start_camera: start_camera,
+                                      type: 0,
+                                      time: total_time,
+                                      shot_count: shot_number,
+                                      sides: sides,
+                                    )),
                           );
                         },
                         child: Container(
@@ -834,49 +822,42 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                           child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(18),
-                                  )),
+                                Radius.circular(18),
+                              )),
                               elevation: 2,
-                              color: main,
+                              color: Theme.of(context).splashColor,
                               child: Center(
                                   child: Text(
-                                    "Start",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                  ))),
+                                "Start",
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                              ))),
                         ),
                       ),
                     ],
                   ),
                 ),
-
               ],
-
             )),
       ],
     );
-
-
   }
 
-  Widget count(){
-
+  Widget count() {
     return Column(
-
       children: [
-
-
         Expanded(
           child: Stack(
-
             children: [
-              Container(height:20,color:    Color.fromRGBO(50, 50, 100, 1)),
-
               Container(
-
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
                   child: Column(
                     children: [
-                      round(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                        ),
+                        child: round(),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
                         child: Row(
@@ -884,259 +865,36 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                await loadModel();
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SoloHome(
-                                        cameras: cameras,
-                                        start_camera: start_camera,
-                                        type:1,
-                                        time: total_time,
-                                        shot_count: shot_number,
-                                        sides: sides,
-                                      )),
-                                );
-                              },
-                              child: Center(
-                                child: Container(
-                                  height: 50,
-                                  width: 150,
-                                  child: Card(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(18),
-                                          )),
-                                      elevation: 2,
-                                      color: main,
-                                      child: Center(
-                                          child: Text(
-                                            "Start",
-                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                          ))),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                                if (sides.length == 0) {
 
-                    ],
+                                  final snackBar = SnackBar(
+                                    content: Text('No Exercises Selected'),
+                                    duration: Duration(seconds: 1),
 
-                  )),
-            ],
-          ),
-        ),
+
+                                  );
+
+                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
 
 
-      ],
+                                } else {
+                                  await loadModel();
 
-
-    );
-
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return NestedScrollView(
-
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-        return <Widget>[
-
-          SliverPersistentHeader(
-            pinned: true,
-            floating: false,
-
-            delegate: MyDynamicHeader("Solo","Exercise",false,true),
-          ),
-
-          SliverPersistentHeader(
-              floating: false,
-              pinned: true,
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                    indicatorColor: Colors.lightBlueAccent,
-                    indicatorWeight: 1,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    tabs: [
-                      new Tab(
-                        //  icon: new Icon(Icons.sports_tennis),
-                        text: "Count",
-                      ),
-                      new Tab(
-                        text: "Timed",
-                      ),
-
-                    ],
-                    controller: _tabController),
-              ),
-            ),
-
-
-        ];
-
-
-
-      }, body: Column(
-
-
-        children: [
-          Stack(
-            children: [
-              Container(height:20,color:    Color.fromRGBO(20, 20, 60, 1),),
-              Container(
-                height: 250,
-                decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0))),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1),shot("Backhand Drives", true, 2),  shot("Backhand Service Box", false, 3)],
-                ),
-              ),
-            ],
-          ),
-          Container(
-            height: 310,
-            child: TabBarView(
-
-            children: [
-
-              count(),timed()
-
-
-
-
-            ],
-            controller: _tabController,
-    ),
-          ),
-        ],
-      ),
-
-
-
-
-
-    );
-
-
-    return Scaffold(
-        body: Container(
-      decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color.fromRGBO(255, 255, 255, 1),
-          Color.fromRGBO(255, 255, 255, 1),
-        ],
-      )),
-      child: Stack(
-        children: [
-          Container(
-            height: 500,
-            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))),
-          ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              height: 550,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 1),  borderRadius: BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(20))),
-            ),
-          ),
-          Column(
-            children: [
-              Container(
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Solo",
-                              style: TextStyle(
-                                fontSize: 50,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              "Exersise",
-                              style: TextStyle(
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white54,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Icon(
-                          Icons.info,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                height: 250,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [shot("Forehand Drives", true, 0), shot("Backhand Drives", true, 1), shot("Forehand Service Box", true, 2), shot("Backhand Service Box", false, 3)],
-                ),
-              ),
-
-              // Target_input(),
-
-              //round(),
-              // Time_Input(),
-
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20))),
-                  child: ListView(
-
-                    children: [
-                      Container(
-                        height: 70,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [button(0, "Time"), button(1, "Shot Count")],
-                        ),
-                      ),
-                      mode_choice(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-                                await loadModel();
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SoloHome(
-                                            cameras: cameras,
-                                            start_camera: 0,
-                                            type: segmentedControlGroupValue,
-                                            time: total_time,
-                                            shot_count: shot_number,
-                                            sides: sides,
-                                          )),
-                                );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SoloHome(
+                                              cameras: cameras,
+                                              start_camera: start_camera,
+                                              type: 1,
+                                              time: total_time,
+                                              shot_count: shot_number,
+                                              sides: sides,
+                                            )),
+                                  );
+                                }
                               },
                               child: Center(
                                 child: Container(
@@ -1148,7 +906,7 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                                         Radius.circular(18),
                                       )),
                                       elevation: 2,
-                                      color: main,
+                                      color: Theme.of(context).splashColor,
                                       child: Center(
                                           child: Text(
                                         "Start",
@@ -1161,18 +919,127 @@ class SoloScreenState extends State<SoloScreen>  with SingleTickerProviderStateM
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
+                  )),
             ],
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(slivers: [
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+          delegate: MyDynamicHeader("Solo", "Exercise", false, true),
+        ),
+        SliverPersistentHeader(
+          pinned: false,
+          floating: false,
+          delegate: header_shot(
+            ListView(
+              scrollDirection: Axis.horizontal,
+              children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1), shot("Backhand Drives", true, 2), shot("Backhand Service Box", false, 3)],
+            ),
+          ),
+        ),
+        SliverPersistentHeader(
+          floating: false,
+          pinned: true,
+          delegate: _SliverAppBarDelegate(
+            TabBar(
+                indicatorColor: Colors.lightBlueAccent,
+                indicatorWeight: 1,
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: [
+                  new Tab(
+                    //  icon: new Icon(Icons.sports_tennis),
+                    text: "Count",
+                  ),
+                  new Tab(
+                    text: "Timed",
+                  ),
+                ],
+                controller: _tabController),
+          ),
+        ),
+        SliverFixedExtentList(
+          itemExtent: 700.0,
+          delegate: SliverChildListDelegate([
+            TabBarView(
+              children: [count(), timed()],
+              controller: _tabController,
+            ),
+          ], addAutomaticKeepAlives: true),
+        ),
+      ]),
+    );
+
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          SliverPersistentHeader(
+            pinned: true,
+            floating: false,
+            delegate: MyDynamicHeader("Solo", "Exercise", false, true),
+          ),
+          SliverPersistentHeader(
+            floating: false,
+            pinned: true,
+            delegate: _SliverAppBarDelegate(
+              TabBar(
+                  indicatorColor: Colors.lightBlueAccent,
+                  indicatorWeight: 1,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  tabs: [
+                    new Tab(
+                      //  icon: new Icon(Icons.sports_tennis),
+                      text: "Count",
+                    ),
+                    new Tab(
+                      text: "Timed",
+                    ),
+                  ],
+                  controller: _tabController),
+            ),
+          ),
+        ];
+      },
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 20,
+                  color: Color.fromRGBO(20, 20, 60, 1),
+                ),
+                Container(
+                  height: 250,
+                  decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1), shot("Backhand Drives", true, 2), shot("Backhand Service Box", false, 3)],
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              height: 310,
+              child: TabBarView(
+                children: [count(), timed()],
+                controller: _tabController,
+              ),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
-
-
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
@@ -1197,5 +1064,4 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
     return false;
   }
-
 }

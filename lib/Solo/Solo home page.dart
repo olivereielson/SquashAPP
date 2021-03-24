@@ -221,7 +221,7 @@ class SoloHomeState extends State<SoloHome> {
           double x = (re["rect"]["x"] * MediaQuery.of(context).size.width);
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
           ball_conf = ((re["confidenceInClass"] * 100).toString());
-          y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
+          y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height+10);
           if (is_working && !pause) {
             if (current_side == 1 || current_side == 3) {
               smartbounce_service_box(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);

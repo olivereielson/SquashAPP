@@ -172,3 +172,72 @@ class header_list extends SliverPersistentHeaderDelegate {
 }
 
 
+
+class header_shot extends SliverPersistentHeaderDelegate {
+
+
+  header_shot(this.am);
+
+  Widget am;
+
+  int index = 0;
+
+  Tween pos_t = Tween<double>(begin: -300, end: 50);
+  Tween pos_y = Tween<double>(begin: 10, end: -300);
+
+
+
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final double percentage = 1 - (constraints.maxHeight - minExtent) / (maxExtent - minExtent);
+
+      final double posy = pos_y.lerp(percentage);
+
+
+
+      return Stack(
+
+        children: [
+          Positioned(
+              left: 0,
+              bottom: 0,
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+              )),
+          Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(0),bottomLeft: Radius.circular(0))),
+
+            child: Stack(
+              children: [
+
+                Positioned(
+                    left: 0,
+                    top: posy,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 200,
+                        child: am)),
+
+
+
+              ],
+            ),
+          ),
+        ],
+      );
+    });
+  }
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate _) => true;
+
+  @override
+  double get maxExtent => 250.0;
+
+  @override
+  double get minExtent => 10.0;
+}

@@ -136,7 +136,24 @@ class Court_Screen_State extends State<Court_Screen> {
               left: (MediaQuery.of(context).size.width - 170) / 2,
               child: SafeArea(
                 child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(corners),
+                  onTap: () {
+                    if(corners.length==0){
+
+                      final snackBar = SnackBar(
+                        content: Text('No Corners Selected'),
+                        duration: Duration(seconds: 1),
+
+
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                    }else{
+
+                      Navigator.of(context).pop(corners);
+
+                  }
+                  },
                   child: Container(
                       width: 170,
                       height: 60,

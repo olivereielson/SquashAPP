@@ -1,4 +1,5 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -46,15 +47,48 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.light, dividerTheme: DividerThemeData()),
-      darkTheme: ThemeData(brightness: Brightness.light, primaryTextTheme: TextTheme(), textTheme: TextTheme()),
+      theme: ThemeData(
+          brightness: Brightness.light,
+          dividerTheme: DividerThemeData(),
+          textTheme: TextTheme(caption: TextStyle(color: Color.fromRGBO(40, 70, 130, 1)),
+          bodyText1: TextStyle(color: Colors.black)
+          ),
+          splashColor: Color.fromRGBO(40, 70, 130, 1),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
+          primaryColorDark: Colors.black87,
+        primaryColorLight: Colors.white,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        selectedItemColor: Color.fromRGBO(40, 70, 130, 1),
+        unselectedItemColor: Colors.grey,
+      ),
+      ),
+
+
+
+      darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          splashColor: Color.fromRGBO(20, 20, 50, 1),
+          textTheme: TextTheme(
+              caption: TextStyle(
+            color: Color.fromRGBO(20, 20, 60, 1),
+          )),
+          accentColor: Colors.lightBlueAccent,
+          cardTheme: CardTheme(),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            selectedItemColor: Colors.lightBlue,
+            unselectedItemColor: Colors.grey,
+          ),
+          primaryColorDark: Colors.grey,
+          iconTheme: IconThemeData(color: Colors.white)),
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-          unselectedItemColor: Colors.grey,
           items: [
             BottomNavigationBarItem(
               icon: Image(
-                  color: current==0?Color.fromRGBO(4, 12, 128, 1):Colors.grey,
+                  color: current == 0 ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor : Colors.grey,
                   height: 25,
                   width: 25,
                   image: AssetImage(
@@ -70,9 +104,8 @@ class _MyAppState extends State<MyApp> {
               icon: Icon(EvaIcons.activityOutline),
               label: 'Saved Data',
             ),
-
           ],
-          fixedColor: Color.fromRGBO(4, 12, 128, 1),
+          //fixedColor:ThemeData().bottomNavigationBarTheme.selectedItemColor,
           onTap: (index) {
             _pageController.jumpToPage(index);
             setState(() {
