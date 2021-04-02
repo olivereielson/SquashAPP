@@ -422,7 +422,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                     ClipPath(
                       clipper: CustomClipperImage3(),
                       child: Container(
-                        decoration: BoxDecoration(color: Color.fromRGBO(55, 55, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
+                        decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
                       ),
                     ),
                     Positioned(

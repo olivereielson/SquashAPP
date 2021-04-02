@@ -50,7 +50,7 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
         },
         child: Container(
 
-          decoration: BoxDecoration(color: showing.contains(index) ? Color.fromRGBO(40, 70, 130, 1):Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
+          decoration: BoxDecoration(color: showing.contains(index) ?Theme.of(context).primaryColor:Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
             (color: Colors.white,
               width: 3)
           ),
@@ -158,7 +158,7 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
     );
   }
   Widget draw_court() {
-    Color court_color = Color.fromRGBO(40, 45, 81, 1);
+    Color court_color = Theme.of(context).primaryColor;
 
     double h = (MediaQuery.of(context).size.width * 1645) / 1080;
 
@@ -233,7 +233,7 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
               top: 0,
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 500),
-                decoration: BoxDecoration(color: court_color, borderRadius: BorderRadius.only(bottomRight: Radius.circular(40), bottomLeft: Radius.circular(40))),
+                decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(40), bottomLeft: Radius.circular(40))),
                 width: MediaQuery.of(context).size.width,
                 child: SafeArea(
                   child: Column(
@@ -255,7 +255,7 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
                         },
                         title: Center(
                             child: Text(
-                              'Statistics',
+                              'Finished',
                               style: TextStyle(color: Colors.white, fontSize: 30),
                             )),
                         children: <Widget>[
