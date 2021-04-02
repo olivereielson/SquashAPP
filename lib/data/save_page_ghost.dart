@@ -82,7 +82,7 @@ class SavedGhostState extends State<SavedDataGhost> {
   }
 
   Widget draw_court() {
-   Color court_color=Color.fromRGBO(40, 45, 81, 1);
+   Color court_color=Theme.of(context).primaryColor;
     return Stack(
       children: [
         Positioned(
@@ -143,9 +143,9 @@ class SavedGhostState extends State<SavedDataGhost> {
         width: 80,
         height: 80,
         decoration: BoxDecoration(
-          color: Color.fromRGBO(40, 70, 130, 1),
+          color:    Theme.of(context).primaryColor,
           border: Border.all(
-              color: Color.fromRGBO(40, 70, 130, 1),
+              color: Theme.of(context).primaryColor,
               // set border color
               width: 6.0), // set border width
           borderRadius: BorderRadius.all(Radius.circular(15.0)), // set rounded corner radius
@@ -207,9 +207,9 @@ class SavedGhostState extends State<SavedDataGhost> {
                       width: 170,
                       height: 60,
                       decoration: BoxDecoration(
-                          color: Color.fromRGBO(40, 45, 81, 1),
+                          color: Theme.of(context).primaryColor,
                           border: Border.all(
-                            color: Color.fromRGBO(40, 45, 81, 1),
+                            color: Theme.of(context).primaryColor,
                           ),
                           borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                       child: Center(

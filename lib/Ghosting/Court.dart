@@ -14,9 +14,12 @@ class Court_Screen_State extends State<Court_Screen> {
   Court_Screen_State(this.corners);
 
   List<double> corners;
-  Color court_color = Color.fromRGBO(40, 45, 81, 1);
+  //Color court_color = Color.fromRGBO(40, 45, 81, 1);
+  Color court_color = Colors.grey;
 
   Widget draw_court() {
+     court_color = Theme.of(context).focusColor;
+
     return Stack(
       children: [
         Positioned(
@@ -82,13 +85,15 @@ class Court_Screen_State extends State<Court_Screen> {
             }
           });
         },
+        focusColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         child: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: corners.contains(x)?Color.fromRGBO(40, 70, 130, 1):Colors.transparent,
+            color: corners.contains(x)?court_color:Colors.transparent,
             border: Border.all(
-                color: Color.fromRGBO(40, 70, 130, 1),
+                color: court_color,
                 // set border color
                 width: 6.0), // set border width
             borderRadius: BorderRadius.all(Radius.circular(15.0)), // set rounded corner radius
@@ -128,6 +133,8 @@ class Court_Screen_State extends State<Court_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    court_color = Theme.of(context).focusColor;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -158,9 +165,9 @@ class Court_Screen_State extends State<Court_Screen> {
                       width: 170,
                       height: 60,
                       decoration: BoxDecoration(
-                          color: Color.fromRGBO(40, 45, 81, 1),
+                          color: court_color,
                           border: Border.all(
-                            color: Color.fromRGBO(40, 45, 81, 1),
+                            color: court_color,
                           ),
                           borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                       child: Center(

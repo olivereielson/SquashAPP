@@ -18,6 +18,8 @@ class CountDown extends StatefulWidget {
 class _CountDownState extends State<CountDown> {
   bool countdown = false;
 
+  bool stop =true;
+
 
   _CountDownState(this._start);
 
@@ -40,16 +42,20 @@ class _CountDownState extends State<CountDown> {
           (Timer timer) {
 
 
-            if(_timer!=null){
+            if(stop){
               setState(
                     () {
                   if (_start < 1) {
                     timer.cancel();
+
                     print("hehee");
                     _start=100;
                     _timer.cancel();
+                    _timer=null;
                     widget.done(true);
                     dispose();
+                    stop=false;
+
 
                   } else {
                     _start = _start - 1;
@@ -66,9 +72,9 @@ class _CountDownState extends State<CountDown> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: main,
+          color: Theme.of(context).primaryColor,
           border: Border.all(
-              color: main,
+              color: Theme.of(context).primaryColor,
               // set border color
               width: 6.0), // set border width
           borderRadius: BorderRadius.all(

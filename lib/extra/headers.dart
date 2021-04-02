@@ -47,7 +47,7 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
       if (++index > Colors.primaries.length - 1) index = 0;
 
       return Container(
-        color: Color.fromRGBO(20, 20, 50, 1),
+        color: Theme.of(context).primaryColor,
         child: SafeArea(
           child: Stack(
             children: [
@@ -61,9 +61,9 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                       IconButton(icon: Icon(Icons.info_outline,color: Colors.white,),onPressed: (){
                         CoolAlert.show(
                           context: context,
-                          confirmBtnColor: Color.fromRGBO(20, 20, 50, 1),
+                          confirmBtnColor: Theme.of(context).primaryColor,
                           animType: CoolAlertAnimType.scale,
-                          backgroundColor:Color.fromRGBO(50, 50, 100, 1),
+                          backgroundColor:Theme.of(context).primaryColor,
 
                           title: "Important Information",
                           flareAnimationName:"play",
@@ -133,12 +133,12 @@ class header_list extends SliverPersistentHeaderDelegate {
               left: 0,
               bottom: 0,
               child: Container(
-                color: Colors.white,
+                color:Theme.of(context).primaryColor,
                 width: MediaQuery.of(context).size.width,
                 height: 50,
               )),
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(0),bottomLeft: Radius.circular(0))),
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(0),bottomLeft: Radius.circular(0))),
 
             child: Stack(
               children: [
@@ -204,12 +204,12 @@ class header_shot extends SliverPersistentHeaderDelegate {
               left: 0,
               bottom: 0,
               child: Container(
-                color: Colors.white,
-                width: MediaQuery.of(context).size.width,
+                  color: Theme.of(context).primaryColor,
+                  width: MediaQuery.of(context).size.width,
                 height: 50,
               )),
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(0),bottomLeft: Radius.circular(0))),
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(0),bottomLeft: Radius.circular(0))),
 
             child: Stack(
               children: [

@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       context,
       targets: targets,
       // List<TargetFocus>
-      colorShadow: Color.fromRGBO(40, 45, 81, 1),
+      colorShadow:Theme.of(context).primaryColor,
       // DEFAULT Colors.black
       // alignSkip: Alignment.bottomRight,
       // textSkip: "SKIP",
@@ -176,9 +176,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       child: AnimatedContainer(
         duration: Duration(milliseconds: 500),
         decoration: BoxDecoration(
-          color: corner == number ? main : Colors.transparent,
+          color: corner == number ? Theme.of(context).primaryColor: Colors.transparent,
           border: Border.all(
-              color: corner == number ? main : Colors.transparent,
+              color: corner == number ? Theme.of(context).primaryColor : Colors.transparent,
               // set border color
               width: 6.0), // set border width
           borderRadius: BorderRadius.all(Radius.circular(25.0)), // set rounded corner radius
@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                  color: main,
+                  color: Theme.of(context).primaryColor,
                   // set border color
                   width: 6.0), // set border width
               borderRadius: BorderRadius.all(Radius.circular(10.0)), // set rounded corner radius
@@ -485,7 +485,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             child: Container(
               height: 15,
               width: MediaQuery.of(context).size.width,
-              color: main,
+              color: Theme.of(context).primaryColor,
             )),
         Positioned(
             bottom: 0,
@@ -493,7 +493,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             child: Container(
               height: MediaQuery.of(context).size.height / 2,
               width: 15,
-              color: main,
+              color: Theme.of(context).primaryColor,
             )),
         Positioned(
           top: MediaQuery.of(context).size.height / 2,
@@ -504,7 +504,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                  color: main,
+                  color: Theme.of(context).primaryColor,
                   // set border color
                   width: 15.0), // set border width
               // set rounded corner radius
@@ -520,7 +520,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                  color: main,
+                  color: Theme.of(context).primaryColor,
                   // set border color
                   width: 15.0), // set border width
               // set rounded corner radius
@@ -645,9 +645,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     width: 170,
                     height: 50,
                     decoration: BoxDecoration(
-                        color: Color.fromRGBO(40, 45, 81, 1),
+                        color: Theme.of(context).primaryColor,
                         border: Border.all(
-                          color: Color.fromRGBO(40, 45, 81, 1),
+                          color: Theme.of(context).primaryColor,
                         ),
                         borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                     child: Center(

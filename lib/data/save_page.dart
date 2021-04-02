@@ -48,7 +48,7 @@ class SavedDataState extends State<SavedData> {
         },
         child: Container(
 
-          decoration: BoxDecoration(color: showing.contains(index) ? Color.fromRGBO(40, 70, 130, 1):Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
+          decoration: BoxDecoration(color: showing.contains(index) ? Theme.of(context).primaryColor:Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
             (color: Colors.white,
               width: 3)
           ),
@@ -69,7 +69,7 @@ class SavedDataState extends State<SavedData> {
   }
 
   Widget draw_court() {
-    Color court_color = Color.fromRGBO(40, 45, 81, 1);
+    Color court_color =  Theme.of(context).primaryColor;
 
     double h = (MediaQuery.of(context).size.width * 1645) / 1080;
 
@@ -196,7 +196,7 @@ class SavedDataState extends State<SavedData> {
               top: 0,
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 500),
-                decoration: BoxDecoration(color: court_color, borderRadius: BorderRadius.only(bottomRight: Radius.circular(40), bottomLeft: Radius.circular(40))),
+                decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(40), bottomLeft: Radius.circular(40))),
                 width: MediaQuery.of(context).size.width,
                 child: SafeArea(
                   child: Column(
@@ -235,7 +235,7 @@ class SavedDataState extends State<SavedData> {
                                       height: 60,
                                       width: 60,
                                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                                      child: Icon(Icons.timer),
+                                      child: Icon(Icons.timer,color: court_color),
                                     ),
                                   ),
                                   Text(
@@ -267,7 +267,7 @@ class SavedDataState extends State<SavedData> {
                                       height: 60,
                                       width: 60,
                                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                                      child: Icon(EvaIcons.hashOutline),
+                                      child: Icon(EvaIcons.hashOutline,color: court_color,),
                                     ),
                                   ),
                                   Text(

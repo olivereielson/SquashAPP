@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_beep/flutter_beep.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:soundpool/soundpool.dart';
 
 typedef void Callback(bool done);
 typedef void Callback1(int current_side);
@@ -32,6 +36,7 @@ class counter_widget extends StatefulWidget {
 
 class counter_widget_state extends State<counter_widget> {
   List<String> names = ["Forehand Drives", "Forehand ServiceBox", "BackHand Drives", "BackHand ServiceBox"];
+  Soundpool _soundpool;
 
   counter_widget_state(this._start, this.type,this.counter_value);
 
@@ -51,6 +56,7 @@ class counter_widget_state extends State<counter_widget> {
   bool is_working = false;
 
   int sides_done = 0;
+  Future<int> _soundId;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -62,6 +68,8 @@ class counter_widget_state extends State<counter_widget> {
           setState(() {
             timer.cancel();
             is_working = false;
+            playsound();
+
             widget.is_working(is_working);
 
             if (sides_done == widget.activities.length - 1) {
@@ -69,7 +77,10 @@ class counter_widget_state extends State<counter_widget> {
             } else {
               //widget.done(false);
 
+              print("sides=$sides_done");
               sides_done++;
+              print("sides=$sides_done");
+
               widget.current_side(widget.activities[sides_done]);
             }
           });
@@ -132,6 +143,7 @@ class counter_widget_state extends State<counter_widget> {
                   is_working = true;
                   widget.is_working(is_working);
                   widget.current_side(widget.activities[sides_done]);
+                  print("cur=${widget.activities[sides_done]}");
                   _start = widget.time.inSeconds;
                   startTimer();
                 });
@@ -155,6 +167,10 @@ class counter_widget_state extends State<counter_widget> {
   Widget Counter() {
     if (is_working) {
       if (widget.counter_value == widget.counter_goal) {
+
+
+        playsound();
+
         if (sides_done == widget.activities.length - 1) {
 
           if(stop_done){
@@ -214,8 +230,18 @@ class counter_widget_state extends State<counter_widget> {
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
             ),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
+
+
+
+
+
                 setState(() {
+
+
+
+
+
                   is_working = true;
                   widget.current_side(widget.activities[sides_done]);
                   widget.is_working(is_working);
@@ -227,7 +253,7 @@ class counter_widget_state extends State<counter_widget> {
               child: Container(
                   height: 150,
                   width: 150,
-                  decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.all(Radius.circular(25))),
+                  decoration: BoxDecoration(color:  Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(25))),
                   child: Icon(
                     Icons.play_arrow,
                     color: Colors.white,
@@ -242,23 +268,46 @@ class counter_widget_state extends State<counter_widget> {
 
   @override
   Widget build(BuildContext context) {
-
-    return Positioned(
-      top: 0,
-      left: (MediaQuery.of(context).size.width - 320) / 2,
-      child: SafeArea(
-        child: Container(
-          width: 320,
-          height: 320,
-          decoration: BoxDecoration(color: Color.fromRGBO(40, 45, 81, 0.9), borderRadius: BorderRadius.all(Radius.circular(25))),
-          child: type == 0 ? timer() : Counter(),
-        ),
+    return SafeArea(
+      child: Container(
+        width: 320,
+        height: 320,
+        decoration: BoxDecoration(color: Theme.of(context).primaryColor.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(25))),
+        child: type == 0 ? timer() : Counter(),
       ),
     );
   }
 
+  Future<void> playsound() async {
+
+    var _alarmSound = await _soundId;
+
+    int streamId = await _soundpool.play(_alarmSound,repeat: 2);
+
+
+  }
+
+  Future<void> loadsound() async {
+
+
+    _soundId = await rootBundle.load("assets/sounds/ding.mp4").then((ByteData soundData) {
+      return _soundpool.load(soundData);
+    });
+
+    var id= await _soundId;
+
+    _soundpool.setVolume(soundId: id, volume: 1.0);
+
+  }
+
+
   @override
   void initState() {
+
+    _soundpool = Soundpool(streamType: StreamType.notification,);
+    loadsound();
+
+
     super.initState();
 
   }
@@ -268,6 +317,7 @@ class counter_widget_state extends State<counter_widget> {
     if (_timer != null) {
       _timer.cancel();
     }
+    _soundpool.dispose();
     sc.dispose();
     super.dispose();
   }

@@ -53,7 +53,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   Duration rest_time = Duration(seconds: 30);
 
-  Color main = Color.fromRGBO(40, 70, 130, 1);
+  //Color main = Color.fromRGBO(40, 70, 130, 1);
+  Color main = Color.fromRGBO(66, 89, 138, 1);
 
   DateTime time;
 
@@ -67,7 +68,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   @override
   void initState() {
-    _tabController = new TabController(length: 2, vsync: this);
+    _tabController = new TabController(length: 2, vsync: this,);
 
     super.initState();
   }
@@ -76,7 +77,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     await Tflite.loadModel(
       model: "assets/converted_model.tflite",
       labels: "assets/ball.txt",
-      useGpuDelegate: Platform.isAndroid ? false : true,
+      useGpuDelegate: Platform.isAndroid ? true : true,
     );
   }
 
@@ -705,6 +706,11 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
               sides.add(index);
             });
           }
+          print(sides);
+          sides.sort();
+          print(sides);
+
+
         },
         child: Center(
           child: Card(
@@ -930,12 +936,16 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(slivers: [
+      body: CustomScrollView(
+
+
+          slivers: [
         SliverPersistentHeader(
           pinned: true,
           floating: false,
           delegate: MyDynamicHeader("Solo", "Exercise", false, true),
         ),
+
         SliverPersistentHeader(
           pinned: false,
           floating: false,
@@ -945,14 +955,23 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
               children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1), shot("Backhand Drives", true, 2), shot("Backhand Service Box", false, 3)],
             ),
           ),
+
+
         ),
         SliverPersistentHeader(
           floating: false,
           pinned: true,
+
+
           delegate: _SliverAppBarDelegate(
             TabBar(
                 indicatorColor: Colors.lightBlueAccent,
-                indicatorWeight: 1,
+
+
+
+                labelColor: Colors.white,
+
+
                 indicatorSize: TabBarIndicatorSize.label,
                 tabs: [
                   new Tab(
@@ -1055,13 +1074,13 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
-      color: Color.fromRGBO(20, 20, 50, 1),
+      color: Theme.of(context).primaryColor,
       child: _tabBar,
     );
   }
 
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
+    return true;
   }
 }

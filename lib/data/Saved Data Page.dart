@@ -11,7 +11,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -110,7 +110,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
 
 
-
     List<double> acc= [];
     for (int i = 0; i < solo_storage_box.length; i++) {
       var n = Array([]);
@@ -159,14 +158,9 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
       }
     }
 
-    for (int i = 0; i < solo_storage_box.length; i++) {
 
 
-
-
-    }
-
-    }
+  }
 
   void calculate_ghost() {
     speed.clear();
@@ -986,16 +980,17 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 child: Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
                   elevation: 10,
+
                   child: Container(
                     height: 100,
-                    decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 60, 1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     child: Stack(
                       children: [
                         Center(
                           child: ClipPath(
                             clipper: CustomClipperImage2(),
                             child: Container(
-                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                              decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(20.0))),
                             ),
                           ),
                         ),
@@ -1005,16 +1000,10 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: Image(
-                                    color: Colors.white,
-                                    height: 40,
-                                    width: 25,
-                                    image: AssetImage(
-                                      'assets/ghost_icon.png',
-                                    )),
+                                child: FaIcon(FontAwesomeIcons.ghost,size: 40,),
                               ),
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(DateFormat('MMMMd').format(ghosting_box.getAt(index).start).toString(), style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold)),
@@ -1084,16 +1073,17 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
               child: Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
                 elevation: 10,
+                color: Colors.transparent,
                 child: Container(
                   height: 100,
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   child: Stack(
                     children: [
                       Center(
                         child: ClipPath(
                           clipper: CustomClipperImage(),
                           child: Container(
-                            decoration: BoxDecoration(color: Color.fromRGBO(40, 40, 100, 1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(19.0))),
                           ),
                         ),
                       ),
@@ -1120,7 +1110,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                             Spacer(),
                             Icon(
                               Icons.chevron_right,
-                              color: Colors.black,
+                              color: Theme.of(context).primaryColorDark,
+
                             )
                           ],
                         ),
@@ -1289,7 +1280,10 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     return FutureBuilder(
       future: load_hive(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+
+
         if (Hive.isBoxOpen("Solo1") && solo_storage_box.length != 0) {
+          print("sd");
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView(
@@ -1518,14 +1512,14 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
-      color: Color.fromRGBO(20, 20, 50, 1),
+      color:Theme.of(context).primaryColor,
       child: _tabBar,
     );
   }
 
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
+    return true;
   }
 }
 
