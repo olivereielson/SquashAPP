@@ -177,6 +177,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
           work = (work + ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds - rest) / 2;
         }
 
+
+
         //print(work);
 
       }

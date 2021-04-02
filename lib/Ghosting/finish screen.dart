@@ -86,9 +86,9 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                 width: MediaQuery.of(context).size.width,
                 height: 200,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(40, 45, 81, 1),
+                  color: Theme.of(context).primaryColor,
                   border: Border.all(
-                      color: Color.fromRGBO(40, 45, 81, 1),
+                      color: Theme.of(context).primaryColor,
                       // set border color
                       width: 6.0), // set border width
                   borderRadius: BorderRadius.all(Radius.circular(25.0)), // set rounded corner radius
@@ -97,7 +97,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: Text(
-                      DateFormat("MMMMd").format(DateTime.now()),
+                    "Finished",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: Colors.white),
                     ),
                   ),
@@ -236,7 +236,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                   children: [
                     Container(
                       child: CupertinoButton(
-                          color: Color.fromRGBO(40, 45, 81, 1),
+                          color: Theme.of(context).primaryColor,
                           onPressed: () {
                             Navigator.pop(context);
                           },
