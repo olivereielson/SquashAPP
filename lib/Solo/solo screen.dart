@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:squash/Solo/Solo%20home%20page.dart';
@@ -129,7 +130,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       "1 Shot",
     ));
 
-    for (int x = 2; x < 50; x++) {
+    for (int x = 2; x < 1000; x++) {
       nums.add(Text(
         x.toString() + " Shots",
       ));
@@ -314,111 +315,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            height: 90,
-            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        Icons.camera_alt,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            start_camera == 0 ? "Front Camera" : "Back Camera",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    CupertinoSwitch(
-                        activeColor: Theme.of(context).splashColor,
-                        value: start_camera == 0 ? true : false,
-                        onChanged: (bool) {
-                          if (start_camera == 0) {
-                            setState(() {
-                              start_camera = 1;
-                            });
-                          } else {
-                            setState(() {
-                              start_camera = 0;
-                            });
-                          }
-                        })
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+        show_green(),
 
-        /*
-        GestureDetector(
-          onTap: () {
-            show_rest_picker();
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-            child: Container(
-              height: 90,
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        Icons.timer,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Rest Time", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-                          Text(
-                            rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
 
-         */
       ],
     );
   }
@@ -523,6 +422,68 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
+  Widget show_green(){
+
+    return        Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 90,
+        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: Center(child: FaIcon(FontAwesomeIcons.bullseye)),
+
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Show Target Area",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Spacer(),
+                CupertinoSwitch(
+                    activeColor: Theme.of(context).splashColor,
+                    value: start_camera == 0 ? true : false,
+                    onChanged: (bool) {
+                      if (start_camera == 0) {
+                        setState(() {
+                          start_camera = 1;
+                        });
+                      } else {
+                        setState(() {
+                          start_camera = 0;
+                        });
+                      }
+                    })
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+
+
+  }
+
   Widget Time_Input() {
     return Column(
       children: [
@@ -581,62 +542,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            height: 90,
-            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        Icons.camera_alt,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            start_camera == 0 ? "Front Camera" : "Back Camera",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    CupertinoSwitch(
-                        activeColor: Theme.of(context).splashColor,
-                        value: start_camera == 0 ? true : false,
-                        onChanged: (bool) {
-                          if (start_camera == 0) {
-                            setState(() {
-                              start_camera = 1;
-                            });
-                          } else {
-                            setState(() {
-                              start_camera = 0;
-                            });
-                          }
-                        })
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+
+        show_green(),
+
 
         /*
         GestureDetector(

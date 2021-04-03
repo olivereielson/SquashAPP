@@ -56,6 +56,7 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                   top: posy2,
                   right: 20,
                   child:info? Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text("Beta",style: TextStyle(color: Colors.white),),
                       IconButton(icon: Icon(Icons.info_outline,color: Colors.white,),onPressed: (){
@@ -99,7 +100,7 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
   double get maxExtent => 200.0;
 
   @override
-  double get minExtent => 100.0;
+  double get minExtent => 110.0;
 }
 
 class header_list extends SliverPersistentHeaderDelegate {
