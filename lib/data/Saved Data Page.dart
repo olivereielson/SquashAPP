@@ -103,6 +103,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   Map<DateTime, List<String>> eventDay = {};
 
+  DateTime    _currentDate=DateTime.now();
+  DateTime     _monthdate=DateTime.now();
 
 
   @override
@@ -245,18 +247,49 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 child: LineChart(
                   LineChartData(
+
+
+                      borderData: FlBorderData(
+                        show: true,
+
+                        border:  Border(
+                          bottom: BorderSide(
+
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+
+                          ),
+                          left: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+
+
+                          ),
+                          right: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          top: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+
+
                       gridData: FlGridData(
-                        show: false,
+                        show: true,
                         drawHorizontalLine: true,
+                        drawVerticalLine: true,
+                        horizontalInterval: 1,
+                        verticalInterval: 1,
                         getDrawingVerticalLine: (value) {
                           return FlLine(
-                            color: const Color(0xff37434d),
+                            color: Theme.of(context).primaryColor,
                             strokeWidth: 1,
                           );
                         },
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
-                            color: const Color(0xff37434d),
+                            color: Theme.of(context).primaryColor,
                             strokeWidth: 1,
                           );
                         },
@@ -290,24 +323,23 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                           },
                           reservedSize: 28,
                           margin: 20,
-                          interval: 0.5,
+                          interval: 2,
                         ),
                       ),
-                      borderData: FlBorderData(
-                          show: false,
-                          border: Border.fromBorderSide(BorderSide(
-                            color: Colors.pink,
-                            width: 5,
-                          ))),
+                      minX: 0,
+                      maxY: 10,
+                      minY: 0,
                       lineBarsData: [
                         LineChartBarData(
                           spots: speed,
                           isCurved: true,
+
                           colors: [
                             Theme.of(context).primaryColor,
                             //Color(0xff044d7c),
                           //  Colors.lightBlue,
                           ],
+
                           barWidth: 5,
                           isStrokeCapRound: true,
                           dotData: FlDotData(
@@ -523,6 +555,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                     }),
                 touchCallback: (barTouchResponse) {},
               ),
+
             ),
           ),
         ),
@@ -1116,9 +1149,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
       ),
     );
   }
-
-  DateTime    _currentDate=DateTime.now();
-  DateTime     _monthdate=DateTime.now();
 
   Widget page_2() {
     //print(events);

@@ -89,16 +89,42 @@ class DataMethods {
   List<FlSpot> speed(Box<Ghosting> ghosting_box) {
     List<FlSpot> speed = [];
 
+
+
+
     for (int i = 0; i < ghosting_box.length; i++) {
       if (ghosting_box.getAt(i).time_array.length > 0) {
-        //print(ghosting_box.getAt(i).time_array);
 
-        var result = ghosting_box.getAt(i).time_array.reduce((num a, num b) => a + b) / ghosting_box.getAt(i).time_array.length;
+
+       double result;
+
+        for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
+
+          double fixedSpeed=ghosting_box.getAt(i).time_array[x];
+
+          if(fixedSpeed>ghosting_box.getAt(i).rest_time){
+
+            fixedSpeed=fixedSpeed-ghosting_box.getAt(i).rest_time;
+          }
+
+          if(result==null){
+
+            result=fixedSpeed;
+          }else{
+            result=(result+fixedSpeed);
+
+          }
+
+
+        }
+
+        result = result / ghosting_box.getAt(i).time_array.length;
+
         speed.add(FlSpot(i.toDouble(), result));
         //print(result);
-      } else {
-        speed.add(FlSpot(i.toDouble(), 8.0));
       }
+
+
       //print(speed);
     }
 
@@ -133,16 +159,27 @@ class DataMethods {
   }
 
   List<double> SingleCornerSpeed(Box<Ghosting> ghosting_box) {
+
     List<double> single_corner_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     for (int i = 0; i < ghosting_box.length; i++) {
       for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
+
+
         int con_index = ghosting_box.getAt(i).corner_array[x].toInt();
 
+        double fixedSpeed=ghosting_box.getAt(i).time_array[x];
+
+        if(fixedSpeed>ghosting_box.getAt(i).rest_time){
+
+          fixedSpeed=fixedSpeed-ghosting_box.getAt(i).rest_time;
+        }
+
+
         if (single_corner_speed[con_index] == 0) {
-          single_corner_speed[con_index] = ghosting_box.getAt(i).time_array[x];
+          single_corner_speed[con_index] =fixedSpeed;
         } else {
-          single_corner_speed[con_index] = (single_corner_speed[con_index] + ghosting_box.getAt(i).time_array[x]) / 2;
+          single_corner_speed[con_index] = (single_corner_speed[con_index] + fixedSpeed) / 2;
         }
       }
     }
@@ -164,7 +201,6 @@ class DataMethods {
 
   }
 
-
   List<BarChartGroupData> BarChartSpeed(Box<Ghosting> ghosting_box,List<double> single_corner_speed,Color primeColor){
 
     List<BarChartGroupData> barchrt = [];
@@ -180,7 +216,7 @@ class DataMethods {
               width: 20,
               backDrawRodData: BackgroundBarChartRodData(
                 show: true,
-                y: 20,
+                y: 10,
                 colors: [Colors.grey.withOpacity(0.2)],
               ),
             ),
@@ -190,5 +226,45 @@ class DataMethods {
     }
     return barchrt;
   }
+
+
+  List<FlSpot> SingleSpeed(Ghosting ghosting_box) {
+    List<FlSpot> speed = [];
+
+
+
+
+      if (ghosting_box.time_array.length > 0) {
+
+
+        double result;
+
+        for (int x = 0; x < ghosting_box.corner_array.length; x++) {
+
+          double fixedSpeed=ghosting_box.time_array[x];
+
+          if(fixedSpeed>ghosting_box.rest_time){
+
+            fixedSpeed=fixedSpeed-ghosting_box.rest_time;
+          }
+
+
+
+          speed.add(FlSpot(x.toDouble(), fixedSpeed));
+
+        }
+
+
+        //print(result);
+
+
+
+      //print(speed);
+    }
+
+    return speed;
+  }
+
+
 
 }
