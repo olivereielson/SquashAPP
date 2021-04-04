@@ -14,7 +14,7 @@ import 'package:squash/extra/hive_classes.dart';
 class Finish_Screen extends StatefulWidget {
   Finish_Screen(this.total_ghost, this.total_time, this.time_array);
 
-  List<double> time_array = [];
+  List<double> time_array;
 
   String total_time;
   int total_ghost;
@@ -73,7 +73,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
       ghosting_box = await Hive.openBox<Ghosting>("Ghosting1");
     }
 
-    speed=DataMethods().SingleSpeed(ghosting_box.getAt(0));
+    speed=DataMethods().SingleSpeed(ghosting_box.getAt(ghosting_box.length-1));
 
 
   }
@@ -299,6 +299,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.time_array);
     return Scaffold(
       body: Stack(
         children: [
@@ -366,7 +367,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                single_card("Total", "Time", widget.total_time, Theme.of(context).primaryColor),
+                                single_card("Total", "Time", widget.total_time.substring(2,7), Theme.of(context).primaryColor),
                                 single_card("Total", "ghosts", widget.time_array.length.toString(), Theme.of(context).primaryColor)
 
                               ],

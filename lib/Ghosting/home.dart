@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Finish_Screen(ghostcast, test.substring(0, test.length - 7), time_array)),
+      MaterialPageRoute(builder: (context) => Finish_Screen(ghostcast, test.substring(0, test.length - 7), time_array2)),
     );
 
     Navigator.pop(context);

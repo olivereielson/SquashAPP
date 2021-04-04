@@ -1,4 +1,5 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -9,6 +10,7 @@ import 'package:scidart/numdart.dart';
 import 'Saved Data Page.dart';
 import '../extra/hive_classes.dart';
 import '../main.dart';
+import 'calculations.dart';
 
 class SavedDataGhost extends StatefulWidget {
   Ghosting ghost_box;
@@ -28,25 +30,211 @@ class SavedGhostState extends State<SavedDataGhost> {
 
   bool expanded = false;
 
-  List<int> num_conrer=[0,0,0,0,0,0,0,0,0,0];
+  List<int> num_conrer = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   List<int> showing = [0, 1, 2, 3];
 
+  List<FlSpot> speed = [];
+
+  Widget single_card(String top_name, String bottom_name, String data, Color color) {
+    return Card(
+      elevation: 10,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
+      child: Container(
+        height: 175,
+        width: 175,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  children: [
+                    Spacer(),
+                    Container(
+                      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(40))),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          data,
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Spacer(),
+              Text(
+                top_name,
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                bottom_name,
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget Speed() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
+        child: Row(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Text(
+                    "Ghosting Speed",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ),
+                Container(
+                  height: 200,
+                  width: MediaQuery.of(context).size.width - 30,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    child: LineChart(
+                      LineChartData(
+                          borderData: FlBorderData(
+                            show: true,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 1,
+                              ),
+                              left: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 1,
+                              ),
+                              right: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              top: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                          gridData: FlGridData(
+                            show: true,
+                            drawHorizontalLine: true,
+                            drawVerticalLine: true,
+                            horizontalInterval: 2,
+                            verticalInterval: 2,
+                            getDrawingVerticalLine: (value) {
+                              return FlLine(
+                                color: Theme.of(context).primaryColor,
+                                strokeWidth: 1,
+                              );
+                            },
+                            getDrawingHorizontalLine: (value) {
+                              return FlLine(
+                                color: Theme.of(context).primaryColor,
+                                strokeWidth: 1,
+                              );
+                            },
+                          ),
+                          lineTouchData: LineTouchData(
+                              enabled: false,
+                              touchTooltipData: LineTouchTooltipData(
+                                tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+                              )),
+                          titlesData: FlTitlesData(
+                            show: true,
+                            bottomTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 40,
+                              getTextStyles: (value) => const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
+                              rotateAngle: 0,
+                              getTitles: (val) {
+                                if (val == 0) {
+                                  return "Start";
+                                }
+
+                                if (val == DataMethods().SingleSpeed(ghost_box).length - 1) {
+                                  return "End";
+                                }
+
+                                return "";
+                              },
+                              margin: 10,
+                            ),
+                            leftTitles: SideTitles(
+                              showTitles: true,
+                              getTextStyles: (value) => const TextStyle(
+                                color: Color(0xff67727d),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                              ),
+                              getTitles: (val) {
+                                return val.toStringAsFixed(0) + " secs";
+                              },
+                              reservedSize: 20,
+                              margin: 20,
+                              interval: 2,
+                            ),
+                          ),
+                          minX: 0,
+                          maxY: 10,
+                          minY: 0,
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: DataMethods().SingleSpeed(ghost_box),
+                              isCurved: true,
+                              colors: [
+                                Theme.of(context).primaryColor,
+                                //Color(0xff044d7c),
+                                //  Colors.lightBlue,
+                              ],
+                              barWidth: 5,
+                              isStrokeCapRound: true,
+                              dotData: FlDotData(
+                                show: false,
+                              ),
+                              belowBarData: BarAreaData(
+                                show: false,
+                                colors: [
+                                  Color.fromRGBO(20, 20, 50, 1),
+                                  Color(0xff044d7c),
+                                  Colors.lightBlueAccent,
+                                ],
+                              ),
+                            ),
+                          ]),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
-
-    for( int i =0; i < ghost_box.corner_array.length; i++){
-
+    for (int i = 0; i < ghost_box.corner_array.length; i++) {
       num_conrer[ghost_box.corner_array[i].toInt()]++;
-
     }
 
-
+    speed = DataMethods().SingleSpeed(ghost_box);
 
     super.initState();
   }
-
 
   Widget button_box(String name, int index) {
     return Padding(
@@ -71,10 +259,10 @@ class SavedGhostState extends State<SavedDataGhost> {
             padding: const EdgeInsets.all(8.0),
             child: Center(
                 child: Text(
-                  name,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.black : Colors.white),
-                  textAlign: TextAlign.center,
-                )),
+              name,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.black : Colors.white),
+              textAlign: TextAlign.center,
+            )),
           ),
         ),
       ),
@@ -82,7 +270,7 @@ class SavedGhostState extends State<SavedDataGhost> {
   }
 
   Widget draw_court() {
-   Color court_color=Theme.of(context).primaryColor;
+    Color court_color = Theme.of(context).primaryColor;
     return Stack(
       children: [
         Positioned(
@@ -143,19 +331,22 @@ class SavedGhostState extends State<SavedDataGhost> {
         width: 80,
         height: 80,
         decoration: BoxDecoration(
-          color:    Theme.of(context).primaryColor,
+          color: Theme.of(context).primaryColor,
           border: Border.all(
               color: Theme.of(context).primaryColor,
               // set border color
               width: 6.0), // set border width
           borderRadius: BorderRadius.all(Radius.circular(15.0)), // set rounded corner radius
         ),
-
-        child: Center(child: Text(num_conrer[x].toString(),style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),)),
-
+        child: Center(
+            child: Text(
+          num_conrer[x].toString(),
+          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        )),
       ),
     );
   }
+
   Widget select_corners() {
     return SafeArea(
       child: Column(
@@ -186,41 +377,89 @@ class SavedGhostState extends State<SavedDataGhost> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    print(ghost_box.corner_array);
-
-    return Scaffold(
-      body: Stack(
-        children: [
-          draw_court(),
-          select_corners(),
-          Positioned(
-              top: -20,
-              left: (MediaQuery.of(context).size.width - 170) / 2,
-              child: SafeArea(
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Container(
-                      width: 170,
-                      height: 60,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          border: Border.all(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
-                      child: Center(
-                          child: Text(
+    return PageView(
+      scrollDirection: Axis.vertical,
+      children: [
+        Scaffold(
+          body: Column(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      // set border color
+                      width: 6.0), // set border width
+                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(25.0), bottomLeft: Radius.circular(25.0)), // set rounded corner radius
+                ),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Data Anylitics",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40, color: Colors.white),
+                        ),
+                        Spacer(),
+                        IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () => Navigator.of(context).pop(),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    single_card("Total", "Time", ghost_box.end.difference(ghost_box.start).toString().substring(2, 7), Theme.of(context).primaryColor),
+                    single_card("Total", "ghosts", ghost_box.time_array.length.toString(), Theme.of(context).primaryColor)
+                  ],
+                ),
+              ),
+              ghost_box.time_array.length > 0 ? Speed() : Text(""),
+            ],
+          ),
+        ),
+        Scaffold(
+          body: Stack(
+            children: [
+              draw_court(),
+              select_corners(),
+              Positioned(
+                  top: -20,
+                  left: (MediaQuery.of(context).size.width - 170) / 2,
+                  child: SafeArea(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                          width: 170,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
+                          child: Center(
+                              child: Text(
                             "Close",
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                           ))),
-                ),
-              )),
-        ],
-      ),
+                    ),
+                  )),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

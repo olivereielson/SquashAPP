@@ -310,6 +310,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                             return DateFormat('Md').format(ghosting_box.getAt(val.toInt()).start).toString();
                           },
                           margin: 20,
+                          interval: 2
                         ),
                         leftTitles: SideTitles(
                           showTitles: true,
