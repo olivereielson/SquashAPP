@@ -166,6 +166,12 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     ave_ghost_num=DataMethods().ave_ghost_num(ghosting_box);
 
 
+    single_corner_speed=DataMethods().SingleCornerSpeed(ghosting_box);
+
+    ghost_type_pie_chart_data=DataMethods().GhostPieChart(ghosting_box);
+
+
+    barchrt=DataMethods().BarChartSpeed(ghosting_box, single_corner_speed, Theme.of(context).primaryColor);
 
 
     for (int i = 0; i < ghosting_box.length; i++) {
@@ -182,39 +188,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
         ];
       }
 
-      for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
-        ghost_type_pie_chart_data[ghosting_box.getAt(i).corner_array[x].toInt()]++;
-
-        int con_index = ghosting_box.getAt(i).corner_array[x].toInt();
-
-        if (single_corner_speed[con_index] == 0) {
-          single_corner_speed[con_index] = ghosting_box.getAt(i).time_array[x];
-        } else {
-          single_corner_speed[con_index] = (single_corner_speed[con_index] + ghosting_box.getAt(i).time_array[x]) / 2;
-        }
-      }
     }
 
-    barchrt.clear();
-    for (int i = 0; i < single_corner_speed.length; i++) {
-      barchrt.add(
-        BarChartGroupData(
-          x: i,
-          barRods: [
-            BarChartRodData(
-              y: single_corner_speed[i],
-              colors: [Theme.of(context).primaryColor],
-              width: 20,
-              backDrawRodData: BackgroundBarChartRodData(
-                show: true,
-                y: 20,
-                colors: [Colors.grey.withOpacity(0.2)],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
   }
 
   Future<void> load_hive() async {

@@ -1,12 +1,12 @@
+import 'dart:ui';
+
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:scidart/numdart.dart';
 import 'package:squash/extra/hive_classes.dart';
 
 class DataMethods {
-
-
-
   List<double> solo_pie_chart(Box<Solo_stroage> solo_storage_box) {
     List<double> solo_type_pie_chart_data = [0, 0, 0, 0];
 
@@ -116,19 +116,12 @@ class DataMethods {
     }
 
     return ave_ghost_dur;
-
   }
 
-  int ave_ghost_num(Box<Ghosting> ghosting_box){
-
-
+  int ave_ghost_num(Box<Ghosting> ghosting_box) {
     int ave_ghost_num;
 
     for (int i = 0; i < ghosting_box.length; i++) {
-
-
-
-
       if (ave_ghost_num == null) {
         ave_ghost_num = ghosting_box.getAt(i).corner_array.length;
       } else {
@@ -137,23 +130,65 @@ class DataMethods {
     }
 
     return ave_ghost_num;
+  }
 
+  List<double> SingleCornerSpeed(Box<Ghosting> ghosting_box) {
+    List<double> single_corner_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+    for (int i = 0; i < ghosting_box.length; i++) {
+      for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
+        int con_index = ghosting_box.getAt(i).corner_array[x].toInt();
 
+        if (single_corner_speed[con_index] == 0) {
+          single_corner_speed[con_index] = ghosting_box.getAt(i).time_array[x];
+        } else {
+          single_corner_speed[con_index] = (single_corner_speed[con_index] + ghosting_box.getAt(i).time_array[x]) / 2;
+        }
+      }
+    }
 
+    return single_corner_speed;
+  }
+
+  List<double> GhostPieChart(Box<Ghosting> ghosting_box) {
+
+    List<double> ghost_type_pie_chart_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+    for (int i = 0; i < ghosting_box.length; i++) {
+      for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
+        ghost_type_pie_chart_data[ghosting_box.getAt(i).corner_array[x].toInt()]++;
+      }
+    }
+
+    return ghost_type_pie_chart_data;
 
   }
 
-  void single_corner_speed(Box<Ghosting> ghosting_box){
 
+  List<BarChartGroupData> BarChartSpeed(Box<Ghosting> ghosting_box,List<double> single_corner_speed,Color primeColor){
 
+    List<BarChartGroupData> barchrt = [];
 
-
-
-
+    for (int i = 0; i < single_corner_speed.length; i++) {
+      barchrt.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              y: single_corner_speed[i],
+              colors: [primeColor],
+              width: 20,
+              backDrawRodData: BackgroundBarChartRodData(
+                show: true,
+                y: 20,
+                colors: [Colors.grey.withOpacity(0.2)],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return barchrt;
   }
-
-
-
 
 }
