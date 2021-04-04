@@ -16,11 +16,12 @@ class MyPainter extends CustomPainter {
   List<Point> serve_box;
   List<Point> dst_point;
   bool backhand;
+  bool showGreen;
   int currentSide;
 
 
 
-  MyPainter(this.serve_box,this.dst_point,this.backhand,this.currentSide);
+  MyPainter(this.serve_box,this.dst_point,this.backhand,this.currentSide,this.showGreen);
 
 
 
@@ -120,18 +121,23 @@ class MyPainter extends CustomPainter {
 
 
 
-
-    if(currentSide==1||currentSide==3){
-
-      canvas.drawPath(serveBox, colorPaint);
+    if(showGreen){
 
 
-    }else{
+      if(currentSide==1||currentSide==3){
 
-      canvas.drawPath(drive, colorPaint);
+        canvas.drawPath(serveBox, colorPaint);
 
+
+      }else{
+
+        canvas.drawPath(drive, colorPaint);
+
+
+      }
 
     }
+
 
     canvas.drawLine(point_to_offset(dst_point[3]), point_to_offset(dst_point[1]), paint);
     //canvas.drawLine(point_to_offset(dst_point[4]), point_to_offset(serve_box[1]), paint);

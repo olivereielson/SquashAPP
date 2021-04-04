@@ -8,6 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
@@ -37,18 +38,21 @@ class SoloHome extends StatefulWidget {
   final int start_camera;
   final int shot_count;
   final int type;
+  final bool showgreen;
   final List<int> sides;
   final Duration time;
 
-  SoloHome({this.cameras, this.start_camera, this.shot_count, this.time, this.type, this.sides});
+  SoloHome({this.cameras, this.start_camera, this.shot_count, this.time, this.type, this.sides,this.showgreen});
 
   @override
-  SoloHomeState createState() => new SoloHomeState(cameras, start_camera);
+  SoloHomeState createState() => new SoloHomeState(cameras, start_camera,showgreen);
 }
 
 class SoloHomeState extends State<SoloHome> {
-  SoloHomeState(this.cameras, this.camera);
+  SoloHomeState(this.cameras, this.camera,this.showGreen);
 
+
+  bool showGreen;
   List<dynamic> _recognitions;
 
   List<Point> bounces = [];
@@ -628,7 +632,7 @@ class SoloHomeState extends State<SoloHome> {
       children: [
         CustomPaint(
           size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
-          painter: MyPainter(points, dst_point,back_hand,current_side),
+          painter: MyPainter(points, dst_point,back_hand,current_side,showGreen),
         ),
         TouchBubble(
           index: 1,
@@ -702,15 +706,23 @@ class SoloHomeState extends State<SoloHome> {
                     });
                   }),
               IconButton(
-                  icon: Icon(Icons.camera_alt, color: Colors.white),
+                  icon: FaIcon(FontAwesomeIcons.bullseye),
                   onPressed: () {
+
+                    setState(() {
+                      showGreen=!showGreen;
+                    });
+
+                    /*
                     if (camera == 0) {
                       camera = 1;
                     } else {
                       camera = 0;
                     }
 
-                    onNewCameraSelected(cameras[camera]);
+                    onNewCameraSelected(cameras[camera]);'
+
+                     */
                   }),
               IconButton(
                   icon: page == 0 ? Icon(Icons.arrow_forward_rounded, color: Colors.white) : Icon(Icons.arrow_back_rounded, color: Colors.white),

@@ -43,7 +43,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   int extra_num;
   int shot_number = 100;
-  int start_camera = 0;
+  int start_camera = 1;
   int segmentedControlGroupValue = 1;
   Point location = Point(250.0, 250.0);
   bool target_locked = false;
@@ -64,6 +64,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   List<Widget> settings;
   int side_count = 2;
   int taraget_count = 50;
+
+  bool showGreen=true;
 
   List<String> type_list = ["Timed Solo", "Target Practice", "Shot Count"];
 
@@ -461,17 +463,13 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                 Spacer(),
                 CupertinoSwitch(
                     activeColor: Theme.of(context).splashColor,
-                    value: start_camera == 0 ? true : false,
+                    value: showGreen,
                     onChanged: (bool) {
-                      if (start_camera == 0) {
-                        setState(() {
-                          start_camera = 1;
-                        });
-                      } else {
-                        setState(() {
-                          start_camera = 0;
-                        });
-                      }
+
+                      setState(() {
+                        showGreen=bool;
+                      });
+
                     })
               ],
             ),
@@ -727,6 +725,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                       time: total_time,
                                       shot_count: shot_number,
                                       sides: sides,
+                                  showgreen: showGreen,
                                     )),
                           );
                         },
@@ -806,7 +805,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                               time: total_time,
                                               shot_count: shot_number,
                                               sides: sides,
-                                            )),
+                                          showgreen: showGreen,
+
+                                        )),
                                   );
                                 }
                               },

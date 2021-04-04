@@ -285,7 +285,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                  color: main,
+                  color: Theme.of(context).primaryColor,
                   // set border color
                   width: 6.0), // set border width
               borderRadius: BorderRadius.all(Radius.circular(10.0)), // set rounded corner radius
@@ -342,8 +342,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
 
-
-
   Widget rest_timer() {
     return Container(
       key: Key("time"),
@@ -351,14 +349,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       height: 350,
       child: Center(
         child: CircularCountDownTimer(
-          height: 320,
-          width: 320,
+          height: 300,
+          width: 300,
           duration: rest_time.inSeconds,
-          fillColor: main,
+          fillColor: Theme.of(context).primaryColor,
           strokeWidth: 30,
 
+          initialDuration: 0,
+
           isReverse: true,
-          textStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 70),
+          textStyle: TextStyle(color: resting?Colors.grey:Colors.transparent, fontWeight: FontWeight.bold, fontSize: 70),
           onComplete: () {
             setState(() {
               resting = !resting;
@@ -394,7 +394,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               height: 200,
               width: 200,
               duration: widget.round_time.inSeconds,
-              fillColor: main,
+              fillColor: Theme.of(context).primaryColor,
               strokeWidth: 20,
               isReverse: true,
               textStyle: TextStyle(color: Colors.black38, fontWeight: FontWeight.bold, fontSize: 70),
@@ -429,7 +429,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         width: 200,
         height: 200,
         child: CircularPercentIndicator(
-          progressColor: main,
+          progressColor: Theme.of(context).primaryColor,
           lineWidth: 20,
           backgroundColor: Colors.white,
           percent: precent,
@@ -572,7 +572,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 time_array2.add(dif.toDouble());
                 //time_array.sort();
 
-                center = precent_complete_indicator(time_array.length / number_set);
+                if(widget.type==1){
+
+                  center = precent_complete_indicator(time_array.length / number_set);
+
+
+                }
 
                 //
                 //time_array
@@ -670,22 +675,25 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedSwitcher(
-                        key: keyButton4,
-                        duration: Duration(milliseconds: 400),
-                        child: center,
-                        transitionBuilder: (Widget child, Animation<double> animation) {
-                          return ScaleTransition(child: child, scale: animation);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+              child: Container(
+                height: 400,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedSwitcher(
+                          key: keyButton4,
+                          duration: Duration(milliseconds: 400),
+                          child: center,
+                          transitionBuilder: (Widget child, Animation<double> animation) {
+                            return ScaleTransition(child: child, scale: animation);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

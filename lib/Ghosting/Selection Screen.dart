@@ -308,7 +308,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromRGBO(40, 45, 81, 1),
+          backgroundColor: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
             Radius.circular(18),
@@ -528,7 +528,9 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                           child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Icon(
+
                                 Icons.clear,
+                                color: Theme.of(context).primaryColorDark,
                                 size: 15,
                               )),
                         )),

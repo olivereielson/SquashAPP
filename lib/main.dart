@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
           primaryColorDark: Colors.black87,
           primaryColorLight: Colors.white,
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            selectedItemColor: Color.fromRGBO(40, 70, 130, 1),
+            selectedItemColor: Color.fromRGBO(66, 89, 138, 1),
             unselectedItemColor: Colors.grey,
           ),
           focusColor: Color.fromRGBO(66, 89, 138, 1),
@@ -116,7 +116,7 @@ class _MyAppState extends State<MyApp> {
             ),
             BottomNavigationBarItem(
               icon: Icon(EvaIcons.activityOutline),
-              label: 'Saved Data',
+              label: 'Data',
             ),
           ],
           //fixedColor:ThemeData().bottomNavigationBarTheme.selectedItemColor,

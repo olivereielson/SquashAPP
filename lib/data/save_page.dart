@@ -187,6 +187,8 @@ class SavedDataState extends State<SavedData> {
   @override
   Widget build(BuildContext context) {
 
+    print(solo_storage_box.start);
+
     return Scaffold(
       body: Stack(
         children: [
