@@ -65,13 +65,16 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   int side_count = 2;
   int taraget_count = 50;
 
-  bool showGreen=true;
+  bool showGreen = true;
 
   List<String> type_list = ["Timed Solo", "Target Practice", "Shot Count"];
 
   @override
   void initState() {
-    _tabController = new TabController(length: 2, vsync: this,);
+    _tabController = new TabController(
+      length: 2,
+      vsync: this,
+    );
 
     super.initState();
   }
@@ -318,8 +321,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
           ),
         ),
         show_green(),
-
-
       ],
     );
   }
@@ -424,9 +425,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
-  Widget show_green(){
-
-    return        Padding(
+  Widget show_green() {
+    return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
         height: 90,
@@ -442,7 +442,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                   width: 50,
                   decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Center(child: FaIcon(FontAwesomeIcons.bullseye)),
-
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -465,11 +464,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                     activeColor: Theme.of(context).splashColor,
                     value: showGreen,
                     onChanged: (bool) {
-
                       setState(() {
-                        showGreen=bool;
+                        showGreen = bool;
                       });
-
                     })
               ],
             ),
@@ -477,9 +474,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
         ),
       ),
     );
-
-
-
   }
 
   Widget Time_Input() {
@@ -540,9 +534,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             ),
           ),
         ),
-
         show_green(),
-
 
         /*
         GestureDetector(
@@ -615,8 +607,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
           print(sides);
           sides.sort();
           print(sides);
-
-
         },
         child: Center(
           child: Card(
@@ -725,7 +715,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                       time: total_time,
                                       shot_count: shot_number,
                                       sides: sides,
-                                  showgreen: showGreen,
+                                      showgreen: showGreen,
                                     )),
                           );
                         },
@@ -778,20 +768,13 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                           children: [
                             GestureDetector(
                               onTap: () async {
-
                                 if (sides.length == 0) {
-
                                   final snackBar = SnackBar(
                                     content: Text('No Exercises Selected'),
                                     duration: Duration(seconds: 1),
-
-
                                   );
 
                                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-
-
                                 } else {
                                   await loadModel();
 
@@ -805,9 +788,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                               time: total_time,
                                               shot_count: shot_number,
                                               sides: sides,
-                                          showgreen: showGreen,
-
-                                        )),
+                                              showgreen: showGreen,
+                                            )),
                                   );
                                 }
                               },
@@ -845,16 +827,12 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-
-
-          slivers: [
+      body: CustomScrollView(slivers: [
         SliverPersistentHeader(
           pinned: true,
           floating: false,
           delegate: MyDynamicHeader("Solo", "Exercise", false, true),
         ),
-
         SliverPersistentHeader(
           pinned: false,
           floating: false,
@@ -864,23 +842,14 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
               children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1), shot("Backhand Drives", true, 2), shot("Backhand Service Box", false, 3)],
             ),
           ),
-
-
         ),
         SliverPersistentHeader(
           floating: false,
           pinned: true,
-
-
           delegate: _SliverAppBarDelegate(
             TabBar(
                 indicatorColor: Colors.lightBlueAccent,
-
-
-
                 labelColor: Colors.white,
-
-
                 indicatorSize: TabBarIndicatorSize.label,
                 tabs: [
                   new Tab(

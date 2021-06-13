@@ -33,9 +33,16 @@ class DataMethods {
       }
     }
 
-    //print(acc);
 
-    return acc.reduce((a, b) => a + b) / acc.length;
+    if(acc.length==0){
+      return 0;
+
+    }else{
+
+      return acc.reduce((a, b) => a + b) / acc.length;
+
+
+    }
   }
 
   int ave_solo_dur(Box<Solo_stroage> solo_storage_box) {

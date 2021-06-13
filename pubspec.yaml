@@ -56,7 +56,6 @@ dependencies:
   flutter_ringtone_player: ^3.0.0
   flutter_beep: ^0.2.0
   soundpool: ^1.1.3
-  flutter_neat_and_clean_calendar: ^0.1.2+4
   flutter_calendar_carousel:
 
 
@@ -92,6 +91,7 @@ flutter:
     - assets/ssd_mobilenet.txt
     - assets/info_check.flr
     - assets/sounds/ding.mp4
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

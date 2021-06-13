@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-import 'package:flutter_neat_and_clean_calendar/flutter_neat_and_clean_calendar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -99,7 +98,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   List<FlSpot> speed = [];
 
-  Map<DateTime, List<NeatCleanCalendarEvent>> events = {};
 
   Map<DateTime, List<String>> eventDay = {};
 
@@ -1203,70 +1201,15 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 ),
               );
             } else {
-              return Center(
-                  child: Text(
-                "No Saved Data",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ));
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget page_2w() {
-    //print(events);
-
-    return ListView(
-      children: [
-        FutureBuilder(
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1") && solo_storage_box.length + ghosting_box.length != 0) {
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Calendar(
-                  startOnMonday: true,
-                  weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'sun'],
-                  events: events,
-                  isExpanded: true,
-
-                  eventDoneColor: Colors.green,
-                  selectedColor: Theme.of(context).primaryColor,
-                  todayColor: Theme.of(context).primaryColor,
-
-                  // dayBuilder: (BuildContext context, DateTime day) {
-                  //   return new Text("!");
-                  // },
-                  eventListBuilder: (BuildContext context, List<NeatCleanCalendarEvent> _selectesdEvents) {
-                    if (!_selectesdEvents.isEmpty) {
-                      List<Widget> t = _selectesdEvents.map((element) {
-                        print(element.description.substring(0, 1));
-
-                        return element.description.substring(0, 1) == "1" ? ghost_saved(int.parse(element.description.substring(1))) : Solo_Saved(int.parse(element.description.substring(1)));
-                      }).toList();
-
-                      return Column(children: t);
-                    } else {
-                      return new Text("");
-                    }
-                  },
-                  hideBottomBar: false,
-
-                  hideArrows: false,
-
-                  hideTodayIcon: true,
-
-                  expandableDateFormat: 'EEEE, dd. MMMM yyyy',
-                  dayOfWeekStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w800, fontSize: 11),
+                padding: const EdgeInsets.symmetric(vertical: 50),
+                child: Center(
+                  child: Text(
+                    "No Saved Data",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
               );
-            } else {
-              return Center(
-                  child: Text(
-                "No Saved Data",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ));
             }
           },
         ),

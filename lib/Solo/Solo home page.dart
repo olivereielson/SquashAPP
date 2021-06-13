@@ -498,11 +498,7 @@ class SoloHomeState extends State<SoloHome> {
             ball.add(Positioned(
                 left: last_bounce[last_bounce.length - 3].x,
                 top: last_bounce[last_bounce.length - 3].y - h,
-                child: Icon(
-                  Icons.circle,
-                  size: 15,
-                  color: Colors.black,
-                )));
+                child: Image.asset("assets/icons/squash.png",color: Colors.black,height: 20,width: 20,)));
           }
         }
 
@@ -523,6 +519,8 @@ class SoloHomeState extends State<SoloHome> {
       } else {
 
         last_bounce.removeAt(len - max);
+
+      /*
         ball.add(Positioned(
             left: x,
             top: y-h,
@@ -531,6 +529,8 @@ class SoloHomeState extends State<SoloHome> {
               size: 15,
               color: Colors.green,
             )));
+
+       */
       }
     }
 
@@ -1172,8 +1172,9 @@ class SoloHomeState extends State<SoloHome> {
                         ),
                     ),
 
-                Positioned(top: 400, right: 40, child: Text(ball_conf)),
+                //Positioned(top: 400, right: 40, child: Text(ball_conf)),
 
+                /*
                 Positioned(
                     top: 400,
                     right: 40,
@@ -1191,10 +1192,12 @@ class SoloHomeState extends State<SoloHome> {
                       ),
                     )),
 
+
+                 */
+
                 Stack(
                   children: ball,
                 ),
-
                 BndBoxSolo(_recognitions == null ? [] : _recognitions),
               ]),
             ),

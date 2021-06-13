@@ -84,8 +84,8 @@ class MyPainter extends CustomPainter {
     //anvas.drawLine(point_to_offset(dst_point[2]), point_to_offset(dst_point[3]), paint2);
 
 
-    canvas.drawLine(Offset(1000,dst_point[0 ].y-15), Offset(dst_point[0].x,dst_point[0 ].y-15), paint2);
-    canvas.drawLine(Offset(dst_point[0 ].x-30,2000), Offset(dst_point[0 ].x-30,0), paint2);
+    //canvas.drawLine(Offset(1000,dst_point[0 ].y-15), Offset(dst_point[0].x,dst_point[0 ].y-15), paint2);
+    //canvas.drawLine(Offset(dst_point[0 ].x-30,2000), Offset(dst_point[0 ].x-30,0), paint2);
 
 
     var serveBox = Path();

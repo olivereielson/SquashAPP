@@ -9,6 +9,7 @@ import 'package:hive/hive.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:squash/Ghosting/Selection%20Screen.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
+import 'package:squash/Settings.dart';
 import 'package:squash/data/save_page.dart';
 import 'package:squash/Solo/solo%20screen.dart';
 import 'data/Saved Data Page.dart';
@@ -55,14 +56,8 @@ class _MyAppState extends State<MyApp> {
           textTheme: TextTheme(caption: TextStyle(color: Color.fromRGBO(40, 70, 130, 1)), bodyText1: TextStyle(color: Colors.black)),
           splashColor: Color.fromRGBO(60, 90, 130, 1),
           backgroundColor: Colors.white,
-
-
           tabBarTheme: TabBarTheme(
-
-
             labelColor: Colors.white,
-
-
           ),
           iconTheme: IconThemeData(
             color: Colors.white,
@@ -75,13 +70,6 @@ class _MyAppState extends State<MyApp> {
           ),
           focusColor: Color.fromRGBO(66, 89, 138, 1),
           primaryColor: Color.fromRGBO(66, 89, 138, 1)),
-
-
-
-
-
-
-
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           backgroundColor: Color.fromRGBO(40, 40, 40, 1),
@@ -107,7 +95,7 @@ class _MyAppState extends State<MyApp> {
           iconTheme: IconThemeData(color: Colors.white)),
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
+          type: BottomNavigationBarType.shifting,
           items: [
             BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.ghost), label: "Ghosting"),
             BottomNavigationBarItem(
@@ -117,6 +105,10 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: Icon(EvaIcons.activityOutline),
               label: 'Data',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
             ),
           ],
           //fixedColor:ThemeData().bottomNavigationBarTheme.selectedItemColor,
@@ -130,12 +122,14 @@ class _MyAppState extends State<MyApp> {
         ),
         body: PageView(
           pageSnapping: true,
+          allowImplicitScrolling: true,
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             gs,
             SoloScreen(cameras),
             SavedDataPage(),
+            SettingsPage()
           ],
         ),
       ),
