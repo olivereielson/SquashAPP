@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
           primaryColor: Color.fromRGBO(66, 89, 138, 1)),
       darkTheme: ThemeData(
           brightness: Brightness.dark,
-          backgroundColor: Color.fromRGBO(40, 40, 40, 1),
+          backgroundColor: Color.fromRGBO(50, 50, 50, 1),
           splashColor: Color.fromRGBO(20, 20, 50, 1),
           focusColor: Colors.grey,
           textTheme: TextTheme(
@@ -107,8 +107,8 @@ class _MyAppState extends State<MyApp> {
               label: 'Data',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
+              icon: Icon(CupertinoIcons.profile_circled),
+              label: 'Profile',
             ),
           ],
           //fixedColor:ThemeData().bottomNavigationBarTheme.selectedItemColor,
@@ -123,13 +123,14 @@ class _MyAppState extends State<MyApp> {
         body: PageView(
           pageSnapping: true,
           allowImplicitScrolling: true,
+
           controller: _pageController,
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             gs,
             SoloScreen(cameras),
             SavedDataPage(),
-            SettingsPage()
+            Acount()
           ],
         ),
       ),
