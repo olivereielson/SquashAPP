@@ -60,6 +60,8 @@ dependencies:
   package_info:
   liquid_progress_indicator_ns:
   animated_text_kit: ^4.2.1
+  easy_dynamic_theme: ^2.2.0
+  email_launcher: 1.1.1
 
 
 

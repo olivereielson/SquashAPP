@@ -1,6 +1,8 @@
 PODS:
   - camera (0.0.1):
     - Flutter
+  - email_launcher (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_beep (0.0.1):
     - Flutter
@@ -15,7 +17,7 @@ PODS:
   - soundpool (0.0.1):
     - Flutter
   - TensorFlowLiteC (2.2.0)
-  - tflite (1.1.1):
+  - tflite (1.1.2):
     - Flutter
     - TensorFlowLiteC
   - wakelock (0.0.1):
@@ -23,6 +25,7 @@ PODS:
 
 DEPENDENCIES:
   - camera (from `.symlinks/plugins/camera/ios`)
+  - email_launcher (from `.symlinks/plugins/email_launcher/ios`)
   - Flutter (from `Flutter`)
   - flutter_beep (from `.symlinks/plugins/flutter_beep/ios`)
   - flutter_ringtone_player (from `.symlinks/plugins/flutter_ringtone_player/ios`)
@@ -40,6 +43,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   camera:
     :path: ".symlinks/plugins/camera/ios"
+  email_launcher:
+    :path: ".symlinks/plugins/email_launcher/ios"
   Flutter:
     :path: Flutter
   flutter_beep:
@@ -61,6 +66,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   camera: 38cc83ae9a5667bb5a71c7d9edaf60a91920fd4e
+  email_launcher: 19e0f42a16a904ae74f399c4603c791a157bc6ec
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
@@ -69,9 +75,9 @@ SPEC CHECKSUMS:
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   soundpool: c7f4422ca206e77f8900ed3c4ee6a6ff5a0e38a9
   TensorFlowLiteC: b3ab9e867b0b71052ca102a32a786555b330b02e
-  tflite: f0403a894740019d63ab5662253bba5b2dd37296
+  tflite: 7acd11db0915e2d90ab90474413068568eb605f0
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: a75497545d4391e2d394c3668e20cfb1c2bbd4aa
+PODFILE CHECKSUM: c0ed90c325b5a2632b0ddac177e59b067af61bd8
 
 COCOAPODS: 1.10.1

@@ -15,6 +15,7 @@ import 'package:squash/Solo/solo%20screen.dart';
 import 'data/Saved Data Page.dart';
 import 'account.dart';
 import 'Ghosting/home.dart';
+import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 
 List<CameraDescription> cameras;
 
@@ -30,7 +31,8 @@ Future<Null> main() async {
   }
 
   runApp(
-    MyApp(),
+    EasyDynamicThemeWidget(child: MyApp()),
+      //MyApp()
   );
 }
 
@@ -50,6 +52,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      themeMode: EasyDynamicTheme.of(context).themeMode,
       theme: ThemeData(
           brightness: Brightness.light,
           dividerTheme: DividerThemeData(),
