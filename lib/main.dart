@@ -16,10 +16,14 @@ import 'data/Saved Data Page.dart';
 import 'account.dart';
 import 'Ghosting/home.dart';
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+
 
 List<CameraDescription> cameras;
 
 Future<Null> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
   HiveHelper.init();
@@ -29,6 +33,7 @@ Future<Null> main() async {
   } on CameraException catch (e) {
     print('Error: $e.code\nError Message: $e.message');
   }
+  //await Firebase.initializeApp();
 
   runApp(
     EasyDynamicThemeWidget(child: MyApp()),

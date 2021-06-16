@@ -85,40 +85,67 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   }
 
   Future<void> editname() async {
-    return showDialog<void>(
+    await showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Edit Name'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Created by: Oliver Eielson'),
-                Text('Squash Icon by: add name here '),
-                Text('Squash Icon by: add name here '),
-                Text('Squash Icon by: add name here '),
-                Text('Squash Icon by: add name here '),
-                Text('Squash Icon by: add name here '),
-              ],
-            ),
+          backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(18),
+              )),
+          title: new Text(
+            "Edit Name",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                'Close',
-                style: TextStyle(
-                  color: Color.fromRGBO(66, 89, 138, 1),
+          content: new TextField(
+            autofocus: true,
+            decoration: new InputDecoration(
+                counterStyle: TextStyle(color: Colors.white),
+                hintText: "Eg Joe Smith",
+                hintStyle: TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 10,
+                    ),
+                    gapPadding: 5),
+                focusedBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(25.0),
+                  borderSide: BorderSide(color: Colors.white54),
                 ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+                labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+
+            style: TextStyle(color: Colors.white54),
+            onSubmitted: (value) {
+              setState(() {
+                name = value;
+              });
+              Navigator.of(context).pop();
+            },
+          ),
         );
       },
     );
+  }
+  
+  String initals(){
+    
+    if(name.split(" ").length==1){
+      
+      return name.substring(0,1).toUpperCase();
+      
+    }
+
+    if(name.split(" ").length>=2){
+
+      return name.substring(0,1).toUpperCase()+name.split(" ")[1].substring(0,1).toUpperCase();
+
+    }
+
+    return name.substring(0,1).toUpperCase();
+    
   }
 
 
@@ -385,8 +412,9 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      body: Column(
+
+      resizeToAvoidBottomInset: false,
+        body: Column(
 
         children: [
 
@@ -441,7 +469,7 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Text(
-                              name.split(" ")[0].substring(0,1)+name.split(" ")[1].substring(0,1),
+                              initals(),
                               style: TextStyle(fontSize: 50, color: Colors.grey),
                             ),
                           ))),
@@ -483,7 +511,11 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
           Expanded(
             child: TabBarView(
               children: [
-                info(),
+                ListView(
+                  children: [
+                    info(),
+                  ],
+                ),
                 FutureBuilder(
                   future: load_hive(),
                   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

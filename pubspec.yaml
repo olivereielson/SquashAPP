@@ -65,7 +65,6 @@ dependencies:
 
 
 
-
 dev_dependencies:
 
   flutter_native_splash:
@@ -128,7 +127,8 @@ flutter:
 #flutter pub run flutter_native_splash:create
 
 flutter_native_splash:
-  image: assets/ghost_icon.png
+  #ios_content_mode: scaleToFill
+  image: assets/logo.png
   color: "#42598a"
   color_dark: "#13132e"
-  image_dark: assets/ghost_icon.png
+  image_dark: assets/logo.png
