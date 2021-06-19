@@ -123,9 +123,9 @@ class SettingsPageState extends State<SettingsPage> {
         onTap: () async {
           //final InAppReview inAppReview = InAppReview.instance;
 
-          //if (await inAppReview.isAvailable()) {
-          //inAppReview.requestReview();
-          //}
+        // if (await inAppReview.isAvailable()) {
+         // inAppReview.requestReview();
+         // }
         },
         child: Container(
           height: 90,
@@ -440,7 +440,7 @@ class SettingsPageState extends State<SettingsPage> {
       children: [
         darkmode(),
         DataColect(),
-        Rate_App(),
+      //  Rate_App(),
         FeedBack(),
         buildInfo(),
         //VersionInfo(),

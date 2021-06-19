@@ -97,6 +97,7 @@ flutter:
     - assets/info_check.flr
     - assets/sounds/ding.mp4
     - assets/icons/
+    - assets/launch_image.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -128,7 +129,8 @@ flutter:
 
 flutter_native_splash:
   #ios_content_mode: scaleToFill
-  image: assets/logo.png
+  image: assets/launch_image.png
+  android_gravity: fill_horizontal
   color: "#42598a"
   color_dark: "#13132e"
-  image_dark: assets/logo.png
+  image_dark: assets/launch_image.png

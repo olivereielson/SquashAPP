@@ -71,7 +71,8 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                                   flareAsset: "assets/info_check.flr",
                                   type: CoolAlertType.success,
                                   text:
-                                      "Solo Exercise is still in beta testing.  The Artificial Intelligence has only been taught to play squash on a few courts and might have trouble on your court. ",
+                                      "Solo Exercise is still in beta testing.  The Artificial Intelligence has only been taught to play squash on a few courts and might have trouble on your court."
+                                          "To train the AI on your court click here",
                                 );
                               },
                             ),
@@ -219,11 +220,11 @@ class profileHeader extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     Tween icon_x = Tween<double>(begin: center - 50, end: 0);
     Tween icon_y = Tween<double>(begin: 40, end: 20);
-    Tween name_x = Tween<double>(begin: center - 60, end: 90);
+    Tween name_x = Tween<double>(begin: center - 60, end: 80);
     Tween name_y = Tween<double>(begin: 130, end: 15);
-    Tween pos_y2 = Tween<double>(begin: 15, end: 25);
+    Tween pos_y2 = Tween<double>(begin: 15, end: 30);
     Tween iconsize = Tween<double>(begin: 50, end: 20);
-
+    Tween iconopacity = Tween<double>(begin: 1, end: 0);
     return LayoutBuilder(builder: (context, constraints) {
       final double percentage = 1 - (constraints.maxHeight - minExtent) / (maxExtent - minExtent);
 
@@ -231,7 +232,7 @@ class profileHeader extends SliverPersistentHeaderDelegate {
       final double icony = icon_y.lerp(percentage);
       final double namex = name_x.lerp(percentage);
       final double namey = name_y.lerp(percentage);
-
+      final double opacityedit= iconopacity.lerp(percentage);
       final double posy2 = pos_y2.lerp(percentage);
       final double Iconsize = iconsize.lerp(percentage);
 
@@ -251,7 +252,7 @@ class profileHeader extends SliverPersistentHeaderDelegate {
                       Container(
                           width: 100,
                           decoration: new BoxDecoration(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withOpacity(1),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -271,7 +272,7 @@ class profileHeader extends SliverPersistentHeaderDelegate {
                     padding: const EdgeInsets.all(15.0),
                     child: Text(
                       name,
-                      style: TextStyle(color: Colors.white,fontSize: posy2),
+                      style: TextStyle(color: Colors.white, fontSize: posy2),
                     ),
                   )),
               Positioned(
@@ -294,6 +295,13 @@ class profileHeader extends SliverPersistentHeaderDelegate {
                       ),
                     ],
                   )),
+              Positioned(
+                  top: 20,
+                  left: 15,
+                  child: IconButton(
+                    icon: Icon(Icons.edit,color: Colors.white.withOpacity(opacityedit),),
+                    onPressed: () {},
+                  ))
             ],
           ),
         ),

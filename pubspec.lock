@@ -63,7 +63,7 @@ packages:
       name: blobs
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "2.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -266,7 +266,7 @@ packages:
       name: equatable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.0.3"
   eva_icons_flutter:
     dependency: "direct main"
     description:
@@ -301,7 +301,7 @@ packages:
       name: file
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.1"
+    version: "6.1.2"
   fixnum:
     dependency: transitive
     description:
@@ -881,7 +881,7 @@ packages:
       name: tutorial_coach_mark
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.3"
   typed_data:
     dependency: transitive
     description:

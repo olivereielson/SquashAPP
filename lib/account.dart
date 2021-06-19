@@ -47,12 +47,14 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   }
 
   Future<void> load_hive() async {
+
     if (!Hive.isAdapterRegistered(5)) {
       Hive.registerAdapter(Solo_stroage_Adapter());
     }
     if (!Hive.isAdapterRegistered(6)) {
       Hive.registerAdapter(BounceAdapter());
     }
+
 
     if (Hive.isBoxOpen("Solo1")) {
       solo_storage_box = Hive.box<Solo_stroage>("Solo1");
@@ -173,6 +175,7 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
   Widget info() {
     return FutureBuilder(
+      future: load_hive(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (loadfeed) {
           calcualte_levels();
@@ -372,15 +375,21 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
     feed.clear();
 
-    for (int i = 0; i < solo_storage_box.length; i++) {
-      feed.add({"date": solo_storage_box.getAt(i).end, "wid": feedCard(true, solo_storage_box.getAt(i).end)});
+    if(solo_storage_box!=null){
+      for (int i = 0; i < solo_storage_box.length; i++) {
+        feed.add({"date": solo_storage_box.getAt(i).end, "wid": feedCard(true, solo_storage_box.getAt(i).end)});
 
+      }
     }
 
-    for (int i = 0; i < ghosting_box.length; i++) {
-      feed.add({"date": ghosting_box.getAt(i).end, "wid": feedCard(false, ghosting_box.getAt(i).end)});
+    if(ghosting_box!=null){
+      for (int i = 0; i < ghosting_box.length; i++) {
+        feed.add({"date": ghosting_box.getAt(i).end, "wid": feedCard(false, ghosting_box.getAt(i).end)});
 
+      }
     }
+
+
 
     feed.sort((a, b) {
       return a["date"].compareTo(b["date"]);
@@ -411,6 +420,63 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    print(loadfeed);
+
+    if(true){
+
+      return Scaffold(
+
+        body: CustomScrollView(
+
+          slivers: [
+
+            SliverPersistentHeader(
+              pinned: true,
+              floating: false,
+              delegate: profileHeader("Oliver Eielson", "OE",MediaQuery.of(context).size.width/2),
+            ),
+
+            SliverPersistentHeader(
+              floating: false,
+              pinned: true,
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                    indicatorColor: Colors.lightBlueAccent,
+                    labelColor: Colors.white,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    tabs: [
+                      new Tab(
+                        //  icon: new Icon(Icons.sports_tennis),
+                        text: "Levels",
+                      ),
+                      new Tab(
+                        text: "Exercise Feed",
+                      ),
+                    ],
+                    controller: _tabController),
+              ),
+            ),
+
+            SliverFixedExtentList(
+              itemExtent: 700.0,
+              delegate: SliverChildListDelegate([
+                TabBarView(
+                  children: [info(), exersise_feed()],
+                  controller: _tabController,
+                ),
+              ], addAutomaticKeepAlives: true),
+            ),
+          ],
+
+
+        ),
+
+
+      );
+
+    }
+
     return Scaffold(
 
       resizeToAvoidBottomInset: false,
@@ -470,7 +536,7 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                             padding: const EdgeInsets.all(15.0),
                             child: Text(
                               initals(),
-                              style: TextStyle(fontSize: 50, color: Colors.grey),
+                              style: TextStyle(fontSize: 50, color: Colors.white),
                             ),
                           ))),
 
