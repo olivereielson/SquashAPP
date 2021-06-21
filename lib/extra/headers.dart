@@ -1,6 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:squash/Settings.dart';
+import 'package:squash/admin/Settings.dart';
 
 class MyDynamicHeader extends SliverPersistentHeaderDelegate {
   MyDynamicHeader(this.text1, this.text2, this.ghosting, [this.info = false]);
@@ -70,9 +71,8 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                                   flareAnimationName: "play",
                                   flareAsset: "assets/info_check.flr",
                                   type: CoolAlertType.success,
-                                  text:
-                                      "Solo Exercise is still in beta testing.  The Artificial Intelligence has only been taught to play squash on a few courts and might have trouble on your court."
-                                          "To train the AI on your court click here",
+                                  text: "Solo Exercise is still in beta testing.  The Artificial Intelligence has only been taught to play squash on a few courts and might have trouble on your court."
+                                      "To train the AI on your court click here",
                                 );
                               },
                             ),
@@ -205,8 +205,9 @@ class header_shot extends SliverPersistentHeaderDelegate {
 }
 
 class profileHeader extends SliverPersistentHeaderDelegate {
-  profileHeader(this.name, this.inital, this.center);
+  profileHeader(this.name, this.inital, this.center, this.edit);
 
+  Widget edit;
   String name;
   String inital;
   double center;
@@ -219,8 +220,8 @@ class profileHeader extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     Tween icon_x = Tween<double>(begin: center - 50, end: 0);
-    Tween icon_y = Tween<double>(begin: 40, end: 20);
-    Tween name_x = Tween<double>(begin: center - 60, end: 80);
+    Tween icon_y = Tween<double>(begin: 40, end: -100);
+    Tween name_x = Tween<double>(begin: center - 100, end: center - 100);
     Tween name_y = Tween<double>(begin: 130, end: 15);
     Tween pos_y2 = Tween<double>(begin: 15, end: 30);
     Tween iconsize = Tween<double>(begin: 50, end: 20);
@@ -232,7 +233,7 @@ class profileHeader extends SliverPersistentHeaderDelegate {
       final double icony = icon_y.lerp(percentage);
       final double namex = name_x.lerp(percentage);
       final double namey = name_y.lerp(percentage);
-      final double opacityedit= iconopacity.lerp(percentage);
+      final double opacityedit = iconopacity.lerp(percentage);
       final double posy2 = pos_y2.lerp(percentage);
       final double Iconsize = iconsize.lerp(percentage);
 
@@ -244,6 +245,11 @@ class profileHeader extends SliverPersistentHeaderDelegate {
           child: Stack(
             children: [
               Positioned(
+                  top: 20,
+                  left: 15,
+                  child: edit
+              ),
+              Positioned(
                   top: icony,
                   left: iconx,
                   child: Column(
@@ -252,27 +258,37 @@ class profileHeader extends SliverPersistentHeaderDelegate {
                       Container(
                           width: 100,
                           decoration: new BoxDecoration(
-                            color: Colors.white.withOpacity(1),
+                            color: Colors.white.withOpacity(opacityedit),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
                               child: Padding(
                             padding: const EdgeInsets.all(15.0),
-                            child: Text(
+                            child:
+
+                            AutoSizeText(
                               inital,
-                              style: TextStyle(fontSize: Iconsize, color: Colors.grey),
-                            ),
+                              style: TextStyle(fontSize: Iconsize,color: Colors.grey.withOpacity(opacityedit) ),
+                              maxLines: 1,
+                            )
                           ))),
                     ],
                   )),
               Positioned(
                   top: namey,
                   left: namex,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(
-                      name,
-                      style: TextStyle(color: Colors.white, fontSize: posy2),
+                  child: Container(
+                    width: 200,
+                    height: 70,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: AutoSizeText(
+                          name,
+                          style: TextStyle(fontSize: posy2,color: Colors.white ),
+                          maxLines: 1,
+                        )
+                      ),
                     ),
                   )),
               Positioned(
@@ -295,13 +311,6 @@ class profileHeader extends SliverPersistentHeaderDelegate {
                       ),
                     ],
                   )),
-              Positioned(
-                  top: 20,
-                  left: 15,
-                  child: IconButton(
-                    icon: Icon(Icons.edit,color: Colors.white.withOpacity(opacityedit),),
-                    onPressed: () {},
-                  ))
             ],
           ),
         ),

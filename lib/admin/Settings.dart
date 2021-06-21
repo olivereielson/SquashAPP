@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:email_launcher/email_launcher.dart';
 
-import 'extra/headers.dart';
+import '../extra/headers.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage();

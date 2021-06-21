@@ -9,6 +9,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:soundpool/soundpool.dart';
+import 'package:squash/Solo/solo_defs.dart';
 
 typedef void Callback(bool done);
 typedef void Callback1(int current_side);
@@ -35,7 +36,6 @@ class counter_widget extends StatefulWidget {
 }
 
 class counter_widget_state extends State<counter_widget> {
-  List<String> names = ["Forehand Drives", "Forehand ServiceBox", "BackHand Drives", "BackHand ServiceBox"];
   Soundpool _soundpool;
 
   counter_widget_state(this._start, this.type,this.counter_value);
@@ -134,7 +134,7 @@ class counter_widget_state extends State<counter_widget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              names[widget.activities[sides_done]],
+              SoloDefs().Exersise[widget.activities[sides_done]]["name"],
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
             ),
             GestureDetector(
@@ -226,7 +226,7 @@ class counter_widget_state extends State<counter_widget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              names[widget.activities[sides_done]],
+              SoloDefs().Exersise[widget.activities[sides_done]]["name"],
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
             ),
             GestureDetector(

@@ -12,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:squash/Solo/Solo%20home%20page.dart';
+import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/Target_page.dart';
 import 'package:squash/extra/headers.dart';
 import 'package:tflite/tflite.dart';
@@ -67,7 +68,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   bool showGreen = true;
 
-  List<String> type_list = ["Timed Solo", "Target Practice", "Shot Count"];
 
   @override
   void initState() {
@@ -588,25 +588,23 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
-  Widget shot(String name, bool selected, int index) {
+  Widget shot(Map data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: GestureDetector(
         onTap: () {
           HapticFeedback.lightImpact();
 
-          if (sides.contains(index)) {
+          if (sides.contains(data["id"])) {
             setState(() {
-              sides.remove(index);
+              sides.remove(data["id"]);
             });
           } else {
             setState(() {
-              sides.add(index);
+              sides.add(data["id"]);
             });
           }
-          print(sides);
           sides.sort();
-          print(sides);
         },
         child: Center(
           child: Card(
@@ -614,7 +612,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             color: Color.fromRGBO(40, 70, 130, 1),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
-              side: BorderSide(color: sides.contains(index) ? Theme.of(context).primaryColorLight : Color.fromRGBO(40, 70, 130, 1), width: 5),
+              side: BorderSide(color: sides.contains(data["id"]) ? Theme.of(context).primaryColorLight : Color.fromRGBO(40, 70, 130, 1), width: 5),
             ),
             child: Container(
               height: 175,
@@ -624,7 +622,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      name,
+                      data["name"],
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColorLight),
                     ),
@@ -837,10 +835,24 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
           pinned: false,
           floating: false,
           delegate: header_shot(
-            ListView(
+
+            ListView.builder(
+
+              itemCount: SoloDefs().Exersise.length,
+
               scrollDirection: Axis.horizontal,
-              children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1), shot("Backhand Drives", true, 2), shot("Backhand Service Box", false, 3)],
-            ),
+
+
+              itemBuilder: (BuildContext context, int index) {
+
+                return shot(SoloDefs().Exersise[index]);
+
+              },
+
+
+
+            )
+
           ),
         ),
         SliverPersistentHeader(
@@ -875,66 +887,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       ]),
     );
 
-    return NestedScrollView(
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-        return <Widget>[
-          SliverPersistentHeader(
-            pinned: true,
-            floating: false,
-            delegate: MyDynamicHeader("Solo", "Exercise", false, true),
-          ),
-          SliverPersistentHeader(
-            floating: false,
-            pinned: true,
-            delegate: _SliverAppBarDelegate(
-              TabBar(
-                  indicatorColor: Colors.lightBlueAccent,
-                  indicatorWeight: 1,
-                  indicatorSize: TabBarIndicatorSize.label,
-                  tabs: [
-                    new Tab(
-                      //  icon: new Icon(Icons.sports_tennis),
-                      text: "Count",
-                    ),
-                    new Tab(
-                      text: "Timed",
-                    ),
-                  ],
-                  controller: _tabController),
-            ),
-          ),
-        ];
-      },
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 20,
-                  color: Color.fromRGBO(20, 20, 60, 1),
-                ),
-                Container(
-                  height: 250,
-                  decoration: BoxDecoration(color: Color.fromRGBO(50, 50, 100, 1), borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [shot("Forehand Drives", true, 0), shot("Forehand Service Box", true, 1), shot("Backhand Drives", true, 2), shot("Backhand Service Box", false, 3)],
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: 310,
-              child: TabBarView(
-                children: [count(), timed()],
-                controller: _tabController,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

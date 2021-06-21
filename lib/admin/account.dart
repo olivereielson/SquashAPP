@@ -8,8 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 import 'Settings.dart';
-import 'extra/headers.dart';
-import 'extra/hive_classes.dart';
+import '../extra/headers.dart';
+import '../extra/hive_classes.dart';
 
 class Acount extends StatefulWidget {
   @override
@@ -45,6 +45,9 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
     super.initState();
   }
+
+
+
 
   Future<void> load_hive() async {
 
@@ -122,7 +125,8 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
             style: TextStyle(color: Colors.white54),
             onSubmitted: (value) {
               setState(() {
-                name = value;
+                name = value.capitalizeFirstofEach;
+
               });
               Navigator.of(context).pop();
             },
@@ -149,8 +153,6 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
     return name.substring(0,1).toUpperCase();
     
   }
-
-
 
   void calcualte_levels() {
     shots_hit = 0;
@@ -223,7 +225,7 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
                                   ),
                                   RotateAnimatedText(
-                                    "Hit ${goals[ball_level + 1] - shots_hit} to level up",
+                                    "Hit ${goals[ball_level + 1] - shots_hit} balls to level up",
                                     textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
                                       duration: Duration(seconds: 3)
 
@@ -421,7 +423,6 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    print(loadfeed);
 
     if(true){
 
@@ -434,8 +435,16 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
             SliverPersistentHeader(
               pinned: true,
               floating: false,
-              delegate: profileHeader("Oliver Eielson", "OE",MediaQuery.of(context).size.width/2),
-            ),
+              delegate: profileHeader(name, initals(),MediaQuery.of(context).size.width/2,IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: (){
+
+                  editname();
+
+                },
+
+              ),
+            ),),
 
             SliverPersistentHeader(
               floating: false,
@@ -445,6 +454,9 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                     indicatorColor: Colors.lightBlueAccent,
                     labelColor: Colors.white,
                     indicatorSize: TabBarIndicatorSize.label,
+                    automaticIndicatorColorAdjustment: true,
+
+
                     tabs: [
                       new Tab(
                         //  icon: new Icon(Icons.sports_tennis),
@@ -477,133 +489,6 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
     }
 
-    return Scaffold(
-
-      resizeToAvoidBottomInset: false,
-        body: Column(
-
-        children: [
-
-          Container(
-
-            height: 250,
-            width: MediaQuery.of(context).size.width,
-            color: Theme.of(context).primaryColor,
-            child: SafeArea(
-              child: Column(
-
-                children: [
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-
-
-                      children: [
-
-                        IconButton(onPressed: (){
-
-                          editname();
-
-                        }, icon: Icon(Icons.edit)),
-                        IconButton(onPressed: (){
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SettingsPage()),
-                          );
-
-                        }, icon: Icon(Icons.settings)),
-
-
-
-
-                      ],
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-
-                    ),
-                  ),
-
-                  Container(
-                      width: 100,
-                      decoration: new BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Text(
-                              initals(),
-                              style: TextStyle(fontSize: 50, color: Colors.white),
-                            ),
-                          ))),
-
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(name,style: TextStyle(fontSize: 15,color: Colors.white),),
-                  )
-
-
-                ],
-
-
-              ),
-            ),
-
-
-          ),
-           Container(
-             color: Theme.of(context).primaryColor,
-
-             child: TabBar(
-
-                indicatorColor: Colors.lightBlueAccent,
-                labelColor: Colors.white,
-                indicatorSize: TabBarIndicatorSize.label,
-                tabs: [
-                  new Tab(
-                    //  icon: new Icon(Icons.sports_tennis),
-                    text: "Levels",
-                  ),
-                  new Tab(
-                    text: "Exercise Feed",
-                  ),
-                ],
-                controller: _tabController),
-           ),
-
-          Expanded(
-            child: TabBarView(
-              children: [
-                ListView(
-                  children: [
-                    info(),
-                  ],
-                ),
-                FutureBuilder(
-                  future: load_hive(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if (loadfeed) {
-                      return exersise_feed();
-                    } else {
-                      return Text("Loading feed");
-                    }
-                  },
-                )
-              ],
-              controller: _tabController,
-            ),
-          ),
-        ],
-
-      )
-
-
-
-
-    );
   }
 }
 
@@ -630,4 +515,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
     return true;
   }
+}
+
+extension CapExtension on String {
+  String get inCaps => this.length > 0 ?'${this[0].toUpperCase()}${this.substring(1)}':'';
+  String get allInCaps => this.toUpperCase();
+  String get capitalizeFirstofEach => this.replaceAll(RegExp(' +'), ' ').split(" ").map((str) => str.inCaps).join(" ");
 }
