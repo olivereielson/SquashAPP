@@ -17,7 +17,7 @@ class Acount extends StatefulWidget {
 }
 
 class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
-  String name = "Oliver Eielson";
+  String name = "No Name";
 
 
 
@@ -42,6 +42,8 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
       length: 2,
       vsync: this,
     );
+
+    get_pref();
 
     super.initState();
   }
@@ -91,7 +93,7 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
     }
 
     setState(() {
-      name = prefs.getString('first_name');
+      name = prefs.getString('first_name').capitalizeFirstofEach;
     });
   }
 

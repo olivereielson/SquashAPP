@@ -65,8 +65,7 @@ dependencies:
   auto_size_text: ^2.1.0
   random_color:
   firebase_analytics:
-  intro_screen_onboarding_flutter:
-
+  intro_views_flutter:
 
 dev_dependencies:
 
@@ -101,6 +100,9 @@ flutter:
     - assets/sounds/ding.mp4
     - assets/icons/
     - assets/launch_image.png
+    - assets/court_intro.png
+    - assets/solo_intro.png
+    - assets/data_intro.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 //import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:email_launcher/email_launcher.dart';
+import 'package:squash/admin/terms_and_conditions.dart';
 
 import '../extra/headers.dart';
 
@@ -403,7 +404,7 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> terms() async {
+  Future<void> terms_dialog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -412,8 +413,8 @@ class SettingsPageState extends State<SettingsPage> {
           title: const Text('Terms and Conditions'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: const <Widget>[
-                Text('Dont sue me please i dont have any money'),
+              children:  <Widget>[
+                Text(terms().terms_text),
               ],
             ),
           ),
@@ -439,8 +440,8 @@ class SettingsPageState extends State<SettingsPage> {
     return Column(
       children: [
         darkmode(),
-        DataColect(),
-      //  Rate_App(),
+        //DataColect(),
+      // Rate_App(),
         FeedBack(),
         buildInfo(),
         //VersionInfo(),
@@ -462,7 +463,7 @@ class SettingsPageState extends State<SettingsPage> {
               ),
               GestureDetector(
                   onTap: () {
-                    terms();
+                    terms_dialog();
                   },
                   child: Text(
                     "Terms and Conditions",

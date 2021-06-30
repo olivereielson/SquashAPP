@@ -1177,7 +1177,7 @@ class SoloHomeState extends State<SoloHome> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Text(
-                    "Drag the four points to four corners of the service box. ",
+                    "Place phone at shoulder height and drag the four points to four corners of the service box. ",
                     style: TextStyle(color: Colors.white),
                   ),
                 )

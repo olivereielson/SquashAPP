@@ -520,13 +520,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.17.0"
-  intro_screen_onboarding_flutter:
+  intro_views_flutter:
     dependency: "direct main"
     description:
-      name: intro_screen_onboarding_flutter
+      name: intro_views_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.5"
+    version: "3.2.0"
   io:
     dependency: transitive
     description:
