@@ -225,7 +225,7 @@ class profileHeader extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    Tween icon_x = Tween<double>(begin: center - 50, end: 0);
+    Tween icon_x = Tween<double>(begin: center - 50, end: center - 50);
     Tween icon_y = Tween<double>(begin: 40, end: -100);
     Tween name_x = Tween<double>(begin: center - 100, end: center - 100);
     Tween name_y = Tween<double>(begin: 130, end: 15);

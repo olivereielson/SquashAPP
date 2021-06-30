@@ -82,7 +82,10 @@ class _setupState extends State<setup> {
       theme: ThemeData(
           brightness: Brightness.light,
           dividerTheme: DividerThemeData(),
-          textTheme: TextTheme(caption: TextStyle(color: Color.fromRGBO(40, 70, 130, 1)), bodyText1: TextStyle(color: Colors.black)),
+          textTheme: TextTheme(
+              bodyText2: TextStyle(color: Color.fromRGBO(60, 90, 130, 1)),
+
+              caption: TextStyle(color: Color.fromRGBO(40, 70, 130, 1)), bodyText1: TextStyle(color: Colors.black)),
           splashColor: Color.fromRGBO(60, 90, 130, 1),
           backgroundColor: Colors.white,
           tabBarTheme: TabBarTheme(
@@ -106,6 +109,7 @@ class _setupState extends State<setup> {
           focusColor: Colors.grey,
           textTheme: TextTheme(
               bodyText1: TextStyle(color: Colors.white),
+              bodyText2: TextStyle(color: Colors.white),
               caption: TextStyle(
                 color: Color.fromRGBO(20, 20, 60, 1),
               )),

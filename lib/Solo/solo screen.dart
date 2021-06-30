@@ -261,6 +261,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             },
           ),
           actions: <Widget>[
+
             // usually buttons at the bottom of the dialog
           ],
         );

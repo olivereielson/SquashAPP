@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 //import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:email_launcher/email_launcher.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:squash/admin/credits.dart';
 import 'package:squash/admin/terms_and_conditions.dart';
 
 import '../extra/headers.dart';
@@ -454,20 +456,31 @@ class SettingsPageState extends State<SettingsPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
                     onTap: () {
-                      credits();
-                    },
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.bottomToTop,
+                          child: credit_page(),
+                        ),
+                      );                    },
                     child: Text(
                       "Credits",
-                      style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15),
+                      style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color, fontSize: 15),
                     )),
               ),
               GestureDetector(
                   onTap: () {
-                    terms_dialog();
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: terms_page(),
+                      ),
+                    );
                   },
                   child: Text(
                     "Terms and Conditions",
-                    style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15),
+                    style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color, fontSize: 15),
                   )),
             ],
           ),
