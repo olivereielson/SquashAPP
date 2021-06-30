@@ -5,8 +5,15 @@ import 'package:animated_widgets/widgets/rotation_animated.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
 import 'package:camera/camera.dart';
 import 'package:direct_select/direct_select.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -23,8 +30,10 @@ import '../extra/hive_classes.dart';
 
 class GhostScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
 
-  GhostScreen(this.cameras);
+  GhostScreen(this.cameras,this.analytics,this.observer);
 
   @override
   GhostScreenState createState() => new GhostScreenState(cameras);
@@ -73,6 +82,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     );
 
     super.initState();
+    _testSetCurrentScreen();
 
     if (Hive.isBoxOpen(box)) {
       setState(() {
@@ -84,6 +94,26 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
   }
 
   GhostScreenState(this.cameras);
+
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Ghosting Page',
+      screenClassOverride: 'Ghosting_Page',
+    );
+  }
+
+  Future<void> _sendAnalyticsEvent() async {
+     widget.analytics.logEvent(
+      name: 'Ghosting_Workout',
+      parameters: <String, dynamic>{
+        //'int': start_time.inSeconds,
+      //  'int': rest_time.inSeconds,
+        //'double': round_num,
+        'int': 0,
+       // 'int': _tabController.index,
+      },
+    );
+  }
 
   void saved() {
     var exersie = Custom()
@@ -291,7 +321,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
           content: new Text("Please select at least 1 Corner"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
+            new TextButton(
               child: new Text("Close"),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -731,6 +761,8 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                         GestureDetector(
                                           onTap: () async {
                                             await loadModel();
+                                         //
+                                            //   _sendAnalyticsEvent();
 
                                             Navigator.push(
                                               context,
@@ -896,7 +928,10 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                       children: [
                                         GestureDetector(
                                           onTap: () async {
+                                       //     _sendAnalyticsEvent();
                                             await loadModel();
+
+
 
                                             Navigator.push(
                                               context,

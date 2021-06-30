@@ -31,7 +31,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   bool delete_mode = false;
 
-  final _solokey = GlobalKey<AnimatedListState>();
 
   final List<CameraDescription> cameras;
   TabController _tabController;
@@ -60,7 +59,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   DateTime time;
 
-  List<int> sides = [0, 1, 2, 3];
+  List<int> sides = [];
 
   List<Widget> settings;
   int side_count = 2;
@@ -649,17 +648,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
         ),
       ),
     );
-  }
-
-  Widget mode_choice() {
-    switch (segmentedControlGroupValue) {
-      case 0:
-        return Time_Input();
-      case 1:
-        return round();
-      case 2:
-        return Target_input();
-    }
   }
 
   Widget button(int index, String name) {

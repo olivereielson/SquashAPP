@@ -3,20 +3,55 @@ import 'dart:ui';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:random_color/random_color.dart';
 import 'package:scidart/numdart.dart';
+import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/hive_classes.dart';
 
 class DataMethods {
+
   List<double> solo_pie_chart(Box<Solo_stroage> solo_storage_box) {
-    List<double> solo_type_pie_chart_data = [0, 0, 0, 0];
+    List<double> solo_type_pie_chart_data = [];
+
+    for (int i = 0; i < SoloDefs().Exersise.length; i++) {
+      solo_type_pie_chart_data.add(0);
+    }
+
 
     for (int i = 0; i < solo_storage_box.length; i++) {
-      for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
-        solo_type_pie_chart_data[solo_storage_box.getAt(i).bounces[x].type.toInt()]++;
+      for (int x = 0; x < solo_storage_box
+          .getAt(i)
+          .bounces
+          .length; x++) {
+        solo_type_pie_chart_data[solo_storage_box
+            .getAt(i)
+            .bounces[x].type.toInt()]++;
       }
     }
 
     return solo_type_pie_chart_data;
+  }
+
+  List<PieChartSectionData> solo_type_slice_data(List<double> slice_data,colors,index) {
+    List<PieChartSectionData> data = [];
+
+
+    var sum = slice_data.reduce((a, b) => a + b);
+
+    RandomColor _randomColor = RandomColor();
+
+    for (int i = 0; i < SoloDefs().Exersise.length; i++) {
+      data.add(PieChartSectionData(
+        color: colors[i],
+        value: slice_data[i],
+        title: ((slice_data[i] / sum) * 100).toInt().toString() + '%',
+        radius:index==i?70:60,
+        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[0] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
+        titlePositionPercentageOffset: 0.55,
+      ),);
+    }
+
+    return data;
   }
 
   double percision(Box<Solo_stroage> solo_storage_box) {
@@ -24,8 +59,15 @@ class DataMethods {
     for (int i = 0; i < solo_storage_box.length; i++) {
       var n = Array([]);
 
-      for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
-        n.add(hypotenuse(solo_storage_box.getAt(i).bounces[x].y_pos, solo_storage_box.getAt(i).bounces[x].x_pos));
+      for (int x = 0; x < solo_storage_box
+          .getAt(i)
+          .bounces
+          .length; x++) {
+        n.add(hypotenuse(solo_storage_box
+            .getAt(i)
+            .bounces[x].y_pos, solo_storage_box
+            .getAt(i)
+            .bounces[x].x_pos));
       }
 
       if (n.length != 0) {
@@ -34,14 +76,10 @@ class DataMethods {
     }
 
 
-    if(acc.length==0){
+    if (acc.length == 0) {
       return 0;
-
-    }else{
-
+    } else {
       return acc.reduce((a, b) => a + b) / acc.length;
-
-
     }
   }
 
@@ -50,9 +88,21 @@ class DataMethods {
 
     for (int i = 0; i < solo_storage_box.length; i++) {
       if (ave_solo_dur == null) {
-        ave_solo_dur = solo_storage_box.getAt(i).end.difference(solo_storage_box.getAt(i).start).inSeconds;
+        ave_solo_dur = solo_storage_box
+            .getAt(i)
+            .end
+            .difference(solo_storage_box
+            .getAt(i)
+            .start)
+            .inSeconds;
       } else {
-        ave_solo_dur = (solo_storage_box.getAt(i).end.difference(solo_storage_box.getAt(i).start).inSeconds + ave_solo_dur) ~/ 2;
+        ave_solo_dur = (solo_storage_box
+            .getAt(i)
+            .end
+            .difference(solo_storage_box
+            .getAt(i)
+            .start)
+            .inSeconds + ave_solo_dur) ~/ 2;
       }
     }
 
@@ -64,9 +114,15 @@ class DataMethods {
 
     for (int i = 0; i < solo_storage_box.length; i++) {
       if (ave_shot_num == null) {
-        ave_shot_num = solo_storage_box.getAt(i).bounces.length;
+        ave_shot_num = solo_storage_box
+            .getAt(i)
+            .bounces
+            .length;
       } else {
-        ave_shot_num = (solo_storage_box.getAt(i).bounces.length + ave_shot_num) ~/ 2;
+        ave_shot_num = (solo_storage_box
+            .getAt(i)
+            .bounces
+            .length + ave_shot_num) ~/ 2;
       }
     }
 
@@ -78,14 +134,38 @@ class DataMethods {
     double work = 0;
 
     for (int i = 0; i < ghosting_box.length; i++) {
-      if (ghosting_box.getAt(i).rest_time != null && ghosting_box.getAt(i).rounds != null) {
+      if (ghosting_box
+          .getAt(i)
+          .rest_time != null && ghosting_box
+          .getAt(i)
+          .rounds != null) {
         if (rest == 0 && work == 0) {
-          rest = (ghosting_box.getAt(i).rest_time * (ghosting_box.getAt(i).rounds + 1)).toDouble();
-          work = ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds - rest;
+          rest = (ghosting_box
+              .getAt(i)
+              .rest_time * (ghosting_box
+              .getAt(i)
+              .rounds + 1)).toDouble();
+          work = ghosting_box
+              .getAt(i)
+              .end
+              .difference(ghosting_box
+              .getAt(i)
+              .start)
+              .inSeconds - rest;
         } else {
           //print(ghosting_box.getAt(i).rounds);
-          rest = (rest + (ghosting_box.getAt(i).rest_time * (ghosting_box.getAt(i).rounds + 1)).toDouble()) / 2;
-          work = (work + ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds - rest) / 2;
+          rest = (rest + (ghosting_box
+              .getAt(i)
+              .rest_time * (ghosting_box
+              .getAt(i)
+              .rounds + 1)).toDouble()) / 2;
+          work = (work + ghosting_box
+              .getAt(i)
+              .end
+              .difference(ghosting_box
+              .getAt(i)
+              .start)
+              .inSeconds - rest) / 2;
         }
       }
     }
@@ -97,35 +177,40 @@ class DataMethods {
     List<FlSpot> speed = [];
 
 
-
-
     for (int i = 0; i < ghosting_box.length; i++) {
-      if (ghosting_box.getAt(i).time_array.length > 0) {
+      if (ghosting_box
+          .getAt(i)
+          .time_array
+          .length > 0) {
+        double result;
 
+        for (int x = 0; x < ghosting_box
+            .getAt(i)
+            .corner_array
+            .length; x++) {
+          double fixedSpeed = ghosting_box
+              .getAt(i)
+              .time_array[x];
 
-       double result;
-
-        for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
-
-          double fixedSpeed=ghosting_box.getAt(i).time_array[x];
-
-          if(fixedSpeed>ghosting_box.getAt(i).rest_time){
-
-            fixedSpeed=fixedSpeed-ghosting_box.getAt(i).rest_time;
+          if (fixedSpeed > ghosting_box
+              .getAt(i)
+              .rest_time) {
+            fixedSpeed = fixedSpeed - ghosting_box
+                .getAt(i)
+                .rest_time;
           }
 
-          if(result==null){
-
-            result=fixedSpeed;
-          }else{
-            result=(result+fixedSpeed);
-
+          if (result == null) {
+            result = fixedSpeed;
+          } else {
+            result = (result + fixedSpeed);
           }
-
-
         }
 
-        result = result / ghosting_box.getAt(i).time_array.length;
+        result = result / ghosting_box
+            .getAt(i)
+            .time_array
+            .length;
 
         speed.add(FlSpot(i.toDouble(), result));
         //print(result);
@@ -142,9 +227,21 @@ class DataMethods {
     int ave_ghost_dur;
     for (int i = 0; i < ghosting_box.length; i++) {
       if (ave_ghost_dur == null) {
-        ave_ghost_dur = ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds;
+        ave_ghost_dur = ghosting_box
+            .getAt(i)
+            .end
+            .difference(ghosting_box
+            .getAt(i)
+            .start)
+            .inSeconds;
       } else {
-        ave_ghost_dur = (ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds + ave_ghost_dur) ~/ 2;
+        ave_ghost_dur = (ghosting_box
+            .getAt(i)
+            .end
+            .difference(ghosting_box
+            .getAt(i)
+            .start)
+            .inSeconds + ave_ghost_dur) ~/ 2;
       }
     }
 
@@ -156,9 +253,15 @@ class DataMethods {
 
     for (int i = 0; i < ghosting_box.length; i++) {
       if (ave_ghost_num == null) {
-        ave_ghost_num = ghosting_box.getAt(i).corner_array.length;
+        ave_ghost_num = ghosting_box
+            .getAt(i)
+            .corner_array
+            .length;
       } else {
-        ave_ghost_num = (ghosting_box.getAt(i).corner_array.length + ave_ghost_num) ~/ 2;
+        ave_ghost_num = (ghosting_box
+            .getAt(i)
+            .corner_array
+            .length + ave_ghost_num) ~/ 2;
       }
     }
 
@@ -166,25 +269,32 @@ class DataMethods {
   }
 
   List<double> SingleCornerSpeed(Box<Ghosting> ghosting_box) {
-
     List<double> single_corner_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     for (int i = 0; i < ghosting_box.length; i++) {
-      for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
+      for (int x = 0; x < ghosting_box
+          .getAt(i)
+          .corner_array
+          .length; x++) {
+        int con_index = ghosting_box
+            .getAt(i)
+            .corner_array[x].toInt();
 
+        double fixedSpeed = ghosting_box
+            .getAt(i)
+            .time_array[x];
 
-        int con_index = ghosting_box.getAt(i).corner_array[x].toInt();
-
-        double fixedSpeed=ghosting_box.getAt(i).time_array[x];
-
-        if(fixedSpeed>ghosting_box.getAt(i).rest_time){
-
-          fixedSpeed=fixedSpeed-ghosting_box.getAt(i).rest_time;
+        if (fixedSpeed > ghosting_box
+            .getAt(i)
+            .rest_time) {
+          fixedSpeed = fixedSpeed - ghosting_box
+              .getAt(i)
+              .rest_time;
         }
 
 
         if (single_corner_speed[con_index] == 0) {
-          single_corner_speed[con_index] =fixedSpeed;
+          single_corner_speed[con_index] = fixedSpeed;
         } else {
           single_corner_speed[con_index] = (single_corner_speed[con_index] + fixedSpeed) / 2;
         }
@@ -195,21 +305,23 @@ class DataMethods {
   }
 
   List<double> GhostPieChart(Box<Ghosting> ghosting_box) {
-
     List<double> ghost_type_pie_chart_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     for (int i = 0; i < ghosting_box.length; i++) {
-      for (int x = 0; x < ghosting_box.getAt(i).corner_array.length; x++) {
-        ghost_type_pie_chart_data[ghosting_box.getAt(i).corner_array[x].toInt()]++;
+      for (int x = 0; x < ghosting_box
+          .getAt(i)
+          .corner_array
+          .length; x++) {
+        ghost_type_pie_chart_data[ghosting_box
+            .getAt(i)
+            .corner_array[x].toInt()]++;
       }
     }
 
     return ghost_type_pie_chart_data;
-
   }
 
-  List<BarChartGroupData> BarChartSpeed(Box<Ghosting> ghosting_box,List<double> single_corner_speed,Color primeColor){
-
+  List<BarChartGroupData> BarChartSpeed(Box<Ghosting> ghosting_box, List<double> single_corner_speed, Color primeColor) {
     List<BarChartGroupData> barchrt = [];
 
     for (int i = 0; i < single_corner_speed.length; i++) {
@@ -239,31 +351,22 @@ class DataMethods {
     List<FlSpot> speed = [];
 
 
+    if (ghosting_box.time_array.length > 0) {
+      double result;
 
+      for (int x = 0; x < ghosting_box.corner_array.length; x++) {
+        double fixedSpeed = ghosting_box.time_array[x];
 
-      if (ghosting_box.time_array.length > 0) {
-
-
-        double result;
-
-        for (int x = 0; x < ghosting_box.corner_array.length; x++) {
-
-          double fixedSpeed=ghosting_box.time_array[x];
-
-          if(fixedSpeed>ghosting_box.rest_time){
-
-            fixedSpeed=fixedSpeed-ghosting_box.rest_time;
-          }
-
-
-
-          speed.add(FlSpot(x.toDouble(), fixedSpeed));
-
+        if (fixedSpeed > ghosting_box.rest_time) {
+          fixedSpeed = fixedSpeed - ghosting_box.rest_time;
         }
 
 
-        //print(result);
+        speed.add(FlSpot(x.toDouble(), fixedSpeed));
+      }
 
+
+      //print(result);
 
 
       //print(speed);
@@ -271,7 +374,6 @@ class DataMethods {
 
     return speed;
   }
-
 
 
 }

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "818347271232",
+    "project_id": "squash-f666e",
+    "storage_bucket": "squash-f666e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818347271232:android:8fafd4e7a99375d217aba5",
+        "android_client_info": {
+          "package_name": "com.example.squash"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "818347271232-lt7vquaq14g6lokj5c7lfqci5f4qdeos.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt9ex0MtcdpSzVGmyziunXMqAesFZzFCE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "818347271232-lt7vquaq14g6lokj5c7lfqci5f4qdeos.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "818347271232-8sln88pphqt68qsk0kmeroihgpbs377f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.squashlabs54321"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

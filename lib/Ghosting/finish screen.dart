@@ -301,53 +301,37 @@ class _Finish_ScreenState extends State<Finish_Screen> {
   Widget build(BuildContext context) {
     print(widget.time_array);
     return Scaffold(
+
+      appBar: AppBar(
+
+        title: Text("Ghosting Finished",style: TextStyle(fontSize: 25),),
+        toolbarHeight: 90,
+        elevation: 0,
+        leading: Text(""),
+        actions: [
+
+          IconButton(onPressed: (){
+
+            Navigator.pop(context);
+
+
+          }, icon: Icon(Icons.close,size: 30,))
+
+        ],
+
+
+      ),
+
       body: Stack(
         children: [
 
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _controllerCenter,
-              shouldLoop: false,
-
-              blastDirection: pi / 2,
-              // radial value - RIGHT
-              emissionFrequency: 1,
-              minimumSize: const Size(10, 10),
-              // set the minimum potential size for the confetti (width, height)
-              maximumSize: const Size(20, 20),
-              // set the maximum potential size for the confetti (width, height)
-              numberOfParticles: 1,
-              gravity: 0.1,
-            ),
-          ),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
 
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 200,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  border: Border.all(
-                      color: Theme.of(context).primaryColor,
-                      // set border color
-                      width: 6.0), // set border width
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)), // set rounded corner radius
-                ),
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    child: Text(
-                    "Finished",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
+
 
 
               FutureBuilder(
@@ -373,27 +357,11 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                               ],
                             ),
 
-                            Speed(),
+                            ghosting_box.getAt(0).corner_array.length!=0?Speed():Text(""),
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    child: CupertinoButton(
-                                        color: Theme.of(context).primaryColor,
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          "Done",
-                                          style: TextStyle(color: Colors.white),
-                                        )),
-                                  )
-                                ],
-                              ),
-                            )
+
+
+
 
                           ],
 

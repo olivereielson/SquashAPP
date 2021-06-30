@@ -84,6 +84,12 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   Future<void> get_pref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    if(!prefs.containsKey("first_name")){
+
+      prefs.setString('first_name', "No name");
+
+    }
+
     setState(() {
       name = prefs.getString('first_name');
     });

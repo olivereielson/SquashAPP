@@ -1,9 +1,6 @@
 import 'dart:math' as math;
 import 'dart:math';
 import 'dart:ui';
-import 'package:animated_icon_button/animated_icon_button.dart';
-
-import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +18,7 @@ import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/headers.dart';
 import 'package:squash/maginfine/magnifier.dart';
 import 'package:tflite/tflite.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../Ghosting/Selection Screen.dart';
@@ -80,8 +78,6 @@ class SoloHomeState extends State<SoloHome> {
   Offset position = Offset(200, 500);
   double currentBubbleSize = 10.0;
   bool magnifierVisible = false;
-
-  bool back_hand = false;
 
   bool pause = false;
 
@@ -143,6 +139,13 @@ class SoloHomeState extends State<SoloHome> {
   bool up_down = false;
   int blew_count = 0;
 
+  List<TargetFocus> targets = [];
+  GlobalKey keyButton = GlobalKey();
+  GlobalKey keyButton1 = GlobalKey();
+  GlobalKey keyButton2 = GlobalKey();
+  GlobalKey keyButton3 = GlobalKey();
+  GlobalKey keyButton4 = GlobalKey();
+
   @override
   void initState() {
     currentBubbleSize = touchBubbleSize;
@@ -159,16 +162,42 @@ class SoloHomeState extends State<SoloHome> {
     start_time = DateTime.now();
     generate_cout_point();
     saved_points();
+    make_targets();
     super.initState();
+  }
+
+  void showTutorial() {
+    TutorialCoachMark(
+      context,
+      targets: targets,
+      // List<TargetFocus>
+      colorShadow: Theme.of(context).primaryColor,
+      // DEFAULT Colors.black
+      // alignSkip: Alignment.bottomRight,
+      // textSkip: "SKIP",
+      // paddingFocus: 10,
+      // opacityShadow: 0.8,
+      onClickTarget: (target) {
+      },
+      onClickOverlay: (target) {
+      },
+      hideSkip: false,
+
+
+
+      onSkip: () {
+        print("Finish");
+      },
+      onFinish: () {
+        print("finish");
+      },
+    )..show();
   }
 
   Future<void> saved_points() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    print("herer");
-    print(back_hand);
-
-    if (!back_hand) {
+    if (!SoloDefs().Exersise[current_side]["BackHand"]) {
       if (!prefs.containsKey("p2.y")) {
         prefs.setDouble("p0.x", 324.0);
         prefs.setDouble("p0.y", 489.0);
@@ -226,7 +255,7 @@ class SoloHomeState extends State<SoloHome> {
     ];
 
     dst_point.clear();
-    var H = find_homography3(back_hand ? scr_backhand : scr_forehand, dst);
+    var H = find_homography3(SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand, dst);
 
     for (int i = 0; i < scr_points_corners.length; i++) {
       Point p = hom_trans(scr_points_corners[i][0], scr_points_corners[i][1], H);
@@ -236,10 +265,12 @@ class SoloHomeState extends State<SoloHome> {
   }
 
   setRecognitions2(recognitions, imageHeight, imageWidth) {
+
     setState(() {
       _recognitions = recognitions;
 
       _recognitions.forEach((re) {
+
         if (re["detectedClass"] == "ball") {
           double x = (re["rect"]["x"] * MediaQuery.of(context).size.width);
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
@@ -247,13 +278,13 @@ class SoloHomeState extends State<SoloHome> {
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
           if (is_working && !pause) {
 
-
+            print(x);
             dynamic_bounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
 
             if (current_side == 1 || current_side == 3) {
-            //  smartbounce_service_box(x, x, re["rect"]["h"] * MediaQuery.of(context).size.height);
+              //  smartbounce_service_box(x, x, re["rect"]["h"] * MediaQuery.of(context).size.height);
             } else {
-             // smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
+              // smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
             }
           }
         }
@@ -279,7 +310,6 @@ class SoloHomeState extends State<SoloHome> {
         controller.startImageStream((CameraImage img) async {
           if (!isDetecting) {
             detection = DateTime.now();
-
             isDetecting = true;
             Tflite.detectObjectOnFrame(
                     bytesList: img.planes.map((plane) {
@@ -288,7 +318,7 @@ class SoloHomeState extends State<SoloHome> {
                     imageHeight: img.height,
                     imageWidth: img.width,
                     model: "SSDMobileNet",
-                    threshold: threshold,
+                    threshold:threshold,
                     numResultsPerClass: numResultsPerClass)
                 .then((recognitions) {
               //print(DateTime.now().difference(detection));
@@ -332,7 +362,7 @@ class SoloHomeState extends State<SoloHome> {
 
         //print(back_hand);
 
-        var H = find_homography3(dst, back_hand ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst, SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand);
 
         Point temp;
 
@@ -417,7 +447,7 @@ class SoloHomeState extends State<SoloHome> {
           [points[0].x, points[0].y],
         ];
 
-        var H = find_homography3(dst, back_hand ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst, SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand);
         Point temp;
 
         //finds the best point if ball bounces off court
@@ -536,13 +566,13 @@ class SoloHomeState extends State<SoloHome> {
 
         //print(back_hand);
 
-        var H = find_homography3(dst, back_hand ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst, SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand);
 
         Point temp;
 
         temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
 
-        List<int> c = back_hand ? [0, 280, 930, 1200] : [810, 1080, 930, 1200];
+        List<int> c = SoloDefs().Exersise[current_side]["BackHand"] ? [0, 280, 930, 1200] : [810, 1080, 930, 1200];
 
         if (temp.x > c[0] && temp.x < c[1] && temp.y > c[2] && temp.y < c[3]) {
           ball.add(Positioned(
@@ -692,13 +722,16 @@ class SoloHomeState extends State<SoloHome> {
           onDrag: _drag,
           onEndDragging: _endDragging,
         ),
-        TouchBubble(
-          index: 3,
-          position: Offset(points[3].x, points[3].y),
-          bubbleSize: currentBubbleSize,
-          onStartDragging: _startDragging,
-          onDrag: _drag,
-          onEndDragging: _endDragging,
+        Container(
+          key: keyButton,
+          child: TouchBubble(
+            index: 3,
+            position: Offset(points[3].x, points[3].y),
+            bubbleSize: currentBubbleSize,
+            onStartDragging: _startDragging,
+            onDrag: _drag,
+            onEndDragging: _endDragging,
+          ),
         ),
         //t_box(0, "TR"),
         //t_box(1, "TL"),
@@ -721,6 +754,7 @@ class SoloHomeState extends State<SoloHome> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
+                  key: keyButton1,
                   icon: Icon(
                     Icons.close,
                     color: Colors.white,
@@ -730,6 +764,7 @@ class SoloHomeState extends State<SoloHome> {
                     Navigator.pop(context);
                   }),
               IconButton(
+                  key: keyButton2,
                   icon: Icon(pause ? Icons.play_arrow : Icons.pause, color: Colors.white),
                   onPressed: () {
                     setState(() {
@@ -740,6 +775,7 @@ class SoloHomeState extends State<SoloHome> {
                     });
                   }),
               IconButton(
+                  key: keyButton3,
                   icon: FaIcon(FontAwesomeIcons.bullseye),
                   onPressed: () {
                     setState(() {
@@ -758,6 +794,7 @@ class SoloHomeState extends State<SoloHome> {
                      */
                   }),
               IconButton(
+                  key: keyButton4,
                   icon: page == 0 ? Icon(Icons.arrow_forward_rounded, color: Colors.white) : Icon(Icons.arrow_back_rounded, color: Colors.white),
                   onPressed: () {
                     if (page == 0) {
@@ -1097,7 +1134,7 @@ class SoloHomeState extends State<SoloHome> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (back_hand) {
+    if (SoloDefs().Exersise[current_side]["BackHand"]) {
       prefs.setDouble('p0b.x', points[0].x);
       prefs.setDouble('p0b.y', points[0].y);
 
@@ -1122,6 +1159,111 @@ class SoloHomeState extends State<SoloHome> {
       prefs.setDouble('p3.x', points[3].x);
       prefs.setDouble('p3.y', points[3].y);
     }
+  }
+
+  void make_targets() {
+    targets.add(TargetFocus(identify: "4 corners", keyTarget: keyButton, contents: [
+      TargetContent(
+          align: ContentAlign.bottom,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Court Setup",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Drag the four points to four corners of the service box. ",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ))
+    ]));
+
+    targets.add(TargetFocus(identify: "Exit Button", keyTarget: keyButton1, contents: [
+      TargetContent(
+          align: ContentAlign.top,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Exit Button",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                ),
+              ],
+            ),
+          ))
+    ]));
+    targets.add(TargetFocus(identify: "Pause Button", keyTarget: keyButton2, contents: [
+      TargetContent(
+          align: ContentAlign.top,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Pause Button",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                ),
+              ],
+            ),
+          ))
+    ]));
+    targets.add(TargetFocus(identify: "Target Button", keyTarget: keyButton3, contents: [
+      TargetContent(
+          align: ContentAlign.top,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Target Button",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Turn on/off the green target area. ",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ))
+    ]));
+    targets.add(TargetFocus(identify: "Target 2", keyTarget: keyButton4, contents: [
+      TargetContent(
+          align: ContentAlign.top,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "2D view",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Switch to the 2D birds eye view of court",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ))
+    ]));
   }
 
   @override
@@ -1162,6 +1304,7 @@ class SoloHomeState extends State<SoloHome> {
                     counter_goal: widget.shot_count,
                     activities: widget.sides,
                     pause: pause,
+                    targets: targets,
                     is_working: (bool) {
                       is_working = bool;
                       if (!is_working) {
@@ -1183,13 +1326,11 @@ class SoloHomeState extends State<SoloHome> {
                       print("int=$vals");
 
                       if (vals < 2) {
-                        back_hand = false;
                         saved_points();
 
                         //   generate_cout_point();
                       } else {
                         setState(() {
-                          back_hand = true;
                           saved_points();
                           //   generate_cout_point();
                         });
@@ -1229,6 +1370,16 @@ class SoloHomeState extends State<SoloHome> {
                   children: ball,
                 ),
                 BndBoxSolo(_recognitions == null ? [] : _recognitions),
+                Positioned(
+                    right: 5,
+                    child: SafeArea(
+                      child: IconButton(
+                        icon: Icon(Icons.help),
+                        onPressed: () {
+                          showTutorial();
+                        },
+                      ),
+                    ))
               ]),
             ),
           ],

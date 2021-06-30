@@ -27,7 +27,6 @@ class MagnifierPainter extends CustomPainter {
       ..strokeWidth = 2
       ..color = color;
 
-    double crossSize = (size.longestSide - 20) / 2;
 
     //canvas.drawCircle(size.center(Offset(0, 0)), 100, crossPaint);
 

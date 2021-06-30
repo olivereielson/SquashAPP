@@ -21,6 +21,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scidart/numdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
+import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/data/calculations.dart';
 import 'package:squash/data/save_page.dart';
 import 'package:squash/data/save_page_ghost.dart';
@@ -98,12 +99,11 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
   List<FlSpot> speed = [];
 
-
   Map<DateTime, List<String>> eventDay = {};
 
-  DateTime    _currentDate=DateTime.now();
-  DateTime     _monthdate=DateTime.now();
-
+  DateTime _currentDate = DateTime.now();
+  DateTime _monthdate = DateTime.now();
+  int _count = 0;
 
   @override
   void initState() {
@@ -116,35 +116,27 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   }
 
   void calculate_solo() {
+    solo_type_pie_chart_data = DataMethods().solo_pie_chart(solo_storage_box);
 
+    accuracy = DataMethods().percision(solo_storage_box);
 
-    solo_type_pie_chart_data=DataMethods().solo_pie_chart(solo_storage_box);
-
-    accuracy=DataMethods().percision(solo_storage_box);
-
-
-    ave_solo_dur=DataMethods().ave_solo_dur(solo_storage_box);
-    ave_shot_num=DataMethods().ave_shot_num(solo_storage_box);
+    ave_solo_dur = DataMethods().ave_solo_dur(solo_storage_box);
+    ave_shot_num = DataMethods().ave_shot_num(solo_storage_box);
 
     eventDay.clear();
 
-
     for (int i = 0; i < solo_storage_box.length; i++) {
-
-
       DateTime cdate = DateTime(solo_storage_box.getAt(i).start.year, solo_storage_box.getAt(i).start.month, solo_storage_box.getAt(i).start.day);
 
       //print(cdate.day);
 
       if (eventDay[cdate] != null) {
         List<String> l = eventDay[cdate];
-        l.add("0"+i.toString());
+        l.add("0" + i.toString());
 
         eventDay[cdate] = l;
       } else {
-        eventDay[cdate] = [
-          "0"+i.toString()
-        ];
+        eventDay[cdate] = ["0" + i.toString()];
       }
     }
 
@@ -152,44 +144,34 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   }
 
   void calculate_ghost() {
-
-
     List<double> WVR = DataMethods().WorkRestPie(ghosting_box);
-    work=WVR[0];
-    rest=WVR[1];
+    work = WVR[0];
+    rest = WVR[1];
 
+    speed = DataMethods().speed(ghosting_box);
 
-    speed=DataMethods().speed(ghosting_box);
+    ave_ghost_dur = DataMethods().ave_ghost_dur(ghosting_box);
 
-    ave_ghost_dur=DataMethods().ave_ghost_dur(ghosting_box);
+    ave_ghost_num = DataMethods().ave_ghost_num(ghosting_box);
 
-    ave_ghost_num=DataMethods().ave_ghost_num(ghosting_box);
+    single_corner_speed = DataMethods().SingleCornerSpeed(ghosting_box);
 
+    ghost_type_pie_chart_data = DataMethods().GhostPieChart(ghosting_box);
 
-    single_corner_speed=DataMethods().SingleCornerSpeed(ghosting_box);
-
-    ghost_type_pie_chart_data=DataMethods().GhostPieChart(ghosting_box);
-
-
-    barchrt=DataMethods().BarChartSpeed(ghosting_box, single_corner_speed, Theme.of(context).primaryColor);
-
+    barchrt = DataMethods().BarChartSpeed(ghosting_box, single_corner_speed, Theme.of(context).primaryColor);
 
     for (int i = 0; i < ghosting_box.length; i++) {
       DateTime cdate = DateTime(ghosting_box.getAt(i).start.year, ghosting_box.getAt(i).start.month, ghosting_box.getAt(i).start.day);
 
       if (eventDay[cdate] != null) {
         List<String> l = eventDay[cdate];
-        l.add("1"+i.toString());
+        l.add("1" + i.toString());
 
         eventDay[cdate] = l;
       } else {
-        eventDay[cdate] = [
-          "1"+i.toString()
-        ];
+        eventDay[cdate] = ["1" + i.toString()];
       }
-
     }
-
   }
 
   Future<void> load_hive() async {
@@ -226,141 +208,144 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   }
 
   Widget Speed() {
-    return Row(
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Text(
-                "Average Ghosting Speed",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-            ),
-            Container(
-              height: 200,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: LineChart(
-                  LineChartData(
+    bool data = false;
 
+    for (final ghost in ghosting_box.values) {
+      if (ghost.corner_array.length > 0) {
+        data = true;
+        break;
+      }
+    }
 
-                      borderData: FlBorderData(
-                        show: true,
-
-                        border:  Border(
-                          bottom: BorderSide(
-
-                            color: Theme.of(context).primaryColor,
-                            width: 1,
-
-                          ),
-                          left: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 1,
-
-
-                          ),
-                          right: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          top: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+    return data
+        ? Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
+            child: Row(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: Text(
+                        "Average Ghosting Speed",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                    ),
+                    Container(
+                      height: 200,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        child: LineChart(
+                          LineChartData(
+                              borderData: FlBorderData(
+                                show: true,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 1,
+                                  ),
+                                  left: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 1,
+                                  ),
+                                  right: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  top: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ),
+                              gridData: FlGridData(
+                                show: true,
+                                drawHorizontalLine: true,
+                                drawVerticalLine: true,
+                                horizontalInterval: 1,
+                                verticalInterval: 1,
+                                getDrawingVerticalLine: (value) {
+                                  return FlLine(
+                                    color: Theme.of(context).primaryColor,
+                                    strokeWidth: 1,
+                                  );
+                                },
+                                getDrawingHorizontalLine: (value) {
+                                  return FlLine(
+                                    color: Theme.of(context).primaryColor,
+                                    strokeWidth: 1,
+                                  );
+                                },
+                              ),
+                              lineTouchData: LineTouchData(
+                                  enabled: false,
+                                  touchTooltipData: LineTouchTooltipData(
+                                    tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+                                  )),
+                              titlesData: FlTitlesData(
+                                show: true,
+                                bottomTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 40,
+                                    getTextStyles: (value) => const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
+                                    rotateAngle: 90,
+                                    getTitles: (val) {
+                                      return DateFormat('Md').format(ghosting_box.getAt(val.toInt()).start).toString();
+                                    },
+                                    margin: 20,
+                                    interval: 2),
+                                leftTitles: SideTitles(
+                                  showTitles: true,
+                                  getTextStyles: (value) => const TextStyle(
+                                    color: Color(0xff67727d),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                  getTitles: (val) {
+                                    return val.toStringAsFixed(1) + " secs";
+                                  },
+                                  reservedSize: 28,
+                                  margin: 20,
+                                  interval: 2,
+                                ),
+                              ),
+                              minX: 0,
+                              maxY: 10,
+                              minY: 0,
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: speed,
+                                  isCurved: true,
+                                  colors: [
+                                    Theme.of(context).primaryColor,
+                                    //Color(0xff044d7c),
+                                    //  Colors.lightBlue,
+                                  ],
+                                  barWidth: 5,
+                                  isStrokeCapRound: true,
+                                  dotData: FlDotData(
+                                    show: false,
+                                  ),
+                                  belowBarData: BarAreaData(
+                                    show: false,
+                                    colors: [
+                                      Color.fromRGBO(20, 20, 50, 1),
+                                      Color(0xff044d7c),
+                                      Colors.lightBlueAccent,
+                                    ],
+                                  ),
+                                ),
+                              ]),
                         ),
                       ),
-
-
-                      gridData: FlGridData(
-                        show: true,
-                        drawHorizontalLine: true,
-                        drawVerticalLine: true,
-                        horizontalInterval: 1,
-                        verticalInterval: 1,
-                        getDrawingVerticalLine: (value) {
-                          return FlLine(
-                            color: Theme.of(context).primaryColor,
-                            strokeWidth: 1,
-                          );
-                        },
-                        getDrawingHorizontalLine: (value) {
-                          return FlLine(
-                            color: Theme.of(context).primaryColor,
-                            strokeWidth: 1,
-                          );
-                        },
-                      ),
-                      lineTouchData: LineTouchData(
-                          enabled: false,
-                          touchTooltipData: LineTouchTooltipData(
-                            tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-                          )),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        bottomTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 40,
-                          getTextStyles: (value) => const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-                          rotateAngle: 90,
-                          getTitles: (val) {
-                            return DateFormat('Md').format(ghosting_box.getAt(val.toInt()).start).toString();
-                          },
-                          margin: 20,
-                          interval: 2
-                        ),
-                        leftTitles: SideTitles(
-                          showTitles: true,
-                          getTextStyles: (value) => const TextStyle(
-                            color: Color(0xff67727d),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                          ),
-                          getTitles: (val) {
-                            return val.toStringAsFixed(1) + " secs";
-                          },
-                          reservedSize: 28,
-                          margin: 20,
-                          interval: 2,
-                        ),
-                      ),
-                      minX: 0,
-                      maxY: 10,
-                      minY: 0,
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: speed,
-                          isCurved: true,
-
-                          colors: [
-                            Theme.of(context).primaryColor,
-                            //Color(0xff044d7c),
-                          //  Colors.lightBlue,
-                          ],
-
-                          barWidth: 5,
-                          isStrokeCapRound: true,
-                          dotData: FlDotData(
-                            show: false,
-                          ),
-                          belowBarData: BarAreaData(
-                            show: false,
-                            colors: [
-                              Color.fromRGBO(20, 20, 50, 1),
-                              Color(0xff044d7c),
-                              Colors.lightBlueAccent,
-                            ],
-                          ),
-                        ),
-                      ]),
+                    ),
+                  ],
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ],
-    );
+          )
+        : Text("");
   }
 
   Widget resting() {
@@ -550,11 +535,10 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                           weekDay = 'Right Back';
                           break;
                       }
-                      return BarTooltipItem(weekDay + '\n' + (rod.y.toInt()).toString() + " Seconds", TextStyle(color: Colors.white));
+                      return BarTooltipItem(weekDay + '\n' + rod.y.toStringAsFixed(2) + " Seconds", TextStyle(color: Colors.white));
                     }),
                 touchCallback: (barTouchResponse) {},
               ),
-
             ),
           ),
         ),
@@ -563,141 +547,80 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   }
 
   Widget type_pie_chart() {
-    var sum = solo_type_pie_chart_data.reduce((a, b) => a + b);
-
     return Container(
-      height: 300,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 250,
-              width: 180,
-              child: PieChart(
-                PieChartData(
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sections: [
-                      PieChartSectionData(
-                        color: type_pie_color[0],
-                        value: solo_type_pie_chart_data[0],
-                        title: ((solo_type_pie_chart_data[0] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((solo_type_pie_chart_data[0] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[1],
-                        value: solo_type_pie_chart_data[1],
-                        title: ((solo_type_pie_chart_data[1] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((solo_type_pie_chart_data[1] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[2],
-                        value: solo_type_pie_chart_data[2],
-                        title: ((solo_type_pie_chart_data[2] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((solo_type_pie_chart_data[2] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[3],
-                        value: solo_type_pie_chart_data[3],
-                        title: ((solo_type_pie_chart_data[3] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: ((solo_type_pie_chart_data[3] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      )
-                    ]),
-              ),
-            ),
-          ),
-          Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
+      height: 320,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
                     "Solo\nBreakDown",
                     style: TextStyle(color: Colors.grey, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[0], borderRadius: BorderRadius.all(Radius.circular(5))),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    transitionBuilder: (Widget child, Animation<double> animation) {
+                      return ScaleTransition(
+                        child: child,
+                        scale: animation,
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: type_pie_color[_count],
+
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)), // set rounded corner radius
+                            ),
+                          ),
+                        ),
+                        Text(
+                          SoloDefs().Exersise[_count]["name"],
+                          // This key causes the AnimatedSwitcher to interpret this as a "new"
+                          // child each time the count changes, so that it will begin its animation
+                          // when the count changes.
+                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                      key: ValueKey<int>(_count),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Forehand Drives",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[2], borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "BackHand Drives",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[1], borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Forehand Service Box",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[3], borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "BackHand Service Box",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                )
-              ],
+                  ),
+                ],
+              ),
             ),
-          )
-        ],
+            Container(
+              height: 230,
+              width: 300,
+              child: PieChart(
+                PieChartData(
+                    pieTouchData: PieTouchData(touchCallback: (PieTouchResponse val) {
+                      print(val.touchedSectionIndex.toInt());
+
+                      if (val.touchedSectionIndex != -1) {
+                        setState(() {
+                          _count = val.touchedSectionIndex;
+                        });
+                      }
+                    }),
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    sections: DataMethods().solo_type_slice_data(solo_type_pie_chart_data, type_pie_color, _count)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -909,7 +832,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
             GestureDetector(
                 onLongPress: () {
                   setState(() {
-                   // is_shaking = true;
+                    // is_shaking = true;
                   });
                 },
                 onTap: () {
@@ -1071,20 +994,16 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         onTap: () {
                           Widget temp = Solo_Saved(index);
 
-
                           DateTime cdate = DateTime(ghosting_box.getAt(index).start.year, ghosting_box.getAt(index).start.month, ghosting_box.getAt(index).start.day);
 
                           eventDay[cdate].remove(index);
 
-
                           solo_storage_box.deleteAt(index);
-
 
                           //_listKey.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: temp), duration: Duration(milliseconds: 500));
 
                           calculate_solo();
                           calculate_ghost();
-
                         },
                         child: Container(
                             width: 40,
@@ -1152,8 +1071,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   Widget page_2() {
     //print(events);
 
-
-
     return ListView(
       children: [
         FutureBuilder(
@@ -1182,6 +1099,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                       headerTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor, fontSize: 30),
                       headerText: DateFormat("MMMM y").format(_monthdate),
                       customGridViewPhysics: NeverScrollableScrollPhysics(),
+
                       onCalendarChanged: (date) {
                         setState(() {
                           _monthdate = date;
@@ -1193,9 +1111,11 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                       daysHaveCircularBorder: null,
                     ),
                     Column(
-                      children: eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)]!=null?eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)]
-                          .map((e) => e.substring(0, 1) == "1" ? ghost_saved(int.parse(e.substring(1))) : Solo_Saved(int.parse(e.substring(1))))
-                          .toList():[Text("No Data")],
+                      children: eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)] != null
+                          ? eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)]
+                              .map((e) => e.substring(0, 1) == "1" ? ghost_saved(int.parse(e.substring(1))) : Solo_Saved(int.parse(e.substring(1))))
+                              .toList()
+                          : [Text("No Data")],
                     )
                   ],
                 ),
@@ -1274,8 +1194,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: Speed())),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Speed(),
               ),
               //Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: ghost_type_pie_chart())),
               Padding(
@@ -1283,7 +1203,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 child: Card(
                   elevation: 10,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-                  child: speed2(),
+                  child: speed != null ? speed2() : Text(""),
                 ),
               )
             ],
@@ -1314,7 +1234,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      single_card("Average", "Duration", Duration(seconds: ave_solo_dur).toString().substring(2, 7),Theme.of(context).primaryColor),
+                      single_card("Average", "Duration", Duration(seconds: ave_solo_dur).toString().substring(2, 7), Theme.of(context).primaryColor),
                       single_card("Average", "Shots", ave_shot_num.toString(), Theme.of(context).primaryColor),
                     ],
                   ),
@@ -1435,51 +1355,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
           ),
         ),
       ),
-    );
-
-    return CustomScrollView(
-      slivers: [
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-          delegate: MyDynamicHeader("Data", "Analytics", false),
-        ),
-        SliverPersistentHeader(
-          floating: false,
-          pinned: true,
-          delegate: _SliverAppBarDelegate(
-            TabBar(
-                indicatorColor: Colors.lightBlueAccent,
-                tabs: [
-                  new Tab(
-                    //  icon: new Icon(Icons.sports_tennis),
-                    text: "Solo",
-                  ),
-                  new Tab(
-                    text: "Ghosting",
-                  ),
-                  new Tab(
-                    // icon: new Icon(Icons.save),
-                    text: "Saved",
-                  ),
-                ],
-                controller: _tabController),
-          ),
-        ),
-        SliverFixedExtentList(
-          delegate: SliverChildListDelegate([
-            TabBarView(
-              children: [
-                solo_stat(),
-                ghost_stat(),
-                page_2(),
-              ],
-              controller: _tabController,
-            ),
-          ]),
-          itemExtent: 700.0,
-        ),
-      ],
     );
   }
 }

@@ -44,10 +44,6 @@ class MyPainter extends CustomPainter {
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
 
-    final paint2 = Paint()
-      ..color = Color.fromRGBO(4, 255, 255, 1)
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
 
     final colorPaint = Paint()
       ..color = Colors.lightGreen.withOpacity(0.3)
@@ -68,7 +64,7 @@ class MyPainter extends CustomPainter {
       [serve_box[0].x, serve_box[0].y],
     ];
 
-    Map<String, Offset> targets = SoloDefs().convert_points(4, dst);
+    Map<String, Offset> targets = SoloDefs().convert_points(currentSide, dst);
 
     var drive2 = Path();
 

@@ -8,8 +8,9 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:soundpool/soundpool.dart';
 import 'package:squash/Solo/solo_defs.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:soundpool/soundpool.dart';
 
 typedef void Callback(bool done);
 typedef void Callback1(int current_side);
@@ -28,17 +29,18 @@ class counter_widget extends StatefulWidget {
   int counter_goal;
   int type;
   bool pause;
+  List<TargetFocus> targets = [];
 
-  counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side,this.pause});
+  counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side,this.pause,this.targets});
 
   @override
   counter_widget_state createState() => new counter_widget_state(time.inSeconds, type,counter_value);
 }
 
 class counter_widget_state extends State<counter_widget> {
-  Soundpool _soundpool;
 
   counter_widget_state(this._start, this.type,this.counter_value);
+  Soundpool _soundpool;
 
   int type;
 
@@ -96,7 +98,6 @@ class counter_widget_state extends State<counter_widget> {
       },
     );
   }
-
 
   Widget timer() {
     if (is_working) {

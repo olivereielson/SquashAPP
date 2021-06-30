@@ -63,6 +63,9 @@ dependencies:
   easy_dynamic_theme: ^2.2.0
   email_launcher: 1.1.1
   auto_size_text: ^2.1.0
+  random_color:
+  firebase_analytics:
+  intro_screen_onboarding_flutter:
 
 
 dev_dependencies:

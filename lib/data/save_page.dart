@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:random_color/random_color.dart';
 import 'package:scidart/numdart.dart';
+import 'package:squash/Solo/solo_defs.dart';
 
 import 'Saved Data Page.dart';
 import '../extra/hive_classes.dart';
@@ -29,26 +31,62 @@ class SavedDataState extends State<SavedData> {
 
   bool expanded = false;
 
-  List<int> showing = [0, 1, 2, 3];
+  List<int> showing = [];
+  List<int> show_dots = [];
+  List<Color> dots_colors=[];
+
+
+  @override
+  void initState() {
+
+    RandomColor _randomColor = RandomColor();
+
+    for (int i=0;i<SoloDefs().Exersise.length; i++){
+      dots_colors.add(_randomColor.randomColor(colorHue: ColorHue.blue));
+
+    }
+
+
+    for(int i=0; i<solo_storage_box.bounces.length;i++){
+
+      if(!showing.contains(solo_storage_box.bounces[i].type)){
+
+        showing.add(solo_storage_box.bounces[i].type.toInt());
+        show_dots.add(solo_storage_box.bounces[i].type.toInt());
+      }
+
+
+
+    }
+
+
+
+    super.initState();
+
+
+  }
 
   Widget button_box(String name, int index) {
+    print(showing);
+    print(show_dots);
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: GestureDetector(
+
         onTap: () {
-          if (showing.contains(index)) {
+          if (show_dots.contains(index)) {
             setState(() {
-              showing.remove(index);
+              show_dots.remove(index);
             });
           } else {
             setState(() {
-              showing.add(index);
+              show_dots.add(index);
             });
           }
         },
         child: Container(
 
-          decoration: BoxDecoration(color: showing.contains(index) ? Theme.of(context).primaryColor:Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
+          decoration: BoxDecoration(color: show_dots.contains(index) ?Theme.of(context).primaryColor:Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
             (color: Colors.white,
               width: 3)
           ),
@@ -58,10 +96,10 @@ class SavedDataState extends State<SavedData> {
             padding: const EdgeInsets.all(8.0),
             child: Center(
                 child: Text(
-              name,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.white : Colors.black),
-              textAlign: TextAlign.center,
-            )),
+                  name,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: show_dots.contains(index) ? Colors.white : Colors.black),
+                  textAlign: TextAlign.center,
+                )),
           ),
         ),
       ),
@@ -140,33 +178,10 @@ class SavedDataState extends State<SavedData> {
       double x1 = (solo_storage_box.bounces[i].x_pos * MediaQuery.of(context).size.width) / 1080;
       double y1 = ((solo_storage_box.bounces[i].y_pos * h) / 1645) + offset;
 
-      Color spot_color = Colors.black;
-
       int gfg = solo_storage_box.bounces[i].type.toInt();
 
-      switch (gfg) {
-        case 0:
-          {
-            spot_color = Colors.blue;
-          }
-          break;
+      Color spot_color = dots_colors[gfg];
 
-        case 1:
-          {
-            spot_color = Colors.redAccent;
-          }
-          break;
-        case 2:
-          {
-            spot_color = Colors.green;
-          }
-          break;
-        case 3:
-          {
-            spot_color = Colors.pink;
-          }
-          break;
-      }
 
       spots.add(Positioned(
         top: y1 - 10,
@@ -174,7 +189,7 @@ class SavedDataState extends State<SavedData> {
         child: Icon(
           Icons.circle,
           size: 20,
-          color: showing.contains(gfg)?spot_color:Colors.transparent,
+          color: show_dots.contains(gfg)?spot_color:Colors.transparent,
         ),
       ));
     }
@@ -289,22 +304,27 @@ class SavedDataState extends State<SavedData> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  children: [
-                                    button_box("Forehand Drives", 0),
-                                    button_box("BackHand Drives", 2),
-                                  ],
-                                ),
-                                Column(
-                                  children: [button_box("Forehand Service Box", 1), button_box("Backhand Service Box", 3)],
-                                ),
-                              ],
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Container(
+                              height: 150,
+                              width: MediaQuery.of(context).size.width,
+
+                              child: ListView.builder(
+
+                                scrollDirection: Axis.horizontal,
+                                itemCount: showing.length,
+                                itemBuilder: (BuildContext context, int index) {
+
+                                  return button_box(SoloDefs().Exersise[showing[index]]["name"], showing[index]);
+
+
+                                },
+
+
+
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ],

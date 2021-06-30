@@ -145,10 +145,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Text(
-                    "Place your phone in the center of the Tin and drag this box over the T.  This help the artificial intelligence know when you have completed a ghost and are "
-                    "ready "
-                    "for "
-                    "the next one.",
+                    "Lean your phone against the center of the Tin and drag this box over the T",
                     style: TextStyle(color: Colors.white),
                   ),
                 )
@@ -419,7 +416,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
     );
   }
-
 
   Widget precent_complete_indicator(double precent) {
 

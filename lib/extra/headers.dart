@@ -67,12 +67,18 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                                   confirmBtnColor: Theme.of(context).primaryColor,
                                   animType: CoolAlertAnimType.scale,
                                   backgroundColor: Theme.of(context).primaryColor,
-                                  title: "Important Information",
+                                  title: "Beta Testing",
                                   flareAnimationName: "play",
+                                  confirmBtnText: "Ok",
+                                  cancelBtnText: "Lean More",
+                                  showCancelBtn: true,
+                                  onCancelBtnTap: (){
+
+
+                                  },
                                   flareAsset: "assets/info_check.flr",
                                   type: CoolAlertType.success,
-                                  text: "Solo Exercise is still in beta testing.  The Artificial Intelligence has only been taught to play squash on a few courts and might have trouble on your court."
-                                      "To train the AI on your court click here",
+                                  text: "The AI is still learning to play squash and might have trouble on your court. Click below to learn how to train the AI on your court. ",
                                 );
                               },
                             ),

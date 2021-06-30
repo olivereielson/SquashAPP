@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:hive/hive.dart';
-import 'package:soundpool/soundpool.dart';
+//import 'package:soundpool/soundpool.dart';
 import 'package:squash/Ghosting/Selection%20Screen.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
 import 'package:squash/admin/Settings.dart';
@@ -18,6 +18,10 @@ import 'Ghosting/home.dart';
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 
 
 List<CameraDescription> cameras;
@@ -25,6 +29,7 @@ List<CameraDescription> cameras;
 Future<Null> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   HiveHelper.init();
 
@@ -46,17 +51,27 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
+
+
+
+
 class _MyAppState extends State<MyApp> {
-  GhostScreen gs = new GhostScreen(cameras);
 
   PageController _pageController = new PageController();
 
   int current = 0;
 
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer =
+  FirebaseAnalyticsObserver(analytics: analytics);
+  GhostScreen gs = new GhostScreen(cameras,analytics,observer);
+
   @override
   Widget build(BuildContext context) {
+    analytics.logAppOpen();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      navigatorObservers: <NavigatorObserver>[observer],
       themeMode: EasyDynamicTheme.of(context).themeMode,
       theme: ThemeData(
           brightness: Brightness.light,
@@ -123,6 +138,7 @@ class _MyAppState extends State<MyApp> {
           onTap: (index) {
             _pageController.jumpToPage(index);
             setState(() {
+
               current = index;
             });
           },
