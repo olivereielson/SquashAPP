@@ -14,22 +14,27 @@ class credit_page extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        title: Text("Terms and Conditions"),
+        title: Text("Credits",style: TextStyle(fontSize: 30),),
         elevation: 0,
         leading: Text(""),
       ),
       body: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+          padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
 
               Expanded(
                 child: Container(
-                  color: Colors.white.withOpacity(0.1),
-
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                      border: Border.all(
+                        color: Colors.transparent
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListView.builder(
@@ -39,7 +44,7 @@ class credit_page extends StatelessWidget {
 
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Center(child: Text(credits().cred[index],style: TextStyle(color: Colors.white),),),
+                          child: Center(child: Text(credits().cred[index],style: TextStyle(color: Colors.white,fontSize: 20),),),
                         );
 
                       },

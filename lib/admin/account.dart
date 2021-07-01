@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:liquid_progress_indicator_ns/liquid_progress_indicator.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:squash/admin/name.dart';
 
 import 'Settings.dart';
 import '../extra/headers.dart';
@@ -445,9 +447,24 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
               floating: false,
               delegate: profileHeader(name, initals(),MediaQuery.of(context).size.width/2,IconButton(
                 icon: Icon(Icons.edit),
-                onPressed: (){
+                onPressed: () async {
 
-                  editname();
+                String n= await Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.topToBottom,
+                      child: name_edit(),
+                    ),
+                  );
+
+                if(n!="" && n!=null && n.replaceAll(" ", "")==""){
+                  setState(() {
+
+                    name=n;
+
+                  });
+                }
+
 
                 },
 

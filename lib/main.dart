@@ -59,9 +59,22 @@ class setup extends StatefulWidget {
 class _setupState extends State<setup> {
   bool first_run;
 
+  Future _future;
+
+  @override
+  void initState() {
+
+    _future=first_time();
+    super.initState();
+
+  }
+
+
   first_time() async {
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    print("First Time Check");
     if (prefs.containsKey("first_time")) {
       setState(() {
         first_run = false;
@@ -75,6 +88,7 @@ class _setupState extends State<setup> {
   }
 
   Widget app(home) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorObservers: <NavigatorObserver>[setup.observer],
@@ -132,8 +146,9 @@ class _setupState extends State<setup> {
 
   @override
   Widget build(BuildContext context) {
+
     return FutureBuilder(
-      future: first_time(),
+      future: _future,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (first_run == null) {
           return app(Scaffold(backgroundColor: Color.fromRGBO(60, 90, 130, 1), body: Text("")));

@@ -210,8 +210,8 @@ class header_shot extends SliverPersistentHeaderDelegate {
   double get minExtent => 10.0;
 }
 
-class profileHeader extends SliverPersistentHeaderDelegate {
-  profileHeader(this.name, this.inital, this.center, this.edit);
+class profileHeader2 extends SliverPersistentHeaderDelegate {
+  profileHeader2(this.name, this.inital, this.center, this.edit);
 
   Widget edit;
   String name;
@@ -296,6 +296,140 @@ class profileHeader extends SliverPersistentHeaderDelegate {
                         )
                       ),
                     ),
+                  )),
+              Positioned(
+                  top: 20,
+                  right: 20,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.settings,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SettingsPage()),
+                          );
+                        },
+                      ),
+                    ],
+                  )),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate _) => true;
+
+  @override
+  double get maxExtent => 250.0;
+
+  @override
+  double get minExtent => 150.0;
+}
+
+class profileHeader extends SliverPersistentHeaderDelegate {
+  profileHeader(this.name, this.inital, this.center, this.edit);
+
+  Size calcTextSize(String text, TextStyle style) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+      textScaleFactor: WidgetsBinding.instance.window.textScaleFactor,
+    )..layout();
+    return textPainter.size;
+  }
+
+
+  Widget edit;
+  String name;
+  String inital;
+  double center;
+
+  bool ghosting;
+  bool info = false;
+
+  int index = 0;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    Tween icon_x = Tween<double>(begin: center - 50, end: 10);
+    Tween icon_y = Tween<double>(begin: 40, end: 25);
+    Tween name_x = Tween<double>(begin: center - (calcTextSize(name,TextStyle(fontSize: 15,color: Colors.white )).width/2), end: 100);
+    Tween name_y = Tween<double>(begin: 150, end: 40);
+    Tween pos_y2 = Tween<double>(begin: 15, end: 20);
+    Tween iconsize = Tween<double>(begin: 50, end: 20);
+    Tween edit_location = Tween<double>(begin: 15, end: -100);
+
+
+
+    return LayoutBuilder(builder: (context, constraints) {
+      final double percentage = 1 - (constraints.maxHeight - minExtent) / (maxExtent - minExtent);
+
+      final double iconx = icon_x.lerp(percentage);
+      final double icony = icon_y.lerp(percentage);
+      final double namex = name_x.lerp(percentage);
+      final double namey = name_y.lerp(percentage);
+      final double edit_location2 = edit_location.lerp(percentage);
+      final double posy2 = pos_y2.lerp(percentage);
+      final double Iconsize = iconsize.lerp(percentage);
+
+
+
+      if (++index > Colors.primaries.length - 1) index = 0;
+
+      return Container(
+        color: Theme.of(context).primaryColor,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Positioned(
+                  top: 20,
+                  left: edit_location2,
+                  child: edit
+              ),
+              Positioned(
+                  top: icony,
+                  left: iconx,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                          width: 100,
+                          decoration: new BoxDecoration(
+                            color: Colors.white.withOpacity(1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                              child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child:
+
+                                  AutoSizeText(
+                                    inital,
+                                    style: TextStyle(fontSize: Iconsize,color: Colors.grey.withOpacity(1) ),
+                                    maxLines: 1,
+                                  )
+                              ))),
+                    ],
+                  )),
+              Positioned(
+                  top: namey,
+                  left: namex,
+                  child: Container(
+
+                    child: Text(
+                      name,
+                      style: TextStyle(fontSize: posy2,color: Colors.white ),
+                      maxLines: 1,
+                    ),
+
                   )),
               Positioned(
                   top: 20,
