@@ -248,6 +248,7 @@ class _Solo_StatState extends State<Solo_Stat> {
                       if (val.touchedSectionIndex != -1) {
                         setState(() {
                           _count = val.touchedSectionIndex;
+                          widget.analytics.logEvent(name: "Solo_Breakdown_Toggled");
                         });
                       }
                     }),

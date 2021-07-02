@@ -329,7 +329,7 @@ class DataMethods {
           barRods: [
             BarChartRodData(
               y: single_corner_speed[i],
-              colors: [primeColor],
+              colors: [Colors.white],
               width: 20,
               backDrawRodData: BackgroundBarChartRodData(
                 show: true,

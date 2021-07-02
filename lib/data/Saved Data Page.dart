@@ -34,6 +34,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 
 import '../extra/hive_classes.dart';
 import '../maginfine/magnifier.dart';
+import 'Ghost_stat.dart';
 
 class SavedDataPage extends StatefulWidget {
   final FirebaseAnalytics analytics;
@@ -111,11 +112,14 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   DateTime _currentDate = DateTime.now();
   DateTime _monthdate = DateTime.now();
   int _count = 0;
+  Future _load_calander;
+
 
   @override
   void initState() {
     //load_hive();
     //calculate_data();
+    _load_calander=calculate_calender();
     _testSetCurrentScreen();
     _tabController = new TabController(length: 3, vsync: this,);
 
@@ -130,15 +134,32 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   }
 
 
-  void calculate_solo() {
-    solo_type_pie_chart_data = DataMethods().solo_pie_chart(solo_storage_box);
 
-    accuracy = DataMethods().percision(solo_storage_box);
 
-    ave_solo_dur = DataMethods().ave_solo_dur(solo_storage_box);
-    ave_shot_num = DataMethods().ave_shot_num(solo_storage_box);
+  Future<void> calculate_calender() async {
 
-    eventDay.clear();
+    if (!Hive.isAdapterRegistered(9)) {
+      Hive.registerAdapter(GhostingAdapter());
+    }
+
+    if (Hive.isBoxOpen("Ghosting1")) {
+      ghosting_box = Hive.box<Ghosting>("Ghosting1");
+    } else {
+      ghosting_box = await Hive.openBox<Ghosting>("Ghosting1");
+    }
+
+    if (!Hive.isAdapterRegistered(5)) {
+      Hive.registerAdapter(Solo_stroage_Adapter());
+    }
+    if (!Hive.isAdapterRegistered(6)) {
+      Hive.registerAdapter(BounceAdapter());
+    }
+
+    if (Hive.isBoxOpen("Solo1")) {
+      solo_storage_box = Hive.box<Solo_stroage>("Solo1");
+    } else {
+      solo_storage_box = await Hive.openBox<Solo_stroage>("Solo1");
+    }
 
     for (int i = 0; i < solo_storage_box.length; i++) {
       DateTime cdate = DateTime(solo_storage_box.getAt(i).start.year, solo_storage_box.getAt(i).start.month, solo_storage_box.getAt(i).start.day);
@@ -154,27 +175,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
         eventDay[cdate] = ["0" + i.toString()];
       }
     }
-
-    setState(() {});
-  }
-
-  void calculate_ghost() {
-    List<double> WVR = DataMethods().WorkRestPie(ghosting_box);
-    work = WVR[0];
-    rest = WVR[1];
-
-    speed = DataMethods().speed(ghosting_box);
-
-    ave_ghost_dur = DataMethods().ave_ghost_dur(ghosting_box);
-
-    ave_ghost_num = DataMethods().ave_ghost_num(ghosting_box);
-
-    single_corner_speed = DataMethods().SingleCornerSpeed(ghosting_box);
-
-    ghost_type_pie_chart_data = DataMethods().GhostPieChart(ghosting_box);
-
-    barchrt = DataMethods().BarChartSpeed(ghosting_box, single_corner_speed, Theme.of(context).primaryColor);
-
     for (int i = 0; i < ghosting_box.length; i++) {
       DateTime cdate = DateTime(ghosting_box.getAt(i).start.year, ghosting_box.getAt(i).start.month, ghosting_box.getAt(i).start.day);
 
@@ -189,650 +189,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     }
   }
 
-  Future<void> load_hive() async {
-    if (!Hive.isAdapterRegistered(5)) {
-      Hive.registerAdapter(Solo_stroage_Adapter());
-    }
-    if (!Hive.isAdapterRegistered(6)) {
-      Hive.registerAdapter(BounceAdapter());
-    }
-
-    if (Hive.isBoxOpen("Solo1")) {
-      solo_storage_box = Hive.box<Solo_stroage>("Solo1");
-    } else {
-      solo_storage_box = await Hive.openBox<Solo_stroage>("Solo1");
-    }
-    setState(() {
-      calculate_solo();
-    });
-  }
-
-  Future<void> load_ghost_hive() async {
-    if (!Hive.isAdapterRegistered(9)) {
-      Hive.registerAdapter(GhostingAdapter());
-    }
-
-    if (Hive.isBoxOpen("Ghosting1")) {
-      ghosting_box = Hive.box<Ghosting>("Ghosting1");
-    } else {
-      ghosting_box = await Hive.openBox<Ghosting>("Ghosting1");
-    }
-    setState(() {
-      calculate_ghost();
-    });
-  }
-
-  Widget Speed() {
-    bool data = false;
-
-    for (final ghost in ghosting_box.values) {
-      if (ghost.corner_array.length > 0) {
-        data = true;
-        break;
-      }
-    }
-
-    return data
-        ? Card(
-            elevation: 10,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-            child: Row(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Text(
-                        "Average Ghosting Speed",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                    Container(
-                      height: 200,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                        child: LineChart(
-                          LineChartData(
-                              borderData: FlBorderData(
-                                show: true,
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                    width: 1,
-                                  ),
-                                  left: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                    width: 1,
-                                  ),
-                                  right: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  top: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ),
-                              gridData: FlGridData(
-                                show: true,
-                                drawHorizontalLine: true,
-                                drawVerticalLine: true,
-                                horizontalInterval: 1,
-                                verticalInterval: 1,
-                                getDrawingVerticalLine: (value) {
-                                  return FlLine(
-                                    color: Theme.of(context).primaryColor,
-                                    strokeWidth: 1,
-                                  );
-                                },
-                                getDrawingHorizontalLine: (value) {
-                                  return FlLine(
-                                    color: Theme.of(context).primaryColor,
-                                    strokeWidth: 1,
-                                  );
-                                },
-                              ),
-                              lineTouchData: LineTouchData(
-                                  enabled: false,
-                                  touchTooltipData: LineTouchTooltipData(
-                                    tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-                                  )),
-                              titlesData: FlTitlesData(
-                                show: true,
-                                bottomTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 40,
-                                    getTextStyles: (value) => const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-                                    rotateAngle: 90,
-                                    getTitles: (val) {
-                                      return DateFormat('Md').format(ghosting_box.getAt(val.toInt()).start).toString();
-                                    },
-                                    margin: 20,
-                                    interval: 2),
-                                leftTitles: SideTitles(
-                                  showTitles: true,
-                                  getTextStyles: (value) => const TextStyle(
-                                    color: Color(0xff67727d),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 10,
-                                  ),
-                                  getTitles: (val) {
-                                    return val.toStringAsFixed(1) + " secs";
-                                  },
-                                  reservedSize: 28,
-                                  margin: 20,
-                                  interval: 2,
-                                ),
-                              ),
-                              minX: 0,
-                              maxY: 10,
-                              minY: 0,
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: speed,
-                                  isCurved: true,
-                                  colors: [
-                                    Theme.of(context).primaryColor,
-                                    //Color(0xff044d7c),
-                                    //  Colors.lightBlue,
-                                  ],
-                                  barWidth: 5,
-                                  isStrokeCapRound: true,
-                                  dotData: FlDotData(
-                                    show: false,
-                                  ),
-                                  belowBarData: BarAreaData(
-                                    show: false,
-                                    colors: [
-                                      Color.fromRGBO(20, 20, 50, 1),
-                                      Color(0xff044d7c),
-                                      Colors.lightBlueAccent,
-                                    ],
-                                  ),
-                                ),
-                              ]),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
-        : Text("");
-  }
-
-  Widget resting() {
-    //(rest);
-
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 250,
-              width: 200,
-              child: PieChart(
-                PieChartData(
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sections: [
-                      PieChartSectionData(
-                        color: Color.fromRGBO(20, 20, 60, 1),
-                        value: work,
-                        title: (work / (work + rest) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: Color(0xff044d7c),
-                        value: rest,
-                        title: (rest / (work + rest) * 100).ceil().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      )
-                    ]),
-              ),
-            ),
-          ),
-          Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    "Work Vs Rest",
-                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: Color(0xff044d7c), borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Resting",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 60, 1), borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Ghosting",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget speed2() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Average Conner Ghosting Speed",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: BarChart(
-            BarChartData(
-              barGroups: barchrt,
-              borderData: FlBorderData(
-                show: false,
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: SideTitles(
-                  showTitles: true,
-                  getTextStyles: (value) => TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey),
-                  margin: 16,
-                  rotateAngle: 90,
-                  getTitles: (double value) {
-                    switch (value.toInt()) {
-                      case 0:
-                        return 'FL';
-                      case 1:
-                        return 'FR';
-                      case 2:
-                        return 'FML';
-                      case 3:
-                        return 'FMR';
-                      case 4:
-                        return 'ML';
-                      case 5:
-                        return 'MR';
-                      case 6:
-                        return 'BML';
-                      case 7:
-                        return 'BMR';
-                      case 8:
-                        return 'BL';
-                      case 9:
-                        return 'BR';
-                      case 10:
-                        return 'S';
-                      default:
-                        return '';
-                    }
-                  },
-                ),
-                leftTitles: SideTitles(
-                  showTitles: false,
-                ),
-              ),
-              barTouchData: BarTouchData(
-                touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Theme.of(context).primaryColor,
-                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      String weekDay;
-                      switch (group.x.toInt()) {
-                        case 0:
-                          weekDay = 'Front Left';
-                          break;
-                        case 1:
-                          weekDay = 'Front Right';
-                          break;
-                        case 2:
-                          weekDay = 'Front Middle Left';
-                          break;
-                        case 3:
-                          weekDay = 'Front Middle Right';
-                          break;
-                        case 4:
-                          weekDay = 'Left Middle';
-                          break;
-                        case 5:
-                          weekDay = 'Right Middle';
-                          break;
-                        case 6:
-                          weekDay = 'Left Back Middle';
-                          break;
-                        case 7:
-                          weekDay = 'right Back Middle';
-                          break;
-                        case 8:
-                          weekDay = 'Left Back';
-                          break;
-                        case 9:
-                          weekDay = 'Right Back';
-                          break;
-                      }
-                      return BarTooltipItem(weekDay + '\n' + rod.y.toStringAsFixed(2) + " Seconds", TextStyle(color: Colors.white));
-                    }),
-                touchCallback: (barTouchResponse) {},
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget type_pie_chart() {
-    return Container(
-      height: 320,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Solo\nBreakDown",
-                    style: TextStyle(color: Colors.grey, fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    transitionBuilder: (Widget child, Animation<double> animation) {
-                      return ScaleTransition(
-                        child: child,
-                        scale: animation,
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: type_pie_color[_count],
-
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)), // set rounded corner radius
-                            ),
-                          ),
-                        ),
-                        Text(
-                          SoloDefs().Exersise[_count]["name"],
-                          // This key causes the AnimatedSwitcher to interpret this as a "new"
-                          // child each time the count changes, so that it will begin its animation
-                          // when the count changes.
-                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                      key: ValueKey<int>(_count),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: 230,
-              width: 300,
-              child: PieChart(
-                PieChartData(
-                    pieTouchData: PieTouchData(touchCallback: (PieTouchResponse val) {
-                      print(val.touchedSectionIndex.toInt());
-
-                      if (val.touchedSectionIndex != -1) {
-                        setState(() {
-                          _count = val.touchedSectionIndex;
-                        });
-                      }
-                    }),
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sections: DataMethods().solo_type_slice_data(solo_type_pie_chart_data, type_pie_color, _count)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget ghost_type_pie_chart() {
-    var sum = ghost_type_pie_chart_data.reduce((a, b) => a + b);
-
-    return Container(
-      height: 300,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 250,
-              width: 180,
-              child: PieChart(
-                PieChartData(
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sections: [
-                      PieChartSectionData(
-                        color: type_pie_color[0],
-                        value: ghost_type_pie_chart_data[0],
-                        title: ((ghost_type_pie_chart_data[0] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[1],
-                        value: ghost_type_pie_chart_data[1],
-                        title: ((ghost_type_pie_chart_data[1] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[2],
-                        value: ghost_type_pie_chart_data[2],
-                        title: ((ghost_type_pie_chart_data[2] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[3],
-                        value: ghost_type_pie_chart_data[3],
-                        title: ((ghost_type_pie_chart_data[3] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[4],
-                        value: ghost_type_pie_chart_data[4],
-                        title: ((ghost_type_pie_chart_data[4] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[5],
-                        value: ghost_type_pie_chart_data[5],
-                        title: ((ghost_type_pie_chart_data[5] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[6],
-                        value: ghost_type_pie_chart_data[6],
-                        title: ((ghost_type_pie_chart_data[6] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[7],
-                        value: ghost_type_pie_chart_data[7],
-                        title: ((ghost_type_pie_chart_data[7] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[8],
-                        value: ghost_type_pie_chart_data[8],
-                        title: ((ghost_type_pie_chart_data[8] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      ),
-                      PieChartSectionData(
-                        color: type_pie_color[9],
-                        value: ghost_type_pie_chart_data[9],
-                        title: ((ghost_type_pie_chart_data[9] / sum) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                        titlePositionPercentageOffset: 0.55,
-                      )
-                    ]),
-              ),
-            ),
-          ),
-          Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    "Solo\nBreakDown",
-                    style: TextStyle(color: Colors.grey, fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[0], borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Forehand Drives",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[1], borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "BackHand Drives",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[2], borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Forehand Service Box",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: type_pie_color[3], borderRadius: BorderRadius.all(Radius.circular(5))),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "BackHand Service Box",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
   Widget ghost_saved(int index) {
     return ShakeAnimatedWidget(
@@ -1019,8 +375,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
                           //_listKey.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: temp), duration: Duration(milliseconds: 500));
 
-                          calculate_solo();
-                          calculate_ghost();
+
                         },
                         child: Container(
                             width: 40,
@@ -1038,52 +393,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     );
   }
 
-  Widget single_card(String top_name, String bottom_name, String data, Color color) {
-    return Card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-      child: Container(
-        height: 175,
-        width: 175,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Spacer(),
-                    Container(
-                      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(40))),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          data,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Spacer(),
-              Text(
-                top_name,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                bottom_name,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget page_2() {
     //print(events);
@@ -1091,8 +400,11 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     return ListView(
       children: [
         FutureBuilder(
+          future: _load_calander,
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1") && solo_storage_box.length + ghosting_box.length != 0) {
+
+
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
@@ -1189,131 +501,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     );
   }
 
-  Widget ghost_stat() {
-    return FutureBuilder(
-      future: load_ghost_hive(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (Hive.isBoxOpen("Ghosting1") && ghosting_box.length != 0) {
-          return ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                child: Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: resting())),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    single_card("Average", "Duration", Duration(seconds: ave_ghost_dur).toString().substring(2, 7), Theme.of(context).primaryColor),
-                    single_card("Average", "Ghosts", ave_ghost_num.toString(), Theme.of(context).primaryColor),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Speed(),
-              ),
-              //Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: ghost_type_pie_chart())),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-                  child: speed != null ? speed2() : Text(""),
-                ),
-              )
-            ],
-          );
-        } else {
-          return Center(
-              child: Text(
-            "No Data to Analyze",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ));
-        }
-      },
-    );
-  }
-
-  Widget solo_stat() {
-    return FutureBuilder(
-      future: load_hive(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (Hive.isBoxOpen("Solo1") && solo_storage_box.length != 0) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView(
-              children: [
-                Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: type_pie_chart()),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      single_card("Average", "Duration", Duration(seconds: ave_solo_dur).toString().substring(2, 7), Theme.of(context).primaryColor),
-                      single_card("Average", "Shots", ave_shot_num.toString(), Theme.of(context).primaryColor),
-                    ],
-                  ),
-                ),
-                percsion()
-              ],
-            ),
-          );
-        } else {
-          return Center(
-              child: Text(
-            "No Data to Analyze",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ));
-        }
-      },
-    );
-  }
-
-  Widget percsion() {
-    //print(accuracy);
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 200,
-      child: Card(
-        elevation: 10,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Shot",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Precision",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 30),
-                child: Container(
-                  decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(40))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(accuracy.floor().toString() + "%", style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: Colors.white)),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   int pagenum = 0;
 
@@ -1365,7 +552,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
           body: TabBarView(
             children: [
               Solo_Stat(widget.analytics,widget.observer),
-              ghost_stat(),
+              Ghost_Stat(widget.analytics,widget.observer),
               page_2(),
             ],
             controller: _tabController,
