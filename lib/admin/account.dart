@@ -1,4 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -14,6 +16,10 @@ import '../extra/headers.dart';
 import '../extra/hive_classes.dart';
 
 class Acount extends StatefulWidget {
+  Acount(this.analytics,this.observer);
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
   @override
   _AcountState createState() => _AcountState();
 }
@@ -45,13 +51,19 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
       vsync: this,
     );
 
+    _testSetCurrentScreen();
     get_pref();
 
     super.initState();
   }
 
 
-
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Account Page',
+      screenClassOverride: 'Account_Page',
+    );
+  }
 
   Future<void> load_hive() async {
 
@@ -457,18 +469,27 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                     ),
                   );
 
-                if(n!="" && n!=null && n.replaceAll(" ", "")==""){
+                widget.analytics.logEvent(
+                  name: 'Named_Edited',
+                );
+
+                print(n);
+                if(n!="" && n!=null && n.replaceAll(" ", "")!=""){
                   setState(() {
-
-                    name=n;
-
+                    name = n.capitalizeFirstofEach;
+                    print("name updated");
                   });
                 }
+
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setString('first_name', name);
+
+
 
 
                 },
 
-              ),
+              ),widget.analytics,widget.observer
             ),),
 
             SliverPersistentHeader(

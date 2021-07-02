@@ -4,6 +4,8 @@ import 'dart:io' show Platform;
 import 'package:camera/camera.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,8 +21,10 @@ import 'package:tflite/tflite.dart';
 
 class SoloScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
 
-  SoloScreen(this.cameras);
+  SoloScreen(this.cameras,this.analytics,this.observer);
 
   @override
   SoloScreenState createState() => new SoloScreenState(cameras);
@@ -68,14 +72,22 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   bool showGreen = true;
 
 
+
   @override
   void initState() {
     _tabController = new TabController(
       length: 2,
       vsync: this,
     );
-
+    _testSetCurrentScreen();
     super.initState();
+  }
+
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Solo Selection Page',
+      screenClassOverride: 'Solo_Selection_Page',
+    );
   }
 
   loadModel() async {
@@ -691,6 +703,15 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                       GestureDetector(
                         onTap: () async {
                           await loadModel();
+                          widget.analytics.logEvent(
+                            name: 'Solo_Workout_Started',
+                            parameters: <String, dynamic>{
+                              'Sides': sides,
+                              'Shot_Count':shot_number,
+                              'time':total_time,
+                              'Type':'Timed'
+                            },
+                          );
 
                           Navigator.push(
                             context,
@@ -764,7 +785,15 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                 } else {
                                   await loadModel();
-
+                                  widget.analytics.logEvent(
+                                    name: 'Solo_Workout_Started',
+                                    parameters: <String, dynamic>{
+                                      'Sides': sides,
+                                      'Shot_Count':shot_number,
+                                      'time':total_time,
+                                      'Type':'Count'
+                                    },
+                                  );
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

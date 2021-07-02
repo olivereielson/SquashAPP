@@ -23,6 +23,7 @@ import 'package:hive/hive.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:squash/Ghosting/Court.dart';
 import 'package:squash/Ghosting/home.dart';
+import 'package:squash/extra/data_collection.dart';
 import 'package:squash/extra/headers.dart';
 import 'package:tflite/tflite.dart';
 
@@ -33,7 +34,7 @@ class GhostScreen extends StatefulWidget {
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
 
-  GhostScreen(this.cameras,this.analytics,this.observer);
+  GhostScreen(this.cameras, this.analytics, this.observer);
 
   @override
   GhostScreenState createState() => new GhostScreenState(cameras);
@@ -59,7 +60,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
 
   List<Color> title_color = [
     //Colors.lightBlueAccent,
-    //Colors.redAccent,
+    //Colors.redAccen–t,
     //Colors.lightGreen,
     //Colors.pinkAccent,
     Color.fromRGBO(4, 12, 128, 1)
@@ -81,8 +82,9 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
       length: 2,
     );
 
+    Data_Sender().testSetCurrentScreen(widget.analytics,"Ghosting Selection Page","Ghosting_Selection_Page");
+
     super.initState();
-    _testSetCurrentScreen();
 
     if (Hive.isBoxOpen(box)) {
       setState(() {
@@ -102,18 +104,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     );
   }
 
-  Future<void> _sendAnalyticsEvent() async {
-     widget.analytics.logEvent(
-      name: 'Ghosting_Workout',
-      parameters: <String, dynamic>{
-        //'int': start_time.inSeconds,
-      //  'int': rest_time.inSeconds,
-        //'double': round_num,
-        'int': 0,
-       // 'int': _tabController.index,
-      },
-    );
-  }
 
   void saved() {
     var exersie = Custom()
@@ -166,8 +156,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
   }
 
   Widget input(String title, String value, Icon icon) {
-
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -209,16 +197,14 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
   show_round_picker() {
     List<Widget> nums = [];
 
-    nums.add(Text(
-      "1 set",style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color)
-    ));
+    nums.add(Text("1 set", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color)));
 
     for (int x = 2; x < 50; x++) {
       nums.add(Text(
-        x.toString() + " sets",style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
+        x.toString() + " sets",
+        style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
       ));
     }
-
 
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
@@ -241,8 +227,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                 children: nums),
           );
         });
-
-
   }
 
   show_time_picker() {
@@ -257,7 +241,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
             child: CupertinoTimerPicker(
               mode: CupertinoTimerPickerMode.ms,
               initialTimerDuration: rest_time,
-
               onTimerDurationChanged: (data) {
                 setState(() {
                   rest_time = data;
@@ -404,6 +387,8 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                   },
                   onTap: () async {
                     await loadModel();
+                    widget.analytics.logEvent(name: "Ghost_Workout_From_Saved_List");
+
 
                     Navigator.push(
                       context,
@@ -558,7 +543,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                           child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Icon(
-
                                 Icons.clear,
                                 color: Theme.of(context).primaryColorDark,
                                 size: 15,
@@ -583,8 +567,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -605,7 +587,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
               Exersises.add(exersie); // Store this object for the first time
               _mylistkey.currentState.insertItem(0);
             }
- 
+
             return Scaffold(
               body: GestureDetector(
                 onTap: () {
@@ -633,7 +615,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                         automaticIndicatorColorAdjustment: true,
                         labelColor: Colors.white,
                         indicatorColor: Colors.lightBlueAccent,
-
                         tabs: [
                           new Tab(
                             text: "Timed",
@@ -688,11 +669,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           )),
                                     ),
                                   ),
-
-
-
-
-
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: GestureDetector(
@@ -700,12 +676,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                         HapticFeedback.lightImpact();
 
                                         show_time_set_picker();
-
-
-
-
-
-
                                       },
                                       child: input(
                                           "Time Per Round",
@@ -761,12 +731,28 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                         GestureDetector(
                                           onTap: () async {
                                             await loadModel();
-                                         //
+                                            widget.analytics.logEvent(
+                                              name: 'Ghosting_Workout_Started',
+                                            );
+
+                                            //
                                             //   _sendAnalyticsEvent();
 
                                             Navigator.push(
                                               context,
-                                              MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds, round_time, 0)),
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                        cameras,
+                                                        number_set,
+                                                        round_num,
+                                                        rest_time,
+                                                        corners,
+                                                        start_time.inSeconds,
+                                                        round_time,
+                                                        0,
+                                                        analytics: widget.analytics,
+                                                        observer: widget.observer,
+                                                      )),
                                             );
                                           },
                                           child: Center(
@@ -791,7 +777,9 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                         GestureDetector(
                                             onTap: () async {
                                               await text_dialog();
-
+                                              widget.analytics.logEvent(
+                                                name: 'Ghosting_Workout_Saved',
+                                              );
                                               if (name != null && name != "") {
                                                 var exersie = Custom()
                                                   ..name = name
@@ -928,14 +916,28 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                       children: [
                                         GestureDetector(
                                           onTap: () async {
-                                       //     _sendAnalyticsEvent();
+
+                                            widget.analytics.logEvent(
+                                              name: 'Ghosting_Workout_Start',
+                                            );
+
                                             await loadModel();
-
-
 
                                             Navigator.push(
                                               context,
-                                              MaterialPageRoute(builder: (context) => HomePage(cameras, number_set, round_num, rest_time, corners, start_time.inSeconds, round_time, 1)),
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                        cameras,
+                                                        number_set,
+                                                        round_num,
+                                                        rest_time,
+                                                        corners,
+                                                        start_time.inSeconds,
+                                                        round_time,
+                                                        1,
+                                                        analytics: widget.analytics,
+                                                        observer: widget.observer,
+                                                      )),
                                             );
                                           },
                                           child: Center(
@@ -959,7 +961,13 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                         ),
                                         GestureDetector(
                                             onTap: () async {
+
                                               await text_dialog();
+
+                                              widget.analytics.logEvent(
+                                                name: 'Ghosting_Workout_Saved',
+                                              );
+
 
                                               if (name != null && name != "") {
                                                 var exersie = Custom()
@@ -1155,7 +1163,7 @@ class _SliverAppBarDelegate2 extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
-      color:Theme.of(context).primaryColor,
+      color: Theme.of(context).primaryColor,
       child: _tabBar,
     );
   }

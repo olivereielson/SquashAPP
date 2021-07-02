@@ -1,5 +1,7 @@
 import 'package:direct_select/direct_select.dart';
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +15,12 @@ import 'package:squash/admin/terms_and_conditions.dart';
 import '../extra/headers.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage();
+
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+
+  SettingsPage(this.analytics,this.observer);
 
   @override
   SettingsPageState createState() => new SettingsPageState();
@@ -27,9 +34,23 @@ class SettingsPageState extends State<SettingsPage> {
 
   int themeIndex = 0;
 
+  @override
+  void initState() {
+
+    _testSetCurrentScreen();
+     
+    super.initState();
+
+  }
 
 
 
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Settings Page',
+      screenClassOverride: 'Settings_Page',
+    );
+  }
 
 
   getversion() async {
@@ -41,12 +62,30 @@ class SettingsPageState extends State<SettingsPage> {
 
     if(EasyDynamicTheme.of(context).themeMode==ThemeMode.dark){
       themeIndex=0;
+      widget.analytics.logEvent(
+        name: 'Theme_Changed',
+        parameters: <String, dynamic>{
+          'Theme': 'Dark',
+        },
+      );
     }
     if(EasyDynamicTheme.of(context).themeMode==ThemeMode.light){
       themeIndex=1;
+      widget.analytics.logEvent(
+        name: 'Theme_Changed',
+        parameters: <String, dynamic>{
+          'Theme': 'Light',
+        },
+      );
     }
     if(EasyDynamicTheme.of(context).themeMode==ThemeMode.system){
       themeIndex=2;
+      widget.analytics.logEvent(
+        name: 'Theme_Changed',
+        parameters: <String, dynamic>{
+          'Theme': 'System_Default',
+        },
+      );
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -174,6 +213,11 @@ class SettingsPageState extends State<SettingsPage> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: GestureDetector(
         onTap: () async {
+
+          widget.analytics.logEvent(
+            name: 'Feed_Back_Email_Sent',
+          );
+
           Email email = Email(
               to: ['oliver.eielson@gmail.com'],
               //cc: ['foo@gmail.com'],
@@ -460,7 +504,7 @@ class SettingsPageState extends State<SettingsPage> {
                         context,
                         PageTransition(
                           type: PageTransitionType.bottomToTop,
-                          child: credit_page(),
+                          child: credit_page(widget.analytics,widget.observer),
                         ),
                       );                    },
                     child: Text(
@@ -474,7 +518,7 @@ class SettingsPageState extends State<SettingsPage> {
                       context,
                       PageTransition(
                         type: PageTransitionType.bottomToTop,
-                        child: terms_page(),
+                        child: terms_page(widget.analytics,widget.observer),
                       ),
                     );
                   },

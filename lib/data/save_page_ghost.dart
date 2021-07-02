@@ -1,4 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +16,10 @@ import 'calculations.dart';
 
 class SavedDataGhost extends StatefulWidget {
   Ghosting ghost_box;
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
 
-  SavedDataGhost(this.ghost_box);
+  SavedDataGhost(this.ghost_box,this.analytics,this.observer);
 
   @override
   SavedGhostState createState() => new SavedGhostState(ghost_box);
@@ -37,47 +41,53 @@ class SavedGhostState extends State<SavedDataGhost> {
   List<FlSpot> speed = [];
 
   Widget single_card(String top_name, String bottom_name, String data, Color color) {
-    return Card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-      child: Container(
-        height: 175,
-        width: 175,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Spacer(),
-                    Container(
-                      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(40))),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          data,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
-                        ),
+    return Container(
+      decoration: BoxDecoration(color: Colors.transparent,
+
+          border: Border.all(color: Colors.white,width: 3),
+
+
+          borderRadius: BorderRadius.all(
+
+
+              Radius.circular(20.0))),
+
+      height: 175,
+      width: 175,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  Spacer(),
+                  Container(
+                    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(40))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        data,
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Spacer(),
-              Text(
-                top_name,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                bottom_name,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+            ),
+            Spacer(),
+            Text(
+              top_name,
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+            ),
+            Text(
+              bottom_name,
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+            )
+          ],
         ),
       ),
     );
@@ -87,7 +97,8 @@ class SavedGhostState extends State<SavedDataGhost> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
-        elevation: 10,
+        elevation: 0,
+        color: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
         child: Row(
           children: [
@@ -99,11 +110,11 @@ class SavedGhostState extends State<SavedDataGhost> {
                   padding: const EdgeInsets.all(25.0),
                   child: Text(
                     "Ghosting Speed",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
                   ),
                 ),
                 Container(
-                  height: 200,
+                  height: 300,
                   width: MediaQuery.of(context).size.width - 30,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
@@ -113,18 +124,19 @@ class SavedGhostState extends State<SavedDataGhost> {
                             show: true,
                             border: Border(
                               bottom: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 1,
+                                color: Colors.white,
+                                width: 2,
                               ),
                               left: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 1,
+                                color: Colors.white,
+                                width: 2,
+                                style: BorderStyle.solid
                               ),
                               right: BorderSide(
-                                color: Theme.of(context).primaryColor,
+                                color: Colors.transparent,
                               ),
                               top: BorderSide(
-                                color: Theme.of(context).primaryColor,
+                                color: Colors.transparent,
                               ),
                             ),
                           ),
@@ -135,14 +147,17 @@ class SavedGhostState extends State<SavedDataGhost> {
                             horizontalInterval: 2,
                             verticalInterval: 2,
                             getDrawingVerticalLine: (value) {
+
+
                               return FlLine(
-                                color: Theme.of(context).primaryColor,
+                                color: Colors.transparent,
                                 strokeWidth: 1,
+
                               );
                             },
                             getDrawingHorizontalLine: (value) {
                               return FlLine(
-                                color: Theme.of(context).primaryColor,
+                                color: Colors.transparent,
                                 strokeWidth: 1,
                               );
                             },
@@ -157,7 +172,7 @@ class SavedGhostState extends State<SavedDataGhost> {
                             bottomTitles: SideTitles(
                               showTitles: true,
                               reservedSize: 40,
-                              getTextStyles: (value) => const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
+                              getTextStyles: (value) => const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                               rotateAngle: 0,
                               getTitles: (val) {
                                 if (val == 0) {
@@ -175,7 +190,7 @@ class SavedGhostState extends State<SavedDataGhost> {
                             leftTitles: SideTitles(
                               showTitles: true,
                               getTextStyles: (value) => const TextStyle(
-                                color: Color(0xff67727d),
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
                               ),
@@ -195,11 +210,11 @@ class SavedGhostState extends State<SavedDataGhost> {
                               spots: DataMethods().SingleSpeed(ghost_box),
                               isCurved: true,
                               colors: [
-                                Theme.of(context).primaryColor,
+                                Colors.white,
                                 //Color(0xff044d7c),
                                 //  Colors.lightBlue,
                               ],
-                              barWidth: 5,
+                              barWidth: 2,
                               isStrokeCapRound: true,
                               dotData: FlDotData(
                                 show: false,
@@ -232,8 +247,78 @@ class SavedGhostState extends State<SavedDataGhost> {
     }
 
     speed = DataMethods().SingleSpeed(ghost_box);
-
+    _testSetCurrentScreen();
     super.initState();
+  }
+
+  Widget ave_speed(data){
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+      child: Container(
+        decoration: BoxDecoration(color: Colors.transparent,
+
+            border: Border.all(color: Colors.white,width: 3),
+
+
+            borderRadius: BorderRadius.all(
+
+
+                Radius.circular(20.0))),
+
+        height: 120,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Text(
+                    "Average",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                  ),
+                  Text(
+                    "Speed",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child:Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        data.toStringAsFixed(1),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
+                      ),
+                      Text("Seconds per Ghost",style: TextStyle(color: Colors.white,fontSize: 10),)
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+
+  }
+
+
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Old_Ghost_Data_View',
+      screenClassOverride: 'Old_Ghost_Data_View',
+    );
   }
 
   Widget button_box(String name, int index) {
@@ -379,10 +464,54 @@ class SavedGhostState extends State<SavedDataGhost> {
 
   @override
   Widget build(BuildContext context) {
+    return  Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      appBar: AppBar(title: Text("Data Analytics",style: TextStyle(fontSize: 30),),
+        elevation: 0,
+        toolbarHeight: 80,
+        leading: IconButton(
+          icon: Icon(Icons.close),
+          onPressed: (){
+
+            Navigator.pop(context);
+
+          },
+
+        ),
+      ),
+      body: ListView(
+        children: [
+
+          ghost_box.time_array.length > 0 ? Speed() : Text(""),
+          Spacer(),
+
+          Padding(
+            padding: const EdgeInsets.only(top: 0, bottom: 20),
+            child: Column(
+              children: [
+                ave_speed(ghost_box.end.difference(ghost_box.start).inSeconds/ghost_box.time_array.length),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    single_card("Total", "Time", ghost_box.end.difference(ghost_box.start).toString().substring(2, 7), Theme.of(context).primaryColor),
+                    single_card("Total", "ghosts", ghost_box.time_array.length.toString(), Theme.of(context).primaryColor)
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+  }
+
+  Widget old(){
     return PageView(
       scrollDirection: Axis.vertical,
       children: [
         Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
           body: Column(
             children: [
               Container(
@@ -451,9 +580,9 @@ class SavedGhostState extends State<SavedDataGhost> {
                               borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                           child: Center(
                               child: Text(
-                            "Close",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-                          ))),
+                                "Close",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                              ))),
                     ),
                   )),
             ],
@@ -461,5 +590,7 @@ class SavedGhostState extends State<SavedDataGhost> {
         ),
       ],
     );
+
   }
+
 }

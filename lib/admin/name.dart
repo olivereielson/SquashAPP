@@ -51,6 +51,13 @@ class name_edit extends StatelessWidget{
 
               onSubmitted: (name){
 
+
+
+                if (name.substring(name.length-1)==""){
+                  name=name.substring(0,name.length-1);
+                }
+
+
                 Navigator.pop(context,name);
 
 

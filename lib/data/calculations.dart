@@ -38,15 +38,13 @@ class DataMethods {
 
     var sum = slice_data.reduce((a, b) => a + b);
 
-    RandomColor _randomColor = RandomColor();
-
     for (int i = 0; i < SoloDefs().Exersise.length; i++) {
       data.add(PieChartSectionData(
-        color: colors[i],
+        color: Colors.white,
         value: slice_data[i],
         title: ((slice_data[i] / sum) * 100).toInt().toString() + '%',
         radius:index==i?70:60,
-        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[0] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
+        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[i] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.blueGrey),
         titlePositionPercentageOffset: 0.55,
       ),);
     }

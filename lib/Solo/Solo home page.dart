@@ -2,6 +2,8 @@ import 'dart:math' as math;
 import 'dart:math';
 import 'dart:ui';
 import 'package:camera/camera.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,8 +42,10 @@ class SoloHome extends StatefulWidget {
   final bool showgreen;
   final List<int> sides;
   final Duration time;
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
 
-  SoloHome({this.cameras, this.start_camera, this.shot_count, this.time, this.type, this.sides, this.showgreen});
+  SoloHome({this.cameras, this.start_camera, this.shot_count, this.time, this.type, this.sides, this.showgreen,this.analytics,this.observer});
 
   @override
   SoloHomeState createState() => new SoloHomeState(cameras, start_camera, showgreen);
@@ -150,7 +154,7 @@ class SoloHomeState extends State<SoloHome> {
   void initState() {
     currentBubbleSize = touchBubbleSize;
     current_side = widget.sides[0];
-
+    _testSetCurrentScreen();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       //DeviceOrientation.landscapeLeft,
@@ -165,6 +169,14 @@ class SoloHomeState extends State<SoloHome> {
     make_targets();
     super.initState();
   }
+
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Solo Page',
+      screenClassOverride: 'Solo_Page',
+    );
+  }
+
 
   void showTutorial() {
     TutorialCoachMark(
@@ -297,7 +309,7 @@ class SoloHomeState extends State<SoloHome> {
       print('No camera is found');
     } else {
       controller = new CameraController(
-        widget.cameras[0],
+        widget.cameras[camera],
         ResolutionPreset.high,
       );
 
@@ -642,10 +654,10 @@ class SoloHomeState extends State<SoloHome> {
 
         temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
 
-        if (temp.x > SoloDefs().Exersise[current_side]["xmin"] &&
-            temp.x < SoloDefs().Exersise[current_side]["xmax"] &&
-            temp.y > SoloDefs().Exersise[current_side]["ymin"] &&
-            temp.y < SoloDefs().Exersise[current_side]["ymax"]) {
+        if (temp.x > SoloDefs().Exersise[current_side]["xmin"]-10 &&
+            temp.x < SoloDefs().Exersise[current_side]["xmax"]+10 &&
+            temp.y > SoloDefs().Exersise[current_side]["ymin"]-10 &&
+            temp.y < SoloDefs().Exersise[current_side]["ymax"]+10) {
           ball.add(Positioned(
               left: last_bounce[last_bounce.length - 3].x,
               top: last_bounce[last_bounce.length - 3].y - h,
@@ -760,7 +772,10 @@ class SoloHomeState extends State<SoloHome> {
                     color: Colors.white,
                   ),
                   onPressed: () {
+
                     Wakelock.toggle(enable: false);
+                    widget.analytics.logEvent(name: "Solo_Workout_Ended_Early");
+
                     Navigator.pop(context);
                   }),
               IconButton(
@@ -773,6 +788,8 @@ class SoloHomeState extends State<SoloHome> {
                       bounces.clear();
                       // pause = !pause;
                     });
+                    widget.analytics.logEvent(name: "Solo_Workout_Paused");
+
                   }),
               IconButton(
                   key: keyButton3,
@@ -781,6 +798,7 @@ class SoloHomeState extends State<SoloHome> {
                     setState(() {
                       showGreen = !showGreen;
                     });
+                    widget.analytics.logEvent(name: "Solo_Workout_Target_Toggled");
 
                     /*
                     if (camera == 0) {
@@ -804,6 +822,8 @@ class SoloHomeState extends State<SoloHome> {
                       pc.previousPage(duration: Duration(milliseconds: 500), curve: Curves.ease);
                       page = 0;
                     }
+                    widget.analytics.logEvent(name: "Solo_Workout_2D_View_Toggled");
+
                   })
             ],
           ),
@@ -1313,10 +1333,16 @@ class SoloHomeState extends State<SoloHome> {
                     },
                     done: (bool) async {
                       await save2();
+
+                      widget.analytics.logEvent(
+                        name: 'Solo_Workout_Finished',
+                      );
+
                       await Navigator.push(
                           context,
                           PageTransition(
-                              type: PageTransitionType.bottomToTop, child: Finish_Screen_Solo(total_bounces.length, DateTime.now().difference(start_time).toString().substring(0, 7), total_bounces)));
+                              type: PageTransitionType.bottomToTop, child: Finish_Screen_Solo(total_bounces.length, DateTime.now().difference(start_time).toString().substring(0, 7), total_bounces,
+                              widget.analytics,widget.observer)));
 
                       Navigator.pop(context);
                     },
@@ -1377,6 +1403,8 @@ class SoloHomeState extends State<SoloHome> {
                         icon: Icon(Icons.help),
                         onPressed: () {
                           showTutorial();
+                          widget.analytics.logEvent(name: "Solo_Workout_Tutoral");
+
                         },
                       ),
                     ))

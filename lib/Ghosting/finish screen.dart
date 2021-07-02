@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:confetti/confetti.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +14,10 @@ import 'package:squash/data/calculations.dart';
 import 'package:squash/extra/hive_classes.dart';
 
 class Finish_Screen extends StatefulWidget {
-  Finish_Screen(this.total_ghost, this.total_time, this.time_array);
+  Finish_Screen(this.total_ghost, this.total_time, this.time_array,this.analytics,this.observer);
 
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
   List<double> time_array;
 
   String total_time;
@@ -290,9 +294,18 @@ class _Finish_ScreenState extends State<Finish_Screen> {
   void initState() {
 
 
+    _testSetCurrentScreen();
 
     super.initState();
   }
+
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Ghost_Finished_Page',
+      screenClassOverride: 'Ghost_Finished_Page',
+    );
+  }
+
 
 
 

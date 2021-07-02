@@ -218,7 +218,12 @@ class _MyAppState extends State<MyApp> {
         allowImplicitScrolling: true,
         controller: _pageController,
         physics: NeverScrollableScrollPhysics(),
-        children: <Widget>[GhostScreen(cameras, widget.analytics, widget.observer), SoloScreen(cameras), SavedDataPage(), Acount()],
+        children: <Widget>[GhostScreen(cameras, widget.analytics, widget.observer),
+          SoloScreen(cameras,widget.analytics,widget.observer),
+          SavedDataPage(widget.analytics,widget.observer),
+          Acount(widget.analytics,widget.observer)],
+
+
       ),
     );
   }

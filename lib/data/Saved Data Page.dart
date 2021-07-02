@@ -7,6 +7,8 @@ import 'package:custom_clippers/Clippers/directional_wave_clipper.dart';
 import 'package:custom_clippers/Clippers/multiple_points_clipper.dart';
 import 'package:custom_clippers/Clippers/sin_cosine_wave_clipper.dart';
 import 'package:custom_clippers/enum/enums.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ import 'package:scidart/numdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
 import 'package:squash/Solo/solo_defs.dart';
+import 'package:squash/data/Solo_Stat.dart';
 import 'package:squash/data/calculations.dart';
 import 'package:squash/data/save_page.dart';
 import 'package:squash/data/save_page_ghost.dart';
@@ -33,7 +36,11 @@ import '../extra/hive_classes.dart';
 import '../maginfine/magnifier.dart';
 
 class SavedDataPage extends StatefulWidget {
-  //SavedDataPage(this.date, this.duration, this.bounces);
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+
+  SavedDataPage(this.analytics,this.observer);
 
   @override
   SavedDataPageSate createState() => new SavedDataPageSate();
@@ -109,11 +116,19 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   void initState() {
     //load_hive();
     //calculate_data();
-
-    _tabController = new TabController(length: 3, vsync: this);
+    _testSetCurrentScreen();
+    _tabController = new TabController(length: 3, vsync: this,);
 
     super.initState();
   }
+
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Data_Page',
+      screenClassOverride: 'Data_Page',
+    );
+  }
+
 
   void calculate_solo() {
     solo_type_pie_chart_data = DataMethods().solo_pie_chart(solo_storage_box);
@@ -838,7 +853,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 onTap: () {
                   if (!is_shaking) {
                     Navigator.push(
-                        context, PageTransition(type: PageTransitionType.size, alignment: Alignment.center, duration: Duration(milliseconds: 200), child: SavedDataGhost(ghosting_box.getAt(index))));
+                        context, PageTransition(type: PageTransitionType.size, alignment: Alignment.center, duration: Duration(milliseconds: 200), child: SavedDataGhost(ghosting_box.getAt(index),
+                        widget.analytics,widget.observer)));
                   }
                 },
                 child: Card(
@@ -933,7 +949,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
               onTap: () {
                 if (!is_shaking) {
                   Navigator.push(
-                      context, PageTransition(type: PageTransitionType.size, alignment: Alignment.center, duration: Duration(milliseconds: 200), child: SavedData(solo_storage_box.getAt(index))));
+                      context, PageTransition(type: PageTransitionType.size, alignment: Alignment.center, duration: Duration(milliseconds: 200), child: SavedData(solo_storage_box.getAt(index),
+                      widget.analytics,widget.observer)));
                 }
               },
               child: Card(
@@ -1324,7 +1341,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   pinned: true,
                   delegate: _SliverAppBarDelegate(
                     TabBar(
-                        indicatorColor: Colors.lightBlueAccent,
+                        indicatorColor: Colors.white,
                         tabs: [
                           new Tab(
                             //  icon: new Icon(Icons.sports_tennis),
@@ -1347,7 +1364,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
           floatHeaderSlivers: false,
           body: TabBarView(
             children: [
-              solo_stat(),
+              Solo_Stat(widget.analytics,widget.observer),
               ghost_stat(),
               page_2(),
             ],

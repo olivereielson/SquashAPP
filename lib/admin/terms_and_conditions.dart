@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,8 +9,24 @@ class terms {
 }
 
 class terms_page extends StatelessWidget {
+
+  terms_page(this.analytics,this.observer);
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+
+  Future<void> _testSetCurrentScreen() async {
+    print("Logged Page");
+    await analytics.setCurrentScreen(
+      screenName: 'Terms Page',
+      screenClassOverride: 'Terms_Page',
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    _testSetCurrentScreen();
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(

@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,8 +15,10 @@ import 'package:squash/extra/hive_classes.dart';
 import 'package:random_color/random_color.dart';
 
 class Finish_Screen_Solo extends StatefulWidget {
-  Finish_Screen_Solo(this.total_shots, this.total_time,this.total_bounces);
+  Finish_Screen_Solo(this.total_shots, this.total_time,this.total_bounces,this.analytics,this.observer);
 
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
   List<Bounce> total_bounces;
 
   String total_time;
@@ -63,6 +67,7 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
     }
 
 
+    _testSetCurrentScreen();
 
     super.initState();
 
@@ -71,7 +76,12 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
 
 
 
-
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Finished_Solo_Page',
+      screenClassOverride: 'Finished_Solo_Page',
+    );
+  }
 
   Widget button_box(String name, int index) {
     print(showing);

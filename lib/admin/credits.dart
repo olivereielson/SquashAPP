@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +11,29 @@ class credits {
 }
 
 class credit_page extends StatelessWidget {
+
+  credit_page(this.analytics,this.observer);
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+
+  Future<void> _testSetCurrentScreen() async {
+    print("Logged Page");
+    await analytics.setCurrentScreen(
+      screenName: 'Credit Page',
+      screenClassOverride: 'Credit_Page',
+    );
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+    _testSetCurrentScreen();
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(

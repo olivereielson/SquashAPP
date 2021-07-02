@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -12,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
+import 'package:squash/extra/data_collection.dart';
 import 'package:squash/extra/hive_classes.dart';
 import 'package:tflite/tflite.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -28,8 +31,10 @@ class HomePage extends StatefulWidget {
   List<double> corners;
   int start_time;
   int type;
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
 
-  HomePage(this.cameras, this.number_set, this.round_num, this.rest_time, this.corners, this.start_time,this.round_time,this.type);
+  HomePage(this.cameras, this.number_set, this.round_num, this.rest_time, this.corners, this.start_time,this.round_time,this.type,{this.analytics,this.observer});
 
   @override
   _HomePageState createState() => new _HomePageState(number_set, round_num, rest_time, corners, start_time);
@@ -115,6 +120,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     make_targets();
+    _testSetCurrentScreen();
+    Data_Sender().testSetCurrentScreen(widget.analytics,"Ghosting Page","Ghosting_Page");
 
     super.initState();
 
@@ -159,13 +166,24 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     String test = DateTime.now().difference(application_start).toString();
     await save_data();
 
+    widget.analytics.logEvent(
+      name: 'Ghost_Finished',
+    );
+
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Finish_Screen(ghostcast, test.substring(0, test.length - 7), time_array2)),
+      MaterialPageRoute(builder: (context) => Finish_Screen(ghostcast, test.substring(0, test.length - 7), time_array2,widget.analytics,widget.observer)),
     );
 
     Navigator.pop(context);
   }
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Solo_Workout_Page',
+      screenClassOverride: 'Solo_Workout_Page',
+    );
+  }
+
 
   Widget corner_box(int number) {
     return RotationTransition(
@@ -628,6 +646,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         size: 30,
                       ),
                       onPressed: () {
+                        widget.analytics.logEvent(name: "Ghost_Tutorial_Shown");
                         showTutorial();
                       },
                     )
@@ -640,6 +659,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             child: SafeArea(
               child: GestureDetector(
                 onTap: () {
+                  widget.analytics.logEvent(name: "Ghosted_Ended_Early");
                   Navigator.pop(context);
                 },
                 child: Container(
@@ -661,7 +681,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         GestureDetector(
           onDoubleTap: () {
             setState(() {
-              showcam = !showcam;
+              //showcam = !showcam;
             });
           },
           onLongPress: () async {
