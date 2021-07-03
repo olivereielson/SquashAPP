@@ -343,7 +343,10 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
       padding: const EdgeInsets.all(15.0),
       child: Container(
         height: 90,
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+        decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+
+             borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Container(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -353,16 +356,17 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                 Container(
                   height: 50,
                   width: 50,
-                  decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+                  decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: solo
                       ? Icon(
                           Icons.sports_tennis,
+                    color: Theme.of(context).primaryColor,
                         )
                       : Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Image.asset(
                             "assets/ghost_icon.png",
-                            color: Colors.white,
+                            color: Theme.of(context).primaryColor,
                             height: 30,
                           ),
                         ),
@@ -465,7 +469,7 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                     context,
                     PageTransition(
                       type: PageTransitionType.topToBottom,
-                      child: name_edit(),
+                      child: name_edit(widget.analytics,widget.observer),
                     ),
                   );
 
@@ -497,9 +501,8 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
               pinned: true,
               delegate: _SliverAppBarDelegate(
                 TabBar(
-                    indicatorColor: Colors.lightBlueAccent,
-                    labelColor: Colors.white,
-                    indicatorSize: TabBarIndicatorSize.label,
+                    indicatorColor: Colors.white60,
+                    indicatorWeight: 3,
                     automaticIndicatorColorAdjustment: true,
 
 

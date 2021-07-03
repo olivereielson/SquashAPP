@@ -213,46 +213,35 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                         widget.analytics,widget.observer)));
                   }
                 },
-                child: Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-                  elevation: 10,
-                  child: Container(
-                    height: 100,
-                    decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                    child: Stack(
+                child: Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+
+
+                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
                       children: [
-                        Center(
-                          child: ClipPath(
-                            clipper: CustomClipperImage2(),
-                            child: Container(
-                              decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                            ),
-                          ),
-                        ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: FaIcon(
-                                  FontAwesomeIcons.ghost,
-                                  size: 40,
-                                ),
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(DateFormat('MMMMd').format(ghosting_box.getAt(index).start).toString(), style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold)),
-                                  Text(DateFormat('jm').format(ghosting_box.getAt(index).start).toString(), style: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                              Spacer(),
-                              Icon(Icons.chevron_right)
-                            ],
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Image.asset(
+                            "assets/ghost_icon.png",
+                            color: Theme.of(context).primaryColor,
+                            height: 40,
                           ),
                         ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(DateFormat('MMMMd').format(ghosting_box.getAt(index).start).toString(), style: TextStyle(fontSize: 30, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold)),
+                            Text(DateFormat('jm').format(ghosting_box.getAt(index).start).toString(), style: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        Spacer(),
+                        Icon(Icons.chevron_right,color: Theme.of(context).primaryColor,)
                       ],
                     ),
                   ),
@@ -309,51 +298,38 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                       widget.analytics,widget.observer)));
                 }
               },
-              child: Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))),
-                elevation: 10,
-                color: Colors.transparent,
-                child: Container(
-                  height: 100,
-                  decoration: BoxDecoration(color: Theme.of(context).backgroundColor, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  child: Stack(
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+
+                    border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+
+                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
                     children: [
-                      Center(
-                        child: ClipPath(
-                          clipper: CustomClipperImage(),
-                          child: Container(
-                            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(19.0))),
-                          ),
-                        ),
-                      ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                              child: Icon(
-                                Icons.sports_tennis,
-                                color: Colors.white,
-                                size: 50,
-                              ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(DateFormat('MMMMd').format(solo_storage_box.getAt(index).start).toString(), style: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold)),
-                                Text(DateFormat('jm').format(solo_storage_box.getAt(index).start).toString(), style: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.chevron_right,
-                              color: Theme.of(context).primaryColorDark,
-                            )
-                          ],
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Icon(
+                          Icons.sports_tennis,
+                          color: Theme.of(context).primaryColor,
+                          size: 50,
                         ),
                       ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(DateFormat('MMMMd').format(solo_storage_box.getAt(index).start).toString(), style: TextStyle(fontSize: 25, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold)),
+                          Text(DateFormat('jm').format(solo_storage_box.getAt(index).start).toString(), style: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      Spacer(),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Theme.of(context).primaryColor,
+                      )
                     ],
                   ),
                 ),
@@ -364,28 +340,28 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                 left: 0,
                 child: is_shaking
                     ? GestureDetector(
-                        onTap: () {
-                          Widget temp = Solo_Saved(index);
+                  onTap: () {
+                    Widget temp = Solo_Saved(index);
 
-                          DateTime cdate = DateTime(ghosting_box.getAt(index).start.year, ghosting_box.getAt(index).start.month, ghosting_box.getAt(index).start.day);
+                    DateTime cdate = DateTime(ghosting_box.getAt(index).start.year, ghosting_box.getAt(index).start.month, ghosting_box.getAt(index).start.day);
 
-                          eventDay[cdate].remove(index);
+                    eventDay[cdate].remove(index);
 
-                          solo_storage_box.deleteAt(index);
+                    solo_storage_box.deleteAt(index);
 
-                          //_listKey.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: temp), duration: Duration(milliseconds: 500));
+                    //_listKey.currentState.removeItem(index, (context, animation) => SizeTransition(sizeFactor: animation, child: temp), duration: Duration(milliseconds: 500));
 
 
-                        },
-                        child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.grey,
-                            )),
-                      )
+                  },
+                  child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                      )),
+                )
                     : Text(""))
           ],
         ),
@@ -528,7 +504,8 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   pinned: true,
                   delegate: _SliverAppBarDelegate(
                     TabBar(
-                        indicatorColor: Colors.white,
+                        indicatorColor: Colors.white60,
+                        indicatorWeight: 3,
                         tabs: [
                           new Tab(
                             //  icon: new Icon(Icons.sports_tennis),

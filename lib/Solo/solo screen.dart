@@ -292,7 +292,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             padding: const EdgeInsets.all(8.0),
             child: Container(
               height: 90,
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+                  color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
@@ -301,9 +303,12 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                     Container(
                       height: 50,
                       width: 50,
-                      decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+                      decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Icon(
                         EvaIcons.hash,
+
+                        color:     Theme.of(context).primaryColor,
+                        size: 40,
                       ),
                     ),
                     Padding(
@@ -319,7 +324,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                               )),
                           Text(
                             shot_number.toString(),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.caption.color),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -348,7 +353,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Container(
               height: 90,
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+                  color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
@@ -442,7 +449,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       padding: const EdgeInsets.all(8.0),
       child: Container(
         height: 90,
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+        decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+            color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Container(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -452,8 +461,10 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                 Container(
                   height: 50,
                   width: 50,
-                  decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Center(child: FaIcon(FontAwesomeIcons.bullseye)),
+                  decoration: BoxDecoration(
+
+                       borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: Center(child: FaIcon(FontAwesomeIcons.bullseye,color: Theme.of(context).primaryColor,size: 30,)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -499,7 +510,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             },
             child: Container(
               height: 90,
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+                  color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
               child: Container(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -509,9 +522,10 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                       Container(
                         height: 50,
                         width: 50,
-                        decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+                        decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: Icon(
                           Icons.timer,
+                          color: Theme.of(context).primaryColor,size: 40,
                         ),
                       ),
                       Padding(
@@ -529,7 +543,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                             ),
                             Text(
                               total_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.caption.color),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -619,43 +633,46 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
           sides.sort();
         },
         child: Center(
-          child: Card(
-            elevation: 3,
-            color: Color.fromRGBO(40, 70, 130, 1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-              side: BorderSide(color: sides.contains(data["id"]) ? Theme.of(context).primaryColorLight : Color.fromRGBO(40, 70, 130, 1), width: 5),
-            ),
-            child: Container(
-              height: 175,
-              width: 110,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      data["name"],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColorLight),
-                    ),
+          child: Container(
+            height: 175,
+            width: 110,
+            decoration: BoxDecoration(
+
+                border:
+
+                Border.all(color: !sides.contains(data["id"])?Colors.white.withOpacity(0.5):Colors.white,
+
+
+                    width: 4),
+
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    data["name"],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColorLight),
                   ),
-                  Spacer(),
-                  Container(
-                    height: 80,
-                    width: 130,
-                    child: Stack(
-                      children: [
-                        Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: Theme.of(context).primaryColorLight)),
-                        Positioned(left: 50.0, top: 15, child: Container(width: 5, height: 100, color: Theme.of(context).primaryColorLight)),
-                        Positioned(left: 25.0, top: 15, child: Container(width: 5, height: 30, color: Theme.of(context).primaryColorLight)),
-                        Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: Theme.of(context).primaryColorLight)),
-                        Positioned(right: 25.0, top: 15, child: Container(width: 5, height: 30, color: Theme.of(context).primaryColorLight)),
-                        Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: Theme.of(context).primaryColorLight)),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Spacer(),
+                Container(
+                  height: 80,
+                  width: 130,
+                  child: Stack(
+                    children: [
+                      Positioned(left: 50.0, top: 15, child: Container(width: 5, height: 100, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(left: 25.0, top: 15, child: Container(width: 5, height: 30, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(right: 25.0, top: 15, child: Container(width: 5, height: 30, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(1):Colors.white)),
+
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
         ),
@@ -724,6 +741,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                       shot_count: shot_number,
                                       sides: sides,
                                       showgreen: showGreen,
+                                  analytics: widget.analytics,
+                                  observer: widget.observer,
                                     )),
                           );
                         },
@@ -805,6 +824,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                               shot_count: shot_number,
                                               sides: sides,
                                               showgreen: showGreen,
+                                          analytics: widget.analytics,
+                                          observer: widget.observer,
                                             )),
                                   );
                                 }
@@ -878,9 +899,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
           pinned: true,
           delegate: _SliverAppBarDelegate(
             TabBar(
-                indicatorColor: Colors.lightBlueAccent,
+                indicatorColor: Colors.white60,
+                indicatorWeight: 3,
                 labelColor: Colors.white,
-                indicatorSize: TabBarIndicatorSize.label,
                 tabs: [
                   new Tab(
                     //  icon: new Icon(Icons.sports_tennis),

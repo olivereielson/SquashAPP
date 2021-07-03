@@ -40,11 +40,11 @@ class DataMethods {
 
     for (int i = 0; i < SoloDefs().Exersise.length; i++) {
       data.add(PieChartSectionData(
-        color: Colors.white,
+        color: colors,
         value: slice_data[i],
         title: ((slice_data[i] / sum) * 100).toInt().toString() + '%',
         radius:index==i?70:60,
-        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[i] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.blueGrey),
+        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[i] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
         titlePositionPercentageOffset: 0.55,
       ),);
     }
@@ -329,7 +329,7 @@ class DataMethods {
           barRods: [
             BarChartRodData(
               y: single_corner_speed[i],
-              colors: [Colors.white],
+              colors: [primeColor],
               width: 20,
               backDrawRodData: BackgroundBarChartRodData(
                 show: true,

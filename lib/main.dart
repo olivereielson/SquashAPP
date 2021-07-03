@@ -77,7 +77,7 @@ class _setupState extends State<setup> {
     print("First Time Check");
     if (prefs.containsKey("first_time")) {
       setState(() {
-        first_run = false;
+        first_run = true;
       });
     } else {
       prefs.setBool("first_time", true);
@@ -111,6 +111,7 @@ class _setupState extends State<setup> {
           primaryColorDark: Colors.black87,
           primaryColorLight: Colors.white,
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
+
             selectedItemColor: Color.fromRGBO(66, 89, 138, 1),
             unselectedItemColor: Colors.grey,
           ),
@@ -132,6 +133,7 @@ class _setupState extends State<setup> {
           primaryColor: Color.fromRGBO(20, 20, 60, 1),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             selectedItemColor: Colors.white,
+
             selectedIconTheme: IconThemeData(
               color: Colors.white,
             ),
@@ -187,8 +189,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
+
         items: [
           BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.ghost), label: "Ghosting"),
           BottomNavigationBarItem(

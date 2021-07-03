@@ -93,21 +93,27 @@ class SettingsPageState extends State<SettingsPage> {
         onTap: () {},
         child: Container(
           height: 140,
-          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+          decoration: BoxDecoration(
+
+              border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+
+              borderRadius: BorderRadius.all(Radius.circular(20))),
           child: Container(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         height: 50,
                         width: 50,
-                        decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-                        child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.dark_mode)),
+                        decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
+                        child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.dark_mode,color: Theme.of(context).primaryColor,size: 40,)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 10, right: 40),
@@ -228,7 +234,8 @@ class SettingsPageState extends State<SettingsPage> {
         },
         child: Container(
           height: 90,
-          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+          decoration: BoxDecoration(              border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+              borderRadius: BorderRadius.all(Radius.circular(20))),
           child: Container(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -238,8 +245,8 @@ class SettingsPageState extends State<SettingsPage> {
                   Container(
                     height: 50,
                     width: 50,
-                    decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.feedback_outlined)),
+                    decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.feedback_outlined,color: Theme.of(context).primaryColor,size: 40,)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -320,7 +327,7 @@ class SettingsPageState extends State<SettingsPage> {
         onTap: () {},
         child: Container(
           height: 90,
-          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
+          decoration: BoxDecoration( border: Border.all(color: Theme.of(context).primaryColor,width: 3), borderRadius: BorderRadius.all(Radius.circular(20))),
           child: Container(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -330,63 +337,13 @@ class SettingsPageState extends State<SettingsPage> {
                   Container(
                     height: 50,
                     width: 50,
-                    decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.handyman)),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.handyman,color: Theme.of(context).primaryColor,size: 40,)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "Build Number",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-                  FutureBuilder(
-                    future: getversion(),
-                    builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                      if (gotinfo) {
-                        return Text(packageInfo.buildNumber);
-                      } else {
-                        return Text(gotinfo.toString());
-                      }
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildInfo() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      child: GestureDetector(
-        onTap: () {},
-        child: Container(
-          height: 90,
-          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
-          child: Container(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.handyman)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Build Version",
+                      "Build Vesion",
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -412,6 +369,7 @@ class SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+
 
   Future<void> credits() async {
     return showDialog<void>(
@@ -489,8 +447,7 @@ class SettingsPageState extends State<SettingsPage> {
         //DataColect(),
       // Rate_App(),
         FeedBack(),
-        buildInfo(),
-        //VersionInfo(),
+        VersionInfo(),
         Spacer(),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 30),

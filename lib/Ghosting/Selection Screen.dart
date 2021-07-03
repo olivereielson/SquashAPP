@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:animated_widgets/widgets/rotation_animated.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
 import 'package:direct_select/direct_select.dart';
 import 'package:flutter/material.dart';
@@ -160,7 +161,10 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
         height: 90,
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.09), borderRadius: BorderRadius.all(Radius.circular(20))),
+        decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+
+            borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -169,7 +173,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(height: 50, width: 50, decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(10))), child: icon),
+                  child: Container(height: 50, width: 50, decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))), child: icon),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -180,14 +184,14 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                       Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       Text(
                         value,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.caption.color),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            Icon(Icons.chevron_right)
+            Icon(Icons.chevron_right,color: Theme.of(context).primaryColor,)
           ],
         ),
       ),
@@ -316,7 +320,96 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     );
   }
 
-  text_dialog() async {
+  Future<void> text_dialog() async {
+
+    String n= await Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.topToBottom,
+        child: Scaffold(
+
+          backgroundColor: Theme.of(context).primaryColor,
+
+          body: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Text("Enter Custom Workout Name",style: TextStyle(color: Colors.white,fontSize: 25),),
+                ),
+
+                TextField(
+                  style: TextStyle(color: Colors.white),
+
+                  decoration: InputDecoration(
+                      hintText: "Eg 6 corners",
+                      enabledBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+
+                      hintStyle: TextStyle(color: Colors.white60),
+                      labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+
+                  onSubmitted: (name){
+
+
+
+                    if (name.substring(name.length-1)==""){
+                      name=name.substring(0,name.length-1);
+                    }
+
+
+                    Navigator.pop(context,name);
+
+
+                  },
+
+
+
+
+
+                )
+
+
+              ],
+
+
+            ),
+          ),
+
+
+        ),
+      ),
+    );
+
+
+
+    name = n.toString().toUpperCase();
+    if(name.replaceAll(" ", "")==""){
+
+      name="NO NAME";
+
+    }
+  }
+
+  text_dialog2() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -402,6 +495,8 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                 Hive.box<Custom>(box).getAt(index).start_time,
                                 Duration(seconds: Hive.box<Custom>(box).getAt(index).round_time),
                                 Hive.box<Custom>(box).getAt(index).type,
+                            analytics: widget.analytics,
+                            observer: widget.observer,
                               )),
                     );
                   },
@@ -415,6 +510,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     return Container(
       width: 215,
       height: 215,
+
       child: ShakeAnimatedWidget(
         enabled: is_shaking,
         duration: Duration(milliseconds: 500),
@@ -422,87 +518,72 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
         curve: Curves.linear,
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            Center(
               child: Container(
-                width: 205,
-                height: 205,
-                child: Stack(
-                  children: [
-                    ClipPath(
-                      child: Container(
-                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(20))),
-                      ),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white,width: 3),
+
+
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  width: 200,
+                  height: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 170,
+                                child: AutoSizeText(
+                                  Hive.box<Custom>(box).getAt(index).name,
+                                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+                                  maxLines: 1,
+
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Text(
+                          Hive.box<Custom>(box).getAt(index).start_time.toString() + " Second count down",
+                          style: TextStyle(
+                            color: Colors.white60,
+                          ),
+                        ),
+                        Text(
+                          Hive.box<Custom>(box).getAt(index).rest_time.toString() + " Second Rest",
+                          style: TextStyle(
+                            color: Colors.white60,
+                          ),
+                        ),
+                        Text(
+                          Hive.box<Custom>(box).getAt(index).type == 1
+                              ? Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts"
+                              : Duration(seconds: Hive.box<Custom>(box).getAt(index).round_time).toString().substring(2, 7) + " Round Time",
+                          style: TextStyle(
+                            color: Colors.white60,
+                          ),
+                        ),
+                        Text(
+                          Hive.box<Custom>(box).getAt(index).round_num.toInt().toString() + " Rounds",
+                          style: TextStyle(
+                            color: Colors.white60,
+                          ),
+                        ),
+                        Text(
+                          Hive.box<Custom>(box).getAt(index).corners.length.toString() + " Corners ",
+                          style: TextStyle(
+                            color: Colors.white60,
+                          ),
+                        )
+                      ],
                     ),
-                    ClipPath(
-                      clipper: CustomClipperImage3(),
-                      child: Container(
-                        decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(20))),
-                      ),
-                    ),
-                    Positioned(
-                      top: 5,
-                      child: ClipPath(
-                        child: Container(
-                            width: 200,
-                            height: 200,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          Hive.box<Custom>(box).getAt(index).name,
-                                          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Text(
-                                    Hive.box<Custom>(box).getAt(index).start_time.toString() + " Second count down",
-                                    style: TextStyle(
-                                      color: Colors.white60,
-                                    ),
-                                  ),
-                                  Text(
-                                    Hive.box<Custom>(box).getAt(index).rest_time.toString() + " Second Rest",
-                                    style: TextStyle(
-                                      color: Colors.white60,
-                                    ),
-                                  ),
-                                  Text(
-                                    Hive.box<Custom>(box).getAt(index).type == 1
-                                        ? Hive.box<Custom>(box).getAt(index).number_set.toInt().toString() + " Ghosts"
-                                        : Duration(seconds: Hive.box<Custom>(box).getAt(index).round_time).toString().substring(2, 7) + " Round Time",
-                                    style: TextStyle(
-                                      color: Colors.white60,
-                                    ),
-                                  ),
-                                  Text(
-                                    Hive.box<Custom>(box).getAt(index).round_num.toInt().toString() + " Rounds",
-                                    style: TextStyle(
-                                      color: Colors.white60,
-                                    ),
-                                  ),
-                                  Text(
-                                    Hive.box<Custom>(box).getAt(index).corners.length.toString() + " Corners ",
-                                    style: TextStyle(
-                                      color: Colors.white60,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  )),
             ),
             is_shaking
                 ? Positioned(
@@ -614,7 +695,8 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                         controller: _tabController,
                         automaticIndicatorColorAdjustment: true,
                         labelColor: Colors.white,
-                        indicatorColor: Colors.lightBlueAccent,
+                        indicatorColor: Colors.white60,
+                        indicatorWeight: 3,
                         tabs: [
                           new Tab(
                             text: "Timed",
@@ -646,7 +728,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           start_time.toString().split('.').first.padLeft(8, "0").substring(3),
                                           Icon(
                                             Icons.timer,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -664,7 +746,8 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
                                           Icon(
                                             Icons.timer,
-                                            color: Colors.white,
+
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -682,7 +765,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           round_time.toString().substring(2, 7),
                                           Icon(
                                             Icons.timer,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -700,7 +783,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           round_num.toInt().toString(),
                                           Icon(
                                             EvaIcons.hashOutline,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -718,7 +801,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           corners.length.toInt().toString(),
                                           Icon(
                                             Icons.apps,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -832,7 +915,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           start_time.toString().split('.').first.padLeft(8, "0").substring(3),
                                           Icon(
                                             Icons.timer,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -850,7 +933,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
                                           Icon(
                                             Icons.timer,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -868,7 +951,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           number_set.toInt().toString(),
                                           Icon(
                                             EvaIcons.hashOutline,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -886,7 +969,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           round_num.toInt().toString(),
                                           Icon(
                                             EvaIcons.hashOutline,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),
@@ -904,7 +987,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                           corners.length.toInt().toString(),
                                           Icon(
                                             Icons.apps,
-                                            color: Colors.white,
+                                            color:Theme.of(context).primaryColor,
                                             size: 30,
                                           )),
                                     ),

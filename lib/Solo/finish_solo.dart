@@ -84,13 +84,12 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
   }
 
   Widget button_box(String name, int index) {
-    print(showing);
-    print(show_dots);
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: GestureDetector(
-
         onTap: () {
+          widget.analytics.logEvent(name: "Solo_View_Button_Toggled");
+
           if (show_dots.contains(index)) {
             setState(() {
               show_dots.remove(index);
@@ -102,11 +101,10 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
           }
         },
         child: Container(
-
-          decoration: BoxDecoration(color: show_dots.contains(index) ?Theme.of(context).primaryColor:Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0)),    border: Border.all
-            (color: Colors.white,
-              width: 3)
-          ),
+          decoration: BoxDecoration(
+              color: show_dots.contains(index) ? Theme.of(context).primaryColor : Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              border: Border.all(color: Colors.white, width: 3)),
           height: 60,
           width: 130,
           child: Padding(
@@ -122,38 +120,67 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
       ),
     );
   }
-  Widget confeti() {
+
+  Widget draw_court() {
+    Color court_color = Colors.white;
+
+    double h = (MediaQuery.of(context).size.width * 1645) / 1080;
+
     return Stack(
       children: [
-        Align(
-          alignment: Alignment.topCenter,
-          child: ConfettiWidget(
-            confettiController: _controllerCenter,
-            shouldLoop: false,
-
-            blastDirection: pi / 2,
-            // radial value - RIGHT
-            emissionFrequency: 0.6,
-            minimumSize: const Size(10, 10),
-            // set the minimum potential size for the confetti (width, height)
-            maximumSize: const Size(20, 20),
-            // set the maximum potential size for the confetti (width, height)
-            numberOfParticles: 1,
-            gravity: 0.1,
+        Positioned(
+            bottom: h * 0.44 ,
+            child: Container(
+              height: 10,
+              width: MediaQuery.of(context).size.width,
+              color: court_color,
+            )),
+        Positioned(
+            bottom: 0 ,
+            left: MediaQuery.of(context).size.width / 2,
+            child: Container(
+              height: h * 0.44,
+              width: 10,
+              color: court_color,
+            )),
+        Positioned(
+          bottom: (h * 0.44 )-MediaQuery.of(context).size.width / 4 ,
+          left: -15,
+          child: Container(
+            width: MediaQuery.of(context).size.width / 4 + 10,
+            height: MediaQuery.of(context).size.width / 4 + 10,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              border: Border.all(
+                  color: court_color,
+                  // set border color
+                  width: 10.0), // set border width
+              // set rounded corner radius
+            ),
           ),
         ),
-        Align(
-          alignment: Alignment.center,
-          child: MaterialButton(
-              onPressed: () {
-                _controllerCenter.play();
-              },
-              child: Text('blast\nstars')),
+        Positioned(
+          bottom: (h * 0.44 )-MediaQuery.of(context).size.width / 4 ,
+          right: -15,
+          child: Container(
+            width: MediaQuery.of(context).size.width / 4 + 10,
+            height: MediaQuery.of(context).size.width / 4 + 10,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              border: Border.all(
+                  color: court_color,
+                  // set border color
+                  width: 10.0), // set border width
+              // set rounded corner radius
+            ),
+          ),
         ),
       ],
     );
   }
+
   Widget flat_bounce() {
+
     List<Widget> spots = [];
     double h = (MediaQuery.of(context).size.width * 1645) / 1080;
 
@@ -162,21 +189,20 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
     for (int i = 0; i < total_bounces.length; i++) {
       //(bounces[i]);
 
-      double x1 = (total_bounces[i].x_pos * MediaQuery.of(context).size.width) / 1080;
-      double y1 = ((total_bounces[i].y_pos * h) / 1645) + offset;
-      int gfg =total_bounces[i].type.toInt();
+      double x1 = ( total_bounces[i].x_pos * MediaQuery.of(context).size.width) / 1080;
+      double y1 = (MediaQuery.of(context).size.height-offset)-(( total_bounces[i].y_pos * (h)) / 1645);
+
+      int gfg =  total_bounces[i].type.toInt();
 
       Color spot_color = dots_colors[gfg];
 
-
-
       spots.add(Positioned(
-        top: y1 - 10,
+        bottom: y1 - 10,
         left: x1 - 10,
         child: Icon(
           Icons.circle,
           size: 20,
-          color: show_dots.contains(gfg)?spot_color:Colors.transparent,
+          color: show_dots.contains(gfg) ? spot_color : Colors.transparent,
         ),
       ));
     }
@@ -185,63 +211,54 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
       children: spots,
     );
   }
-  Widget draw_court() {
-    Color court_color = Theme.of(context).primaryColor;
 
-    double h = (MediaQuery.of(context).size.width * 1645) / 1080;
+  Widget single_card(String top_name, String bottom_name, String data) {
+    return Container(
+      decoration: BoxDecoration(color: Colors.transparent,
 
-    double offset = MediaQuery.of(context).size.height - h;
+          border: Border.all(color: Colors.white,width: 3),
 
-    return Stack(
-      children: [
-        Positioned(
-            top: h * 0.56 + offset,
-            child: Container(
-              height: 15,
-              width: MediaQuery.of(context).size.width,
-              color: court_color,
-            )),
-        Positioned(
-            top: h * 0.56 + offset,
-            left: MediaQuery.of(context).size.width / 2,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.56,
-              width: 15,
-              color: court_color,
-            )),
-        Positioned(
-          top: h * 0.56 + offset,
-          left: -15,
-          child: Container(
-            width: MediaQuery.of(context).size.width / 4 + 15,
-            height: MediaQuery.of(context).size.width / 4 + 15,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                  color: court_color,
-                  // set border color
-                  width: 15.0), // set border width
-              // set rounded corner radius
+
+          borderRadius: BorderRadius.all(
+
+
+              Radius.circular(20.0))),
+
+      height: 175,
+      width: 175,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      data,
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-        Positioned(
-          top: h * 0.56 + offset,
-          right: -15,
-          child: Container(
-            width: MediaQuery.of(context).size.width / 4 + 15,
-            height: MediaQuery.of(context).size.width / 4 + 15,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                  color: court_color,
-                  // set border color
-                  width: 15.0), // set border width
-              // set rounded corner radius
+            Spacer(),
+            Text(
+              top_name,
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
             ),
-          ),
+            Text(
+              bottom_name,
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -251,145 +268,48 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
   @override
   Widget build(BuildContext context) {
 
-
-
-
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      appBar: AppBar(title: Text("Data Analytics",style: TextStyle(fontSize: 30),),elevation: 0,toolbarHeight: 80,
+      leading: IconButton(
+        icon: Icon(Icons.close),
+        onPressed: (){
+          Navigator.pop(context);
+
+        }
+      ),
+      ),
+
+
       body: Stack(
+
         children: [
           draw_court(),
           flat_bounce(),
-          Positioned(
-              top: 0,
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 500),
-                decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(40), bottomLeft: Radius.circular(40))),
-                width: MediaQuery.of(context).size.width,
-                child: SafeArea(
-                  child: Column(
-                    children: [
-                      ExpansionTile(
-                        leading: IconButton(
-                          icon: Icon(Icons.close,color: Colors.white,),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
+          Row(
 
-                        trailing:Icon(expanded?Icons.keyboard_arrow_up:Icons.keyboard_arrow_down,color: Colors.white,) ,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
 
-                        onExpansionChanged: (bool) {
-                          setState(() {
-                            expanded = bool;
-                          });
-                        },
-                        title: Center(
-                            child: Text(
-                              'Finished',
-                              style: TextStyle(color: Colors.white, fontSize: 30),
-                            )),
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                              height: 90,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                                    child: Container(
-                                      height: 60,
-                                      width: 60,
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                                      child: Icon(Icons.timer,color: court_color),
-                                    ),
-                                  ),
-                                  Text(
-                                    "Duration",
-                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                  ),
-                                  Spacer(),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                                    child: Text(
-                                      widget.total_time,
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                              height: 90,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                                    child: Container(
-                                      height: 60,
-                                      width: 60,
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                                      child: Icon(EvaIcons.hashOutline,color: court_color,),
-                                    ),
-                                  ),
-                                  Text(
-                                    "Total Shots",
-                                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                  ),
-                                  Spacer(),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                                    child: Text(
-                                     widget.total_shots.toString(),
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: Container(
-                              height: 150,
-                              width: MediaQuery.of(context).size.width,
-
-                              child: ListView.builder(
-
-                                scrollDirection: Axis.horizontal,
-                                itemCount: showing.length,
-                                itemBuilder: (BuildContext context, int index) {
-
-                                 return button_box(SoloDefs().Exersise[showing[index]]["name"], showing[index]);
-
-
-                                },
+              single_card("Total", "Shots",total_bounces.length.toString(),),
+              single_card("Total", "Time", widget.total_time.toString().substring(2, 7))
 
 
 
-                              ),
-                            ),
-                          ),
+            ],
 
 
+          )
 
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              )),
 
         ],
+
+
+
       ),
+
+
     );
-
-
   }
+
 }

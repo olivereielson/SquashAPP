@@ -34,13 +34,12 @@ class _Ghost_StatState extends State<Ghost_Stat> {
   List<BarChartGroupData> barchrt = [];
   List<double> single_corner_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   Map<DateTime, List<String>> eventDay = {};
-  Future _load_data;
 
+ int _count=0;
 
   @override
   void initState() {
 
-    _load_data=load_ghost_hive()
     super.initState();
   }
 
@@ -76,6 +75,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
   }
 
   Future<void> load_ghost_hive() async {
+
     if (!Hive.isAdapterRegistered(9)) {
       Hive.registerAdapter(GhostingAdapter());
     }
@@ -85,16 +85,14 @@ class _Ghost_StatState extends State<Ghost_Stat> {
     } else {
       ghosting_box = await Hive.openBox<Ghosting>("Ghosting1");
     }
-    setState(() {
       calculate_ghost();
-    });
   }
 
   Widget single_card(String top_name, String bottom_name, String data) {
     return Container(
       decoration: BoxDecoration(color: Colors.transparent,
 
-          border: Border.all(color: Colors.white,width: 3),
+          border: Border.all(color: Theme.of(context).primaryColor,width: 3),
 
 
           borderRadius: BorderRadius.all(
@@ -119,7 +117,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       data,
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
+                      style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 40),
                     ),
                   ),
                 ],
@@ -128,11 +126,11 @@ class _Ghost_StatState extends State<Ghost_Stat> {
             Spacer(),
             Text(
               top_name,
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
             ),
             Text(
               bottom_name,
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Theme.of(context).primaryColor),
             )
           ],
         ),
@@ -157,22 +155,34 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                     borderData: FlBorderData(
                       show: false,
                     ),
+
+                    pieTouchData: PieTouchData(touchCallback: (PieTouchResponse val) {
+                      if (val.touchedSectionIndex != -1) {
+                        setState(() {
+                          _count = val.touchedSectionIndex;
+                          widget.analytics.logEvent(name: "Solo_Breakdown_Toggled");
+                        });
+                      }
+                    }),
+
                     sections: [
                       PieChartSectionData(
-                        color: Colors.white60,
+                        color: Theme.of(context).primaryColor,
                         value: work,
                         title: (work / (work + rest) * 100).toInt().toString() + '%',
-                        radius: 50,
-                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                        radius: _count==0?60:50,
+                        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                         titlePositionPercentageOffset: 0.55,
+
                       ),
                       PieChartSectionData(
-                        color: Colors.white,
+                        color: Color.fromRGBO(40, 70, 130, 1),
+
                         value: rest,
                         title: (rest / (work + rest) * 100).ceil().toString() + '%',
-                        radius: 50,
+                        radius: _count==1?60:50,
                         showTitle: true,
-                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                        titleStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                         titlePositionPercentageOffset: 0.55,
                       )
                     ]),
@@ -188,37 +198,39 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
                     "Work Vs Rest",
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
                 Row(
                   children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      height: _count==1?30:25,
+                      width: _count==1?30:25,
+                      decoration: BoxDecoration(color:Color.fromRGBO(40, 70, 150, 1), borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         "Resting",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                     )
                   ],
                 ),
                 Row(
                   children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(color: Colors.white60, borderRadius: BorderRadius.all(Radius.circular(5))),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      height: _count==0?30:25,
+                      width: _count==0?30:25,
+                      decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         "Ghosting",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                     )
                   ],
@@ -239,7 +251,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             "Average Conner Ghosting Speed",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color:Theme.of(context).primaryColor),
           ),
         ),
         Padding(
@@ -254,7 +266,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                 show: true,
                 bottomTitles: SideTitles(
                   showTitles: true,
-                  getTextStyles: (value) => TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                  getTextStyles: (value) => TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).primaryColor),
                   margin: 16,
                   rotateAngle: 90,
                   getTitles: (double value) {
@@ -292,7 +304,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
               ),
               barTouchData: BarTouchData(
                 touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Colors.white,
+                    tooltipBgColor: Theme.of(context).primaryColor,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       String weekDay;
                       switch (group.x.toInt()) {
@@ -327,7 +339,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                           weekDay = 'Right Back';
                           break;
                       }
-                      return BarTooltipItem(weekDay + '\n' + rod.y.toStringAsFixed(2) + " Seconds", TextStyle(color: Colors.grey));
+                      return BarTooltipItem(weekDay + '\n' + rod.y.toStringAsFixed(2) + " Seconds", TextStyle(color: Colors.white));
                     }),
                 touchCallback: (barTouchResponse) {},
               ),
@@ -357,7 +369,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
               padding: const EdgeInsets.all(10.0),
               child: Text(
                 "Average Ghosting Speed",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Theme.of(context).primaryColor),
               ),
             ),
             Container(
@@ -371,19 +383,14 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                         show: true,
                         border: Border(
                           bottom: BorderSide(
-                            color: Colors.white,
+                            color: Theme.of(context).primaryColor,
                             width: 2,
                           ),
                           left: BorderSide(
-                            color: Colors.white,
+                            color: Theme.of(context).primaryColor,
                             width: 2,
                           ),
-                          right: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          top: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+
                         ),
                       ),
                       gridData: FlGridData(
@@ -415,7 +422,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                         bottomTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 40,
-                            getTextStyles: (value) => const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                            getTextStyles: (value) =>  TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 16),
                             rotateAngle: 90,
                             getTitles: (val) {
                               return DateFormat('Md').format(ghosting_box.getAt(val.toInt()).start).toString();
@@ -424,8 +431,8 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                             interval: 2),
                         leftTitles: SideTitles(
                           showTitles: true,
-                          getTextStyles: (value) => const TextStyle(
-                            color: Colors.white,
+                          getTextStyles: (value) =>  TextStyle(
+                            color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 10,
                           ),
@@ -445,8 +452,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                           spots: speed,
                           isCurved: true,
                           colors: [
-                            Colors.white
-                            //Color(0xff044d7c),
+                            Theme.of(context).primaryColor                            //Color(0xff044d7c),
                             //  Colors.lightBlue,
                           ],
                           barWidth: 2,
@@ -480,10 +486,9 @@ class _Ghost_StatState extends State<Ghost_Stat> {
 
     return Scaffold(
 
-      backgroundColor: Theme.of(context).primaryColor,
 
       body: FutureBuilder(
-        future:_load_data,
+        future:load_ghost_hive(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (Hive.isBoxOpen("Ghosting1") && ghosting_box.length != 0) {
             return ListView(

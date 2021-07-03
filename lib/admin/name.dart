@@ -1,12 +1,29 @@
 
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class name_edit extends StatelessWidget{
+
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+
+  name_edit(this.analytics,this.observer);
+
+  Future<void> _testSetCurrentScreen() async {
+    await analytics.setCurrentScreen(
+      screenName: 'Name Page',
+      screenClassOverride: 'Name_Page',
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
-
+    _testSetCurrentScreen();
     return Scaffold(
 
       backgroundColor: Theme.of(context).primaryColor,

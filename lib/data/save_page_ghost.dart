@@ -40,7 +40,95 @@ class SavedGhostState extends State<SavedDataGhost> {
 
   List<FlSpot> speed = [];
 
+
+  @override
+  void initState() {
+    for (int i = 0; i < ghost_box.corner_array.length; i++) {
+      num_conrer[ghost_box.corner_array[i].toInt()]++;
+    }
+
+    speed = DataMethods().SingleSpeed(ghost_box);
+    _testSetCurrentScreen();
+    super.initState();
+  }
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Old_Ghost_Data_View',
+      screenClassOverride: 'Old_Ghost_Data_View',
+    );
+  }
+
+  Widget ave_speed(data){
+
+if(data.toString()=="Infinity"){
+
+  data=0;
+
+}
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+      child: Container(
+        decoration: BoxDecoration(color: Colors.transparent,
+
+            border: Border.all(color: Colors.white,width: 3),
+
+
+            borderRadius: BorderRadius.all(
+
+
+                Radius.circular(20.0))),
+
+        height: 120,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Text(
+                    "Average",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                  ),
+                  Text(
+                    "Speed",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child:Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        data.toStringAsFixed(1),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
+                      ),
+                      Text("Seconds per Ghost",style: TextStyle(color: Colors.white,fontSize: 10),)
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+
+  }
   Widget single_card(String top_name, String bottom_name, String data, Color color) {
+
+
+
+
     return Container(
       decoration: BoxDecoration(color: Colors.transparent,
 
@@ -128,9 +216,9 @@ class SavedGhostState extends State<SavedDataGhost> {
                                 width: 2,
                               ),
                               left: BorderSide(
-                                color: Colors.white,
-                                width: 2,
-                                style: BorderStyle.solid
+                                  color: Colors.white,
+                                  width: 2,
+                                  style: BorderStyle.solid
                               ),
                               right: BorderSide(
                                 color: Colors.transparent,
@@ -240,86 +328,7 @@ class SavedGhostState extends State<SavedDataGhost> {
     );
   }
 
-  @override
-  void initState() {
-    for (int i = 0; i < ghost_box.corner_array.length; i++) {
-      num_conrer[ghost_box.corner_array[i].toInt()]++;
-    }
 
-    speed = DataMethods().SingleSpeed(ghost_box);
-    _testSetCurrentScreen();
-    super.initState();
-  }
-
-  Widget ave_speed(data){
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-      child: Container(
-        decoration: BoxDecoration(color: Colors.transparent,
-
-            border: Border.all(color: Colors.white,width: 3),
-
-
-            borderRadius: BorderRadius.all(
-
-
-                Radius.circular(20.0))),
-
-        height: 120,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  Text(
-                    "Average",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
-                  ),
-                  Text(
-                    "Speed",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child:Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        data.toStringAsFixed(1),
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
-                      ),
-                      Text("Seconds per Ghost",style: TextStyle(color: Colors.white,fontSize: 10),)
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-
-  }
-
-
-  Future<void> _testSetCurrentScreen() async {
-    await widget.analytics.setCurrentScreen(
-      screenName: 'Old_Ghost_Data_View',
-      screenClassOverride: 'Old_Ghost_Data_View',
-    );
-  }
 
   Widget button_box(String name, int index) {
     return Padding(
@@ -483,7 +492,8 @@ class SavedGhostState extends State<SavedDataGhost> {
         children: [
 
           ghost_box.time_array.length > 0 ? Speed() : Text(""),
-          Spacer(),
+          ghost_box.time_array.length > 0 ?  Spacer() : Text(""),
+
 
           Padding(
             padding: const EdgeInsets.only(top: 0, bottom: 20),
