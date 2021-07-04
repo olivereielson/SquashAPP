@@ -160,7 +160,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                       if (val.touchedSectionIndex != -1) {
                         setState(() {
                           _count = val.touchedSectionIndex;
-                          widget.analytics.logEvent(name: "Solo_Breakdown_Toggled");
+                          widget.analytics.logEvent(name: "Ghost_Breakdown_Toggled");
                         });
                       }
                     }),
@@ -360,8 +360,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
       }
     }
 
-    return data
-        ? Column(
+    return Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -449,7 +448,8 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                       minY: 0,
                       lineBarsData: [
                         LineChartBarData(
-                          spots: speed,
+                          spots: data
+                              ?speed:[FlSpot(0, 0)],
                           isCurved: true,
                           colors: [
                             Theme.of(context).primaryColor                            //Color(0xff044d7c),
@@ -474,8 +474,8 @@ class _Ghost_StatState extends State<Ghost_Stat> {
               ),
             ),
           ],
-        )
-        : Text("");
+        );
+
   }
 
 

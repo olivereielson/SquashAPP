@@ -309,7 +309,7 @@ class SoloHomeState extends State<SoloHome> {
       print('No camera is found');
     } else {
       controller = new CameraController(
-        widget.cameras[camera],
+        widget.cameras[1],
         ResolutionPreset.high,
       );
 
@@ -658,6 +658,8 @@ class SoloHomeState extends State<SoloHome> {
             temp.x < SoloDefs().Exersise[current_side]["xmax"]+10 &&
             temp.y > SoloDefs().Exersise[current_side]["ymin"]-10 &&
             temp.y < SoloDefs().Exersise[current_side]["ymax"]+10) {
+
+
           ball.add(Positioned(
               left: last_bounce[last_bounce.length - 3].x,
               top: last_bounce[last_bounce.length - 3].y - h,
@@ -670,14 +672,85 @@ class SoloHomeState extends State<SoloHome> {
           bounces.add(temp);
           total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
         } else {
-          ball.add(Positioned(
-              left: last_bounce[last_bounce.length - 3].x,
-              top: last_bounce[last_bounce.length - 3].y - h,
-              child: Icon(
-                Icons.cancel,
-                size: 15,
-                color: Colors.redAccent,
-              )));
+
+          if(!SoloDefs().Exersise[current_side]["BackHand"]){
+
+            double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
+
+            double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
+
+
+            if(temp.x> SoloDefs().Exersise[current_side]["xmax"]+10){
+              ball.add(Positioned(
+                  left: line_x,
+                  top: last_bounce[last_bounce.length - 3].y - h,
+                  child: Icon(
+                    Icons.check_circle,
+                    size: 15,
+                    color: Colors.black,
+                  )));
+              temp = hom_trans(line_x, last_bounce[last_bounce.length - 3].y, H);
+              bounces.add(temp);
+              total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
+            }else{
+
+              ball.add(Positioned(
+                  left: last_bounce[last_bounce.length - 3].x,
+                  top: last_bounce[last_bounce.length - 3].y - h,
+                  child: Icon(
+                    Icons.cancel,
+                    size: 15,
+                    color: Colors.redAccent,
+                  )));
+
+            }
+
+
+
+
+          }else{
+
+            double slope2 = -1*(dst_point[1].y - dst_point[3].y) / (dst_point[1].x - dst_point[3].x);
+
+            double line_x2 = ((mid_om - dst_point[1].y) / slope2) + dst_point[1].x;
+
+
+            if(temp.x< SoloDefs().Exersise[current_side]["xmin"]-10){
+
+              print("heww");
+              print(line_x2);
+
+              ball.add(Positioned(
+                  right: line_x2,
+                  top: last_bounce[last_bounce.length - 3].y - h,
+                  child: Icon(
+                    Icons.check_circle,
+                    size: 15,
+                    color: Colors.black,
+                  )));
+
+
+
+              temp = hom_trans(line_x2, last_bounce[last_bounce.length - 3].y, H);
+              bounces.add(temp);
+              total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
+
+            }else{
+              ball.add(Positioned(
+                  left: last_bounce[last_bounce.length - 3].x,
+                  top: last_bounce[last_bounce.length - 3].y - h,
+                  child: Icon(
+                    Icons.cancel,
+                    size: 15,
+                    color: Colors.redAccent,
+                  )));
+
+
+            }
+
+          }
+
+
         }
         last_bounce.clear();
         below = true;

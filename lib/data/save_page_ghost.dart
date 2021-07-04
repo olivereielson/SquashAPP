@@ -295,7 +295,9 @@ if(data.toString()=="Infinity"){
                           minY: 0,
                           lineBarsData: [
                             LineChartBarData(
-                              spots: DataMethods().SingleSpeed(ghost_box),
+                              spots: ghost_box.time_array.length > 0 ?DataMethods().SingleSpeed(ghost_box):[
+                                FlSpot(0, 0)
+                              ],
                               isCurved: true,
                               colors: [
                                 Colors.white,
@@ -491,8 +493,8 @@ if(data.toString()=="Infinity"){
       body: ListView(
         children: [
 
-          ghost_box.time_array.length > 0 ? Speed() : Text(""),
-          ghost_box.time_array.length > 0 ?  Spacer() : Text(""),
+          Speed(),
+          Spacer(),
 
 
           Padding(

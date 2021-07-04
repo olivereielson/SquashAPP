@@ -16,7 +16,8 @@ import '../extra/headers.dart';
 import '../extra/hive_classes.dart';
 
 class Acount extends StatefulWidget {
-  Acount(this.analytics,this.observer);
+  Acount(this.analytics, this.observer);
+
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
 
@@ -25,9 +26,7 @@ class Acount extends StatefulWidget {
 }
 
 class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
-  String name = "No Name";
-
-
+  String name = "";
 
   bool edit = false;
   bool loadfeed = false;
@@ -57,7 +56,6 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
     super.initState();
   }
 
-
   Future<void> _testSetCurrentScreen() async {
     await widget.analytics.setCurrentScreen(
       screenName: 'Account Page',
@@ -66,14 +64,12 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   }
 
   Future<void> load_hive() async {
-
     if (!Hive.isAdapterRegistered(5)) {
       Hive.registerAdapter(Solo_stroage_Adapter());
     }
     if (!Hive.isAdapterRegistered(6)) {
       Hive.registerAdapter(BounceAdapter());
     }
-
 
     if (Hive.isBoxOpen("Solo1")) {
       solo_storage_box = Hive.box<Solo_stroage>("Solo1");
@@ -92,18 +88,14 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
     setState(() {
       loadfeed = true;
-
     });
-
   }
 
   Future<void> get_pref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if(!prefs.containsKey("first_name")){
-
+    if (!prefs.containsKey("first_name")) {
       prefs.setString('first_name', "No name");
-
     }
 
     setState(() {
@@ -119,8 +111,8 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
           backgroundColor: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
-                Radius.circular(18),
-              )),
+            Radius.circular(18),
+          )),
           title: new Text(
             "Edit Name",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -143,12 +135,10 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                   borderSide: BorderSide(color: Colors.white54),
                 ),
                 labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
-
             style: TextStyle(color: Colors.white54),
             onSubmitted: (value) {
               setState(() {
                 name = value.capitalizeFirstofEach;
-
               });
               Navigator.of(context).pop();
             },
@@ -157,23 +147,17 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
       },
     );
   }
-  
-  String initals(){
-    
-    if(name.split(" ").length==1){
-      
-      return name.substring(0,1).toUpperCase();
-      
+
+  String initals() {
+    if (name.split(" ").length == 1) {
+      return name.substring(0, 1).toUpperCase();
     }
 
-    if(name.split(" ").length>=2){
-
-      return name.substring(0,1).toUpperCase()+name.split(" ")[1].substring(0,1).toUpperCase();
-
+    if (name.split(" ").length >= 2) {
+      return name.substring(0, 1).toUpperCase() + name.split(" ")[1].substring(0, 1).toUpperCase();
     }
 
-    return name.substring(0,1).toUpperCase();
-    
+    return name.substring(0, 1).toUpperCase();
   }
 
   void calcualte_levels() {
@@ -240,23 +224,14 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                               // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
                               center: AnimatedTextKit(
                                 animatedTexts: [
-                                  RotateAnimatedText(
-                                    shots_hit != 1 ? "$shots_hit Balls Hit" : "1 Ball Hit",
-                                    textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
-                                      duration: Duration(seconds: 3)
-
-                                  ),
-                                  RotateAnimatedText(
-                                    "Hit ${goals[ball_level + 1] - shots_hit} balls to level up",
-                                    textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
-                                      duration: Duration(seconds: 3)
-
-                                  ),
+                                  RotateAnimatedText(shots_hit != 1 ? "$shots_hit Balls Hit" : "1 Ball Hit",
+                                      textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20), duration: Duration(seconds: 3)),
+                                  RotateAnimatedText("Hit ${goals[ball_level + 1] - shots_hit} balls to level up",
+                                      textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20), duration: Duration(seconds: 3)),
                                 ],
                                 isRepeatingAnimation: true,
                                 repeatForever: true,
                                 pause: Duration(seconds: 0),
-
                               )),
                         ),
                       ),
@@ -285,44 +260,28 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: LiquidLinearProgressIndicator(
-                            value: (ghosts_done / goals[ghost_level + 1]),
-                            // Defaults to 0.5.
-                            valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
-                            // Defaults to the current Theme's accentColor.
-                            backgroundColor: Theme.of(context).backgroundColor,
-                            // Defaults to the current Theme's backgroundColor.
-                            borderColor: Theme.of(context).primaryColor,
-                            borderWidth: 5.0,
-                            borderRadius: 30.0,
-
-                            direction: Axis.horizontal,
-                            // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
-                            center:
-
-                            AnimatedTextKit(
-                              animatedTexts: [
-                                RotateAnimatedText(
-                                  shots_hit != 1 ? "$ghosts_done Ghosts Completed" : "1 Ghost Completed",
-                                  textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
-                                  rotateOut: true,
-                                  duration: Duration(seconds: 3)
-
-                                ),
-                                RotateAnimatedText(
-                                  "Do ${goals[ghost_level + 1] - ghosts_done} Ghosts to level up",
-                                  textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20),
-                                    duration: Duration(seconds: 3)
-
-                                ),
-                              ],
-                              isRepeatingAnimation: true,
-                              repeatForever: true,
-                              pause: Duration(seconds: 0),
-
-
-
-                            )
-                          ),
+                              value: (ghosts_done / goals[ghost_level + 1]),
+                              // Defaults to 0.5.
+                              valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+                              // Defaults to the current Theme's accentColor.
+                              backgroundColor: Theme.of(context).backgroundColor,
+                              // Defaults to the current Theme's backgroundColor.
+                              borderColor: Theme.of(context).primaryColor,
+                              borderWidth: 5.0,
+                              borderRadius: 30.0,
+                              direction: Axis.horizontal,
+                              // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.horizontal.
+                              center: AnimatedTextKit(
+                                animatedTexts: [
+                                  RotateAnimatedText(shots_hit != 1 ? "$ghosts_done Ghosts Completed" : "1 Ghost Completed",
+                                      textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20), rotateOut: true, duration: Duration(seconds: 3)),
+                                  RotateAnimatedText("Do ${goals[ghost_level + 1] - ghosts_done} Ghosts to level up",
+                                      textStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20), duration: Duration(seconds: 3)),
+                                ],
+                                isRepeatingAnimation: true,
+                                repeatForever: true,
+                                pause: Duration(seconds: 0),
+                              )),
                         ),
                       ),
                     ],
@@ -343,10 +302,7 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
       padding: const EdgeInsets.all(15.0),
       child: Container(
         height: 90,
-        decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).primaryColor,width: 3),
-
-             borderRadius: BorderRadius.all(Radius.circular(20))),
+        decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 3), borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Container(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -356,11 +312,11 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                 Container(
                   height: 50,
                   width: 50,
-                  decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: solo
                       ? Icon(
                           Icons.sports_tennis,
-                    color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).primaryColor,
                         )
                       : Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -400,24 +356,19 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   }
 
   Widget exersise_feed() {
-
     feed.clear();
 
-    if(solo_storage_box!=null){
+    if (solo_storage_box != null) {
       for (int i = 0; i < solo_storage_box.length; i++) {
         feed.add({"date": solo_storage_box.getAt(i).end, "wid": feedCard(true, solo_storage_box.getAt(i).end)});
-
       }
     }
 
-    if(ghosting_box!=null){
+    if (ghosting_box != null) {
       for (int i = 0; i < ghosting_box.length; i++) {
         feed.add({"date": ghosting_box.getAt(i).end, "wid": feedCard(false, ghosting_box.getAt(i).end)});
-
       }
     }
-
-
 
     feed.sort((a, b) {
       return a["date"].compareTo(b["date"]);
@@ -448,54 +399,45 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
-
-    if(true){
-
+    if (true) {
       return Scaffold(
-
         body: CustomScrollView(
-
           slivers: [
-
             SliverPersistentHeader(
               pinned: true,
               floating: false,
-              delegate: profileHeader(name, initals(),MediaQuery.of(context).size.width/2,IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () async {
+              delegate: profileHeader(
+                  name,
+                  initals(),
+                  MediaQuery.of(context).size.width / 2,
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () async {
+                      String n = await Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.topToBottom,
+                          child: name_edit(widget.analytics, widget.observer),
+                        ),
+                      );
 
-                String n= await Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.topToBottom,
-                      child: name_edit(widget.analytics,widget.observer),
-                    ),
-                  );
+                      widget.analytics.logEvent(name: 'Named_Edited', parameters: <String, dynamic>{"name": name});
 
-                widget.analytics.logEvent(
-                  name: 'Named_Edited',
-                );
+                      print(n);
+                      if (n != "" && n != null && n.replaceAll(" ", "") != "") {
+                        setState(() {
+                          name = n.capitalizeFirstofEach;
+                          print("name updated");
+                        });
+                      }
 
-                print(n);
-                if(n!="" && n!=null && n.replaceAll(" ", "")!=""){
-                  setState(() {
-                    name = n.capitalizeFirstofEach;
-                    print("name updated");
-                  });
-                }
-
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('first_name', name);
-
-
-
-
-                },
-
-              ),widget.analytics,widget.observer
-            ),),
-
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      prefs.setString('first_name', name);
+                    },
+                  ),
+                  widget.analytics,
+                  widget.observer),
+            ),
             SliverPersistentHeader(
               floating: false,
               pinned: true,
@@ -504,8 +446,6 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                     indicatorColor: Colors.white60,
                     indicatorWeight: 3,
                     automaticIndicatorColorAdjustment: true,
-
-
                     tabs: [
                       new Tab(
                         //  icon: new Icon(Icons.sports_tennis),
@@ -518,7 +458,6 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                     controller: _tabController),
               ),
             ),
-
             SliverFixedExtentList(
               itemExtent: 700.0,
               delegate: SliverChildListDelegate([
@@ -529,15 +468,9 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
               ], addAutomaticKeepAlives: true),
             ),
           ],
-
-
         ),
-
-
       );
-
     }
-
   }
 }
 
@@ -567,7 +500,9 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 extension CapExtension on String {
-  String get inCaps => this.length > 0 ?'${this[0].toUpperCase()}${this.substring(1)}':'';
+  String get inCaps => this.length > 0 ? '${this[0].toUpperCase()}${this.substring(1)}' : '';
+
   String get allInCaps => this.toUpperCase();
+
   String get capitalizeFirstofEach => this.replaceAll(RegExp(' +'), ' ').split(" ").map((str) => str.inCaps).join(" ");
 }

@@ -15,13 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.1"
-  animated_icon_button:
-    dependency: "direct main"
-    description:
-      name: animated_icon_button
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
   animated_text_kit:
     dependency: "direct main"
     description:
@@ -443,13 +436,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "9.1.0"
-  freezed_annotation:
-    dependency: transitive
-    description:
-      name: freezed_annotation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.14.2"
   glob:
     dependency: transitive
     description:

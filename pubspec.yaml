@@ -45,7 +45,6 @@ dependencies:
   fl_chart: ^0.20.1
   sliver_header_delegate:
   animated_widgets: ^1.0.6
-  animated_icon_button:
   extended_nested_scroll_view:
   cool_alert: ^1.0.3
   tutorial_coach_mark:

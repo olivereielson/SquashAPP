@@ -156,41 +156,29 @@ class _TestScreenState extends State<TestScreen> {
     ),
   ];
 
-  int number=2;
+  int number = 2;
   Timer _timer;
+  PageController _pageController;
 
-  double bottom=100;
-  double right=20;
+  double bottom = 100;
+  double right = 20;
+  bool can_scroll = true;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 2);
     _timer = new Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
+        setState(() {
+          if (number == 2) {
+            number = 0;
+          } else {
+            number++;
+          }
 
-
-
-
-
-
-          setState(() {
-
-            if(number==2){
-
-                number=0;
-
-            }else{
-                number++;
-            }
-
-            bottom=Random().nextInt(100).toDouble();
-            right=Random().nextInt(70).toDouble();
-
-
-          });
-
-
-
+          bottom = Random().nextInt(100).toDouble();
+          right = Random().nextInt(70).toDouble();
+        });
       },
     );
   }
@@ -225,6 +213,8 @@ class _TestScreenState extends State<TestScreen> {
               onSubmitted: (name) async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString("first_name", name);
+                _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                widget.analytics.logEvent(name: "Named_Edited", parameters: <String, dynamic>{"name": name});
               },
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
@@ -296,12 +286,10 @@ class _TestScreenState extends State<TestScreen> {
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                       onPressed: () {
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => MyApp(widget.analytics, widget.observer)),
                         );
-
                       })
                 ],
               ),
@@ -321,14 +309,13 @@ class _TestScreenState extends State<TestScreen> {
 
     return Stack(
       children: [
-
         Positioned(
           bottom: 10,
           left: 5,
           child: AnimatedContainer(
             duration: Duration(milliseconds: 500),
             decoration: BoxDecoration(
-              color: 0 == number ? Colors.white: Colors.transparent,
+              color: 0 == number ? Colors.white : Colors.transparent,
               border: Border.all(
                   color: 0 == number ? Colors.white : Colors.transparent,
                   // set border color
@@ -339,14 +326,13 @@ class _TestScreenState extends State<TestScreen> {
             height: 0 == number ? 80 : 40,
           ),
         ),
-
         Positioned(
           bottom: 400,
           right: 5,
           child: AnimatedContainer(
             duration: Duration(milliseconds: 500),
             decoration: BoxDecoration(
-              color: 1 == number ? Colors.white: Colors.transparent,
+              color: 1 == number ? Colors.white : Colors.transparent,
               border: Border.all(
                   color: 1 == number ? Colors.white : Colors.transparent,
                   // set border color
@@ -357,14 +343,13 @@ class _TestScreenState extends State<TestScreen> {
             height: 1 == number ? 80 : 40,
           ),
         ),
-
         Positioned(
           bottom: 100,
           right: 5,
           child: AnimatedContainer(
             duration: Duration(milliseconds: 500),
             decoration: BoxDecoration(
-              color: 2 == number ? Colors.white: Colors.transparent,
+              color: 2 == number ? Colors.white : Colors.transparent,
               border: Border.all(
                   color: 2 == number ? Colors.white : Colors.transparent,
                   // set border color
@@ -375,8 +360,6 @@ class _TestScreenState extends State<TestScreen> {
             height: 2 == number ? 80 : 40,
           ),
         ),
-
-
         Positioned(
             top: h * 0.44 + offset,
             child: Container(
@@ -437,10 +420,6 @@ class _TestScreenState extends State<TestScreen> {
 
     return Stack(
       children: [
-
-
-
-
         Positioned(
             top: h * 0.44 + offset,
             child: Container(
@@ -497,7 +476,6 @@ class _TestScreenState extends State<TestScreen> {
       bottom: false,
       child: Stack(
         children: [
-
           draw_court(),
           Container(
             width: MediaQuery.of(context).size.width,
@@ -525,14 +503,7 @@ class _TestScreenState extends State<TestScreen> {
       bottom: false,
       child: Stack(
         children: [
-
-          Positioned(
-
-            bottom: bottom,
-              right: right,
-
-              child: SafeArea(child: Icon(Icons.circle))),
-
+          Positioned(bottom: bottom, right: right, child: SafeArea(child: Icon(Icons.circle))),
           draw_court_solo(),
           Container(
             width: MediaQuery.of(context).size.width,
@@ -555,8 +526,7 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
-  Widget speed(){
-
+  Widget speed() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -565,7 +535,7 @@ class _TestScreenState extends State<TestScreen> {
           padding: const EdgeInsets.all(10.0),
           child: Text(
             "Ghosting Speed",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
           ),
         ),
         Container(
@@ -586,7 +556,6 @@ class _TestScreenState extends State<TestScreen> {
                         color: Colors.white,
                         width: 2,
                       ),
-
                     ),
                   ),
                   gridData: FlGridData(
@@ -618,7 +587,7 @@ class _TestScreenState extends State<TestScreen> {
                     bottomTitles: SideTitles(
                         showTitles: false,
                         reservedSize: 40,
-                        getTextStyles: (value) =>  TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                        getTextStyles: (value) => TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                         rotateAngle: 90,
                         getTitles: (val) {
                           return "";
@@ -627,7 +596,7 @@ class _TestScreenState extends State<TestScreen> {
                         interval: 2),
                     leftTitles: SideTitles(
                       showTitles: true,
-                      getTextStyles: (value) =>  TextStyle(
+                      getTextStyles: (value) => TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
@@ -656,12 +625,10 @@ class _TestScreenState extends State<TestScreen> {
                         FlSpot(7, 2.2),
                         FlSpot(9, 2.5),
                         FlSpot(10, 3.5),
-
-
                       ],
                       isCurved: true,
                       colors: [
-                        Colors.white                     //Color(0xff044d7c),
+                        Colors.white //Color(0xff044d7c),
                         //  Colors.lightBlue,
                       ],
                       barWidth: 2,
@@ -671,11 +638,7 @@ class _TestScreenState extends State<TestScreen> {
                       ),
                       belowBarData: BarAreaData(
                         show: false,
-                        colors: [
-
-                          Colors.white
-
-                        ],
+                        colors: [Colors.white],
                       ),
                     ),
                   ]),
@@ -684,10 +647,7 @@ class _TestScreenState extends State<TestScreen> {
         ),
       ],
     );
-
   }
-
-
 
   Widget single_card(String top_name, String bottom_name, String data) {
     return Padding(
@@ -695,7 +655,7 @@ class _TestScreenState extends State<TestScreen> {
       child: Container(
         decoration: BoxDecoration(color: Colors.transparent, border: Border.all(color: Colors.white, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
         height: 175,
-        width: MediaQuery.of(context).size.width-40,
+        width: MediaQuery.of(context).size.width - 40,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -728,11 +688,7 @@ class _TestScreenState extends State<TestScreen> {
               ),
               Text(
                 bottom_name,
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white
-                ),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
               )
             ],
           ),
@@ -741,52 +697,73 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
-
-  Widget data_show(){
-
+  Widget data_show() {
     return SafeArea(
       child: Column(
-
         children: [
-
-
-
           Padding(
-            padding: const EdgeInsets.symmetric(vertical:50),
+            padding: const EdgeInsets.symmetric(vertical: 50),
             child: Text(
               "Data Analytics",
               style: TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
             ),
           ),
-
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40,horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
             child: speed(),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              single_card("Shot","Accuracy","78%"),
+              single_card("Shot", "Accuracy", "78%"),
             ],
           ),
-
         ],
-
-
       ),
     );
-
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: PageView(
+        controller: _pageController,
+        physics: can_scroll ? AlwaysScrollableScrollPhysics() : NeverScrollableScrollPhysics(),
+        onPageChanged: (page) {
+          print(page);
+
+          if (page == 1) {
+            can_scroll = false;
+
+            widget.analytics.setCurrentScreen(
+              screenName: 'Intro Welcome Screen',
+              screenClassOverride: 'Intro_Welcome_Screen',
+            );
+          }
+
+          if (page == 2) {
+            can_scroll = false;
+            widget.analytics.setCurrentScreen(
+              screenName: 'Intro Name Screen',
+              screenClassOverride: 'Intro_Name_Screen',
+            );
+          }
+
+          if (page == 0) {
+            can_scroll = true;
+            widget.analytics.setCurrentScreen(
+              screenName: 'Intro Terms Screen',
+              screenClassOverride: 'Intro_Terms_Screen',
+            );
+          }
+        },
         scrollDirection: Axis.horizontal,
-        children: [page1(), name(), Term(), ],
+        children: [
+          page1(),
+          name(),
+          Term(),
+        ],
       ),
     );
 
@@ -814,12 +791,11 @@ class _TestScreenState extends State<TestScreen> {
         ),
       ),
     );
-
   }
-
 
   @override
   void initState() {
+    _pageController = PageController();
     startTimer();
     super.initState();
   }
@@ -829,6 +805,4 @@ class _TestScreenState extends State<TestScreen> {
     _timer.cancel();
     super.dispose();
   }
-
-
 }

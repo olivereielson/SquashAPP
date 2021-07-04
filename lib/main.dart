@@ -77,7 +77,7 @@ class _setupState extends State<setup> {
     print("First Time Check");
     if (prefs.containsKey("first_time")) {
       setState(() {
-        first_run = true;
+        first_run = false;
       });
     } else {
       prefs.setBool("first_time", true);

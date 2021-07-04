@@ -14,7 +14,7 @@ import 'package:squash/data/calculations.dart';
 import 'package:squash/extra/hive_classes.dart';
 
 class Finish_Screen extends StatefulWidget {
-  Finish_Screen(this.total_ghost, this.total_time, this.time_array,this.analytics,this.observer);
+  Finish_Screen(this.total_ghost, this.total_time, this.time_array, this.analytics, this.observer);
 
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
@@ -28,7 +28,6 @@ class Finish_Screen extends StatefulWidget {
 }
 
 class _Finish_ScreenState extends State<Finish_Screen> {
-
   Ghosting ghost_box;
 
   Color main = Color.fromRGBO(4, 12, 128, 1);
@@ -41,12 +40,8 @@ class _Finish_ScreenState extends State<Finish_Screen> {
 
   List<FlSpot> speed = [];
 
-
-
   @override
   void initState() {
-
-
     _testSetCurrentScreen();
 
     super.initState();
@@ -60,38 +55,26 @@ class _Finish_ScreenState extends State<Finish_Screen> {
   }
 
   Future<void> load_ghost_hive() async {
-
     if (!Hive.isAdapterRegistered(9)) {
       Hive.registerAdapter(GhostingAdapter());
     }
 
     if (Hive.isBoxOpen("Ghosting1")) {
-      ghost_box = Hive.box<Ghosting>("Ghosting1").getAt(Hive.box<Ghosting>("Ghosting1").length-1);
+      ghost_box = Hive.box<Ghosting>("Ghosting1").getAt(Hive.box<Ghosting>("Ghosting1").length - 1);
     } else {
       Box<Ghosting> tem = await Hive.openBox<Ghosting>("Ghosting1");
-      ghost_box=tem.getAt(tem.length-1);
-
+      ghost_box = tem.getAt(tem.length - 1);
     }
   }
 
-
-  Widget ave_speed(data){
-    if(data.toString()=="Infinity"){
-      data=0;
+  Widget ave_speed(data) {
+    if (data.toString() == "Infinity") {
+      data = 0;
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
-        decoration: BoxDecoration(color: Colors.transparent,
-
-            border: Border.all(color: Colors.white,width: 3),
-
-
-            borderRadius: BorderRadius.all(
-
-
-                Radius.circular(20.0))),
-
+        decoration: BoxDecoration(color: Colors.transparent, border: Border.all(color: Colors.white, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
         height: 120,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -99,25 +82,23 @@ class _Finish_ScreenState extends State<Finish_Screen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
-
                 children: [
                   Text(
                     "Average",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   Text(
                     "Speed",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
                   )
                 ],
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10),
-                child:Padding(
+                child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
@@ -125,7 +106,10 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                         data.toStringAsFixed(1),
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40),
                       ),
-                      Text("Seconds per Ghost",style: TextStyle(color: Colors.white,fontSize: 10),)
+                      Text(
+                        "Seconds per Ghost",
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      )
                     ],
                   ),
                 ),
@@ -135,21 +119,11 @@ class _Finish_ScreenState extends State<Finish_Screen> {
         ),
       ),
     );
-
-
   }
+
   Widget single_card(String top_name, String bottom_name, String data, Color color) {
     return Container(
-      decoration: BoxDecoration(color: Colors.transparent,
-
-          border: Border.all(color: Colors.white,width: 3),
-
-
-          borderRadius: BorderRadius.all(
-
-
-              Radius.circular(20.0))),
-
+      decoration: BoxDecoration(color: Colors.transparent, border: Border.all(color: Colors.white, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
       height: 175,
       width: 175,
       child: Padding(
@@ -179,11 +153,11 @@ class _Finish_ScreenState extends State<Finish_Screen> {
             Spacer(),
             Text(
               top_name,
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             Text(
               bottom_name,
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
             )
           ],
         ),
@@ -208,7 +182,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                   padding: const EdgeInsets.all(25.0),
                   child: Text(
                     "Ghosting Speed",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                   ),
                 ),
                 Container(
@@ -225,11 +199,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                                 color: Colors.white,
                                 width: 2,
                               ),
-                              left: BorderSide(
-                                  color: Colors.white,
-                                  width: 2,
-                                  style: BorderStyle.solid
-                              ),
+                              left: BorderSide(color: Colors.white, width: 2, style: BorderStyle.solid),
                               right: BorderSide(
                                 color: Colors.transparent,
                               ),
@@ -245,12 +215,9 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                             horizontalInterval: 2,
                             verticalInterval: 2,
                             getDrawingVerticalLine: (value) {
-
-
                               return FlLine(
                                 color: Colors.transparent,
                                 strokeWidth: 1,
-
                               );
                             },
                             getDrawingHorizontalLine: (value) {
@@ -305,7 +272,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
                           minY: 0,
                           lineBarsData: [
                             LineChartBarData(
-                              spots: DataMethods().SingleSpeed(ghost_box),
+                              spots: ghost_box.time_array.length > 0 ? DataMethods().SingleSpeed(ghost_box) : [FlSpot(0, 0)],
                               isCurved: true,
                               colors: [
                                 Colors.white,
@@ -338,8 +305,6 @@ class _Finish_ScreenState extends State<Finish_Screen> {
     );
   }
 
-
-
   Widget button_box(String name, int index) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -363,10 +328,10 @@ class _Finish_ScreenState extends State<Finish_Screen> {
             padding: const EdgeInsets.all(8.0),
             child: Center(
                 child: Text(
-                  name,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.black : Colors.white),
-                  textAlign: TextAlign.center,
-                )),
+              name,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: showing.contains(index) ? Colors.black : Colors.white),
+              textAlign: TextAlign.center,
+            )),
           ),
         ),
       ),
@@ -444,9 +409,9 @@ class _Finish_ScreenState extends State<Finish_Screen> {
         ),
         child: Center(
             child: Text(
-              num_conrer[x].toString(),
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-            )),
+          num_conrer[x].toString(),
+          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        )),
       ),
     );
   }
@@ -483,63 +448,51 @@ class _Finish_ScreenState extends State<Finish_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(title: Text("Data Analytics",style: TextStyle(fontSize: 30),),
-        elevation: 0,
-        toolbarHeight: 80,
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: (){
-
-            Navigator.pop(context);
-
-          },
-
+    return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          title: Text(
+            "Data Analytics",
+            style: TextStyle(fontSize: 30),
+          ),
+          elevation: 0,
+          toolbarHeight: 80,
+          leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body:
-      FutureBuilder(
-        future: load_ghost_hive(),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-
-          if(Hive.isBoxOpen("Ghosting1")){
-
-            return  ListView(
-              children: [
-
-                ghost_box.time_array.length > 0 ? Speed() : Text(""),
-                ghost_box.time_array.length > 0 ?  Spacer() : Text(""),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 0, bottom: 20),
-                  child: Column(
-                    children: [
-                      ave_speed(ghost_box.end.difference(ghost_box.start).inSeconds/ghost_box.time_array.length),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          single_card("Total", "Time", ghost_box.end.difference(ghost_box.start).toString().substring(2, 7), Theme.of(context).primaryColor),
-                          single_card("Total", "ghosts", ghost_box.time_array.length.toString(), Theme.of(context).primaryColor)
-                        ],
-                      ),
-                    ],
+        body: FutureBuilder(
+          future: load_ghost_hive(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (Hive.isBoxOpen("Ghosting1")) {
+              return ListView(
+                children: [
+                  Speed(),
+                  Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0, bottom: 20),
+                    child: Column(
+                      children: [
+                        ave_speed(ghost_box.end.difference(ghost_box.start).inSeconds / ghost_box.time_array.length),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            single_card("Total", "Time", ghost_box.end.difference(ghost_box.start).toString().substring(2, 7), Theme.of(context).primaryColor),
+                            single_card("Total", "ghosts", ghost_box.time_array.length.toString(), Theme.of(context).primaryColor)
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
+                ],
+              );
+            }
 
-          }
-
-          return Center(child: Text("loading"));
-
-
-        },
-
-
-      )
-
-    );
-
+            return Center(child: Text("loading"));
+          },
+        ));
   }
 }
