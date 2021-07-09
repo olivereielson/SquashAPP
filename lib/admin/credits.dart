@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 class credits {
   List<String> cred = [
     "Created By: Oliver Eielson",
-    "Squash Icons: Oliver Eielson"
+    "Squash Icons: Oliver Eielson",
+    "Machine Learning Icon: Juicy Fish from the Noun Project",
+    "Machine Learning by monkik from the Noun Project"
   ];
 }
 
@@ -35,7 +37,7 @@ class credit_page extends StatelessWidget {
     _testSetCurrentScreen();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).splashColor,
       appBar: AppBar(
         title: Text("Credits",style: TextStyle(fontSize: 30),),
         elevation: 0,
@@ -86,8 +88,7 @@ class credit_page extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    "Close",
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    "Close",style: TextStyle(color: Colors.grey),
                   ),
                 ),
               )

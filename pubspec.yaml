@@ -59,12 +59,16 @@ dependencies:
   package_info:
   liquid_progress_indicator_ns:
   animated_text_kit: ^4.2.1
-  easy_dynamic_theme: ^2.2.0
   email_launcher: 1.1.1
   auto_size_text: ^2.1.0
   random_color:
   firebase_analytics:
   intro_views_flutter:
+  url_launcher:
+  pull_to_refresh: ^2.0.0
+  theme_provider: ^0.5.0
+  flutter_circle_color_picker: ^0.3.0
+  keyboard_actions: ^3.4.0
 
 dev_dependencies:
 
@@ -135,5 +139,3 @@ flutter_native_splash:
   #ios_content_mode: scaleToFill
   image: assets/launch_image.png
   color: "#42598a"
-  color_dark: "#13132e"
-  image_dark: assets/launch_image.png

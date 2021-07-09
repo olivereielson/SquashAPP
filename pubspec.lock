@@ -168,7 +168,7 @@ packages:
       name: cli_util
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.1"
+    version: "0.3.3"
   clock:
     dependency: transitive
     description:
@@ -246,13 +246,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  easy_dynamic_theme:
-    dependency: "direct main"
-    description:
-      name: easy_dynamic_theme
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.2.0"
   email_launcher:
     dependency: "direct main"
     description:
@@ -391,6 +384,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_circle_color_picker:
+    dependency: "direct main"
+    description:
+      name: flutter_circle_color_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   flutter_native_splash:
     dependency: "direct dev"
     description:
@@ -519,7 +519,7 @@ packages:
       name: io
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.3"
   js:
     dependency: transitive
     description:
@@ -534,6 +534,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.1"
+  keyboard_actions:
+    dependency: "direct main"
+    description:
+      name: keyboard_actions
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.4.0"
   liquid_progress_indicator_ns:
     dependency: "direct main"
     description:
@@ -554,7 +561,7 @@ packages:
       name: lottie
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.1.0"
   matcher:
     dependency: transitive
     description:
@@ -730,6 +737,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  pull_to_refresh:
+    dependency: "direct main"
+    description:
+      name: pull_to_refresh
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   quiver:
     dependency: transitive
     description:
@@ -917,6 +931,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.2"
+  theme_provider:
+    dependency: "direct main"
+    description:
+      name: theme_provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.0"
   timing:
     dependency: transitive
     description:
@@ -952,6 +973,48 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
+  url_launcher:
+    dependency: "direct main"
+    description:
+      name: url_launcher
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.5"
+  url_launcher_linux:
+    dependency: transitive
+    description:
+      name: url_launcher_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
+  url_launcher_macos:
+    dependency: transitive
+    description:
+      name: url_launcher_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
+  url_launcher_platform_interface:
+    dependency: transitive
+    description:
+      name: url_launcher_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
+  url_launcher_web:
+    dependency: transitive
+    description:
+      name: url_launcher_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
+  url_launcher_windows:
+    dependency: transitive
+    description:
+      name: url_launcher_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   vector_math:
     dependency: transitive
     description:
@@ -1014,7 +1077,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.4"
+    version: "2.2.5"
   xdg_directories:
     dependency: transitive
     description:

@@ -449,7 +449,7 @@ class _Finish_ScreenState extends State<Finish_Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).splashColor,
         appBar: AppBar(
           title: Text(
             "Data Analytics",

@@ -137,7 +137,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
 
 
   Future<void> calculate_calender() async {
-
+    eventDay = {};
     if (!Hive.isAdapterRegistered(9)) {
       Hive.registerAdapter(GhostingAdapter());
     }
@@ -187,6 +187,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
         eventDay[cdate] = ["1" + i.toString()];
       }
     }
+    print("calender updated");
   }
 
 
@@ -378,7 +379,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
         FutureBuilder(
           future: _load_calander,
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1") && solo_storage_box.length + ghosting_box.length != 0) {
+            if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1")) {
 
 
               return Padding(
@@ -387,17 +388,23 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   children: [
                     CalendarCarousel<Event>(
                       onDayPressed: (DateTime date, List<Event> events) {
+                        calculate_calender();
                         this.setState(() => _currentDate = date);
+
                       },
                       weekendTextStyle: TextStyle(
-                        color: Colors.black,
+                        color: Theme.of(context).highlightColor,
                       ),
+                      daysTextStyle:  TextStyle(
+                        color: Theme.of(context).highlightColor,
+                      ),
+
                       todayTextStyle: TextStyle(fontWeight: FontWeight.bold),
                       weekdayTextStyle: TextStyle(color: Theme.of(context).primaryColorDark, fontWeight: FontWeight.bold),
                       selectedDayBorderColor: Theme.of(context).primaryColor,
-                      todayButtonColor: Theme.of(context).primaryColor.withOpacity(0.5),
-                      todayBorderColor: Theme.of(context).primaryColor,
-                      selectedDayButtonColor: Theme.of(context).primaryColor,
+                      todayButtonColor: Theme.of(context).splashColor.withOpacity(0.3),
+                      todayBorderColor: Theme.of(context).splashColor,
+                      selectedDayButtonColor: Theme.of(context).splashColor,
                       iconColor: Theme.of(context).primaryColor,
                       thisMonthDayBorderColor: Colors.grey,
                       selectedDateTime: _currentDate,
@@ -425,17 +432,19 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   ],
                 ),
               );
-            } else {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 50),
-                child: Center(
-                  child: Text(
-                    "No Saved Data",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              );
             }
+
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50),
+              child: Center(
+                child: Text(
+                  "No Saved Data",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            );
+
           },
         ),
       ],
@@ -495,7 +504,7 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
               SliverPersistentHeader(
                 pinned: true,
                 floating: false,
-                delegate: MyDynamicHeader("Data", "Analytics", false),
+                delegate: MyDynamicHeader("Data", "Analytics", false,widget.analytics,widget.observer),
               ),
               SliverOverlapAbsorber(
                 handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -504,8 +513,6 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                   pinned: true,
                   delegate: _SliverAppBarDelegate(
                     TabBar(
-                        indicatorColor: Colors.white60,
-                        indicatorWeight: 3,
                         tabs: [
                           new Tab(
                             //  icon: new Icon(Icons.sports_tennis),
@@ -554,7 +561,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).splashColor,
       child: _tabBar,
     );
   }

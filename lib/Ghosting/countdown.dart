@@ -72,9 +72,9 @@ class _CountDownState extends State<CountDown> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).splashColor,
           border: Border.all(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).splashColor,
               // set border color
               width: 6.0), // set border width
           borderRadius: BorderRadius.all(

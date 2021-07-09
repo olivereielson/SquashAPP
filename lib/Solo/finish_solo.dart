@@ -269,7 +269,7 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).splashColor,
       appBar: AppBar(title: Text("Data Analytics",style: TextStyle(fontSize: 30),),elevation: 0,toolbarHeight: 80,
       leading: IconButton(
         icon: Icon(Icons.close),

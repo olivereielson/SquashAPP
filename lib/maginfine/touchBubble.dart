@@ -8,6 +8,8 @@ class TouchBubble extends StatelessWidget {
     @required this.onEndDragging,
     @required this.bubbleSize,
     @required this.index,
+    @required this.bubbleColor,
+
 
   })  : assert(onStartDragging != null),
         assert(onDrag != null),
@@ -21,6 +23,7 @@ class TouchBubble extends StatelessWidget {
   final Function onStartDragging;
   final Function onDrag;
   final Function onEndDragging;
+  Color bubbleColor;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,7 @@ class TouchBubble extends StatelessWidget {
               height: bubbleSize,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color.fromRGBO(40, 45, 81, 0.5)),
+                  color: bubbleColor.withOpacity(0.4)),
 
 
             )));

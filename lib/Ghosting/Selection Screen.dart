@@ -681,7 +681,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                     SliverPersistentHeader(
                       pinned: true,
                       floating: false,
-                      delegate: MyDynamicHeader("Ghosting", "Workout", true),
+                      delegate: MyDynamicHeader("Ghosting", "Workout", true,widget.analytics,widget.observer),
                     ),
                     SliverPersistentHeader(
                       pinned: false,
@@ -862,6 +862,17 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                               await text_dialog();
                                               widget.analytics.logEvent(
                                                 name: 'Ghosting_Workout_Saved',
+                                                parameters: <String, dynamic>{
+                                                  'name': name,
+                                                  'number_set':number_set,
+                                                  'round_num':round_num,
+                                                  'rest_time':rest_time,
+                                                  'start_time':start_time,
+                                                  'corners':corners.length,
+                                                  'round_time':round_time,
+                                                  'type': _tabController.index==0?"count":"timed"
+                                                },
+
                                               );
                                               if (name != null && name != "") {
                                                 var exersie = Custom()
@@ -1049,6 +1060,17 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
 
                                               widget.analytics.logEvent(
                                                 name: 'Ghosting_Workout_Saved',
+                                                parameters: <String, dynamic>{
+                                                  'name': name,
+                                                  'number_set':number_set,
+                                                  'round_num':round_num,
+                                                  'rest_time':rest_time,
+                                                  'start_time':start_time,
+                                                  'corners':corners.length,
+                                                  'round_time':round_time,
+                                                  'type': _tabController.index==0?"count":"timed"
+                                                },
+
                                               );
 
 
@@ -1246,7 +1268,7 @@ class _SliverAppBarDelegate2 extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).splashColor,
       child: _tabBar,
     );
   }

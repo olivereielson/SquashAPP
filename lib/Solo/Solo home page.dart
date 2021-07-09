@@ -149,6 +149,7 @@ class SoloHomeState extends State<SoloHome> {
   GlobalKey keyButton2 = GlobalKey();
   GlobalKey keyButton3 = GlobalKey();
   GlobalKey keyButton4 = GlobalKey();
+  GlobalKey keyButton99 = GlobalKey();
 
   @override
   void initState() {
@@ -183,7 +184,7 @@ class SoloHomeState extends State<SoloHome> {
       context,
       targets: targets,
       // List<TargetFocus>
-      colorShadow: Theme.of(context).primaryColor,
+      colorShadow: Theme.of(context).splashColor,
       // DEFAULT Colors.black
       // alignSkip: Alignment.bottomRight,
       // textSkip: "SKIP",
@@ -781,7 +782,7 @@ class SoloHomeState extends State<SoloHome> {
       children: [
         CustomPaint(
           size: Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height),
-          painter: MyPainter(points, dst_point, current_side, showGreen),
+          painter: MyPainter(points, dst_point, current_side, showGreen,Theme.of(context).splashColor),
         ),
         TouchBubble(
           index: 1,
@@ -790,6 +791,8 @@ class SoloHomeState extends State<SoloHome> {
           onStartDragging: _startDragging,
           onDrag: _drag,
           onEndDragging: _endDragging,
+          bubbleColor: Theme.of(context).splashColor,
+
         ),
         TouchBubble(
           index: 0,
@@ -798,6 +801,8 @@ class SoloHomeState extends State<SoloHome> {
           onStartDragging: _startDragging,
           onDrag: _drag,
           onEndDragging: _endDragging,
+          bubbleColor: Theme.of(context).splashColor,
+
         ),
         TouchBubble(
           index: 2,
@@ -805,7 +810,8 @@ class SoloHomeState extends State<SoloHome> {
           bubbleSize: currentBubbleSize,
           onStartDragging: _startDragging,
           onDrag: _drag,
-          onEndDragging: _endDragging,
+          onEndDragging: _endDragging,          bubbleColor: Theme.of(context).splashColor,
+
         ),
         Container(
           key: keyButton,
@@ -816,6 +822,8 @@ class SoloHomeState extends State<SoloHome> {
             onStartDragging: _startDragging,
             onDrag: _drag,
             onEndDragging: _endDragging,
+            bubbleColor: Theme.of(context).splashColor,
+
           ),
         ),
         //t_box(0, "TR"),
@@ -832,7 +840,7 @@ class SoloHomeState extends State<SoloHome> {
       bottom: !top ? 20 : MediaQuery.of(context).size.height - 130,
       child: SafeArea(
         child: Container(
-          decoration: BoxDecoration(color: Theme.of(context).primaryColor.withOpacity(0.9), borderRadius: BorderRadius.all(Radius.circular(20))),
+          decoration: BoxDecoration(color: Theme.of(context).splashColor.withOpacity(0.9), borderRadius: BorderRadius.all(Radius.circular(20))),
           height: 50,
           width: 250,
           child: Row(
@@ -884,6 +892,36 @@ class SoloHomeState extends State<SoloHome> {
 
                      */
                   }),
+
+              IconButton(
+                  key: keyButton99,
+
+                  icon: FaIcon(Icons.restart_alt),
+                  onPressed: () {
+
+                    setState(() {
+
+                      points = [Point(324.0, 489.0), Point(157.0, 498.0), Point(349.0, 535.0), Point(133.0, 543.0)];
+                      generate_cout_point();
+
+                    });
+
+
+
+                    widget.analytics.logEvent(name: "Solo_Workout_Points_Reset");
+
+                    /*
+                    if (camera == 0) {
+                      camera = 1;
+                    } else {
+                      camera = 0;
+                    }
+
+                    onNewCameraSelected(cameras[camera]);'
+
+                     */
+                  }),
+
               IconButton(
                   key: keyButton4,
                   icon: page == 0 ? Icon(Icons.arrow_forward_rounded, color: Colors.white) : Icon(Icons.arrow_back_rounded, color: Colors.white),
@@ -1197,7 +1235,7 @@ class SoloHomeState extends State<SoloHome> {
       ..end = DateTime.now()
       ..bounces = total_bounces;
 
-    if (total_bounces.length > 1) {
+    if (total_bounces.length >= 1) {
       solo.add(s);
     }
   }
@@ -1334,6 +1372,31 @@ class SoloHomeState extends State<SoloHome> {
             ),
           ))
     ]));
+
+    targets.add(TargetFocus(identify: "reset", keyTarget: keyButton99, contents: [
+      TargetContent(
+          align: ContentAlign.top,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Reset Button",
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    "Press this button to reset the court points",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+          ))
+    ]));
+
     targets.add(TargetFocus(identify: "Target 2", keyTarget: keyButton4, contents: [
       TargetContent(
           align: ContentAlign.top,
@@ -1391,7 +1454,7 @@ class SoloHomeState extends State<SoloHome> {
                   left: (MediaQuery.of(context).size.width - 320) / 2,
                   child: counter_widget(
                     type: widget.type,
-                    main: main,
+                    main: Theme.of(context).splashColor,
                     time: widget.time,
                     counter_value: bounces.length,
                     counter_goal: widget.shot_count,

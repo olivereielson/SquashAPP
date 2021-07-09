@@ -3,10 +3,14 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:squash/admin/Settings.dart';
+import 'package:squash/admin/beta_explenation.dart';
 
 class MyDynamicHeader extends SliverPersistentHeaderDelegate {
-  MyDynamicHeader(this.text1, this.text2, this.ghosting, [this.info = false]);
+  MyDynamicHeader(this.text1, this.text2, this.ghosting, this.analytics,this.observer, [this.info = false]);
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
 
   String text1;
   String text2;
@@ -43,7 +47,7 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
       if (++index > Colors.primaries.length - 1) index = 0;
 
       return Container(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).splashColor,
         child: SafeArea(
           child: Stack(
             children: [
@@ -64,6 +68,16 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                                 color: Colors.white,
                               ),
                               onPressed: () {
+
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.topToBottom,
+                                    child: beta(analytics, observer),
+                                  ),
+                                );
+
+                                /*
                                 CoolAlert.show(
                                   context: context,
                                   confirmBtnColor: Theme.of(context).primaryColor,
@@ -82,6 +96,8 @@ class MyDynamicHeader extends SliverPersistentHeaderDelegate {
                                   type: CoolAlertType.success,
                                   text: "The AI is still learning to play squash and might have trouble on your court. Click below to learn how to train the AI on your court. ",
                                 );
+
+                                 */
                               },
                             ),
                           ],
@@ -135,12 +151,12 @@ class header_list extends SliverPersistentHeaderDelegate {
               left: 0,
               bottom: 0,
               child: Container(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).splashColor,
                 width: MediaQuery.of(context).size.width,
                 height: 50,
               )),
           Container(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(0), bottomLeft: Radius.circular(0))),
+            decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(0), bottomLeft: Radius.circular(0))),
             child: Stack(
               children: [
                 Positioned(left: 0, top: posy, child: Container(width: MediaQuery.of(context).size.width, height: 250, child: am)),
@@ -185,12 +201,12 @@ class header_shot extends SliverPersistentHeaderDelegate {
               left: 0,
               bottom: 0,
               child: Container(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).splashColor,
                 width: MediaQuery.of(context).size.width,
                 height: 50,
               )),
           Container(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(0), bottomLeft: Radius.circular(0))),
+            decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(0), bottomLeft: Radius.circular(0))),
             child: Stack(
               children: [
                 Positioned(left: 0, top: posy, child: Container(width: MediaQuery.of(context).size.width, height: 200, child: am)),
@@ -265,7 +281,7 @@ class profileHeader extends SliverPersistentHeaderDelegate {
       if (++index > Colors.primaries.length - 1) index = 0;
 
       return Container(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).splashColor,
         child: SafeArea(
           child: Stack(
             children: [

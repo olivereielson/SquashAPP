@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
+//import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:fl_chart/fl_chart.dart';

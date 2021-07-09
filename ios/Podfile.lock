@@ -90,6 +90,8 @@ PODS:
   - tflite (1.1.2):
     - Flutter
     - TensorFlowLiteC
+  - url_launcher (0.0.1):
+    - Flutter
   - wakelock (0.0.1):
     - Flutter
 
@@ -106,6 +108,7 @@ DEPENDENCIES:
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - soundpool (from `.symlinks/plugins/soundpool/ios`)
   - tflite (from `.symlinks/plugins/tflite/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
 
 SPEC REPOS:
@@ -147,6 +150,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/soundpool/ios"
   tflite:
     :path: ".symlinks/plugins/tflite/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
 
@@ -174,6 +179,7 @@ SPEC CHECKSUMS:
   soundpool: c7f4422ca206e77f8900ed3c4ee6a6ff5a0e38a9
   TensorFlowLiteC: b3ab9e867b0b71052ca102a32a786555b330b02e
   tflite: 7acd11db0915e2d90ab90474413068568eb605f0
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
 PODFILE CHECKSUM: b3da3af3f4077ba305d9e7bdb4f1bb9e003672be

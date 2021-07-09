@@ -254,8 +254,8 @@ class SavedDataState extends State<SavedData> {
     print(MediaQuery.of(context).size.height);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(title: Text("Data Analytics",style: TextStyle(fontSize: 30),),elevation: 0,toolbarHeight: 80,),
+      backgroundColor: Theme.of(context).splashColor,
+      appBar: AppBar(title: Text("Solo Exercise",style: TextStyle(fontSize: 30),),elevation: 0,toolbarHeight: 80,),
 
 
       body: Stack(

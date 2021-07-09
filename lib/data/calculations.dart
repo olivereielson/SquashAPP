@@ -32,7 +32,7 @@ class DataMethods {
     return solo_type_pie_chart_data;
   }
 
-  List<PieChartSectionData> solo_type_slice_data(List<double> slice_data,colors,index) {
+  List<PieChartSectionData> solo_type_slice_data(List<double> slice_data,colors,index,text_color) {
     List<PieChartSectionData> data = [];
 
 
@@ -44,7 +44,7 @@ class DataMethods {
         value: slice_data[i],
         title: ((slice_data[i] / sum) * 100).toInt().toString() + '%',
         radius:index==i?70:60,
-        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[i] / sum) * 100).toInt() < 7 ? Colors.transparent : Colors.white),
+        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[i] / sum) * 100).toInt() < 7 ? Colors.transparent : text_color),
         titlePositionPercentageOffset: 0.55,
       ),);
     }

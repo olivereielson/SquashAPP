@@ -154,7 +154,6 @@ if(data.toString()=="Infinity"){
                 children: [
                   Spacer(),
                   Container(
-                    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(40))),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -476,8 +475,8 @@ if(data.toString()=="Infinity"){
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(title: Text("Data Analytics",style: TextStyle(fontSize: 30),),
+      backgroundColor: Theme.of(context).splashColor,
+      appBar: AppBar(title: Text("Ghosting Analytics",style: TextStyle(fontSize: 30),),
         elevation: 0,
         toolbarHeight: 80,
         leading: IconButton(
@@ -494,8 +493,6 @@ if(data.toString()=="Infinity"){
         children: [
 
           Speed(),
-          Spacer(),
-
 
           Padding(
             padding: const EdgeInsets.only(top: 0, bottom: 20),

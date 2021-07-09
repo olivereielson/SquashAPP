@@ -1,5 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:direct_select/direct_select.dart';
-import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
+//import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,8 +12,10 @@ import 'package:email_launcher/email_launcher.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:squash/admin/credits.dart';
 import 'package:squash/admin/terms_and_conditions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 import '../extra/headers.dart';
+import 'Theme Page.dart';
 
 class SettingsPage extends StatefulWidget {
 
@@ -60,6 +63,7 @@ class SettingsPageState extends State<SettingsPage> {
 
   Widget darkmode() {
 
+    /*
     if(EasyDynamicTheme.of(context).themeMode==ThemeMode.dark){
       themeIndex=0;
       widget.analytics.logEvent(
@@ -87,12 +91,36 @@ class SettingsPageState extends State<SettingsPage> {
         },
       );
     }
+
+
+     */
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+
+          showDialog(context: context, builder: (_) => ThemeConsumer(child: ThemeDialog(
+            hasDescription: false,
+          )));
+          widget.analytics.logEvent(name: "Theme_Changed",
+            parameters: <String, dynamic>{
+            'theme': ThemeProvider.themeOf(context).id,
+          },);
+
+          /*
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.bottomToTop,
+              child: theme_page(widget.analytics,widget.observer),
+            ),
+          );
+
+
+           */
+        },
         child: Container(
-          height: 140,
+          height: 90,
           decoration: BoxDecoration(
 
               border: Border.all(color: Theme.of(context).primaryColor,width: 3),
@@ -126,35 +154,9 @@ class SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                       Spacer(),
+                      Icon(Icons.chevron_right,color: Theme.of(context).primaryColor,)
                     ],
                   ),
-                  CupertinoSlidingSegmentedControl(
-                    onValueChanged: (value) {
-                      if (value == 0) {
-                        EasyDynamicTheme.of(context).changeTheme(dark: true);
-                      }
-                      if (value == 1) {
-                        EasyDynamicTheme.of(context).changeTheme(dark: false);
-                      }
-                      if (value == 2) {
-                        EasyDynamicTheme.of(context).changeTheme(dynamic: true);
-                      }
-
-                      setState(() {
-                        themeIndex = value;
-                      });
-                    },
-                    thumbColor: Theme.of(context).primaryColor,
-                    groupValue: themeIndex,
-                    children: <int, Widget>{
-                      0: Text('Dark Mode', style: TextStyle(color: themeIndex == 0 ? Colors.white : Colors.grey)),
-                      1: Text(
-                        'Light Mode',
-                        style: TextStyle(color: themeIndex == 1 ? Colors.white : Colors.grey),
-                      ),
-                      2: Text('System Default', style: TextStyle(color: themeIndex == 2 ? Colors.white : Colors.grey))
-                    },
-                  )
                 ],
               ),
             ),
@@ -499,7 +501,7 @@ class SettingsPageState extends State<SettingsPage> {
             style: TextStyle(fontSize: 30),
           ),
           elevation: 0,
-          backgroundColor: Theme.of(context).primaryColor,
+          //backgroundColor: Theme.of(context).primaryColor,
           toolbarHeight: 100,
         ),
         body: settings());

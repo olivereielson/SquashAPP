@@ -149,6 +149,12 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   }
 
   String initals() {
+
+    if(name==""){
+      return "";
+    }
+
+
     if (name.split(" ").length == 1) {
       return name.substring(0, 1).toUpperCase();
     }
@@ -488,7 +494,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).splashColor,
       child: _tabBar,
     );
   }

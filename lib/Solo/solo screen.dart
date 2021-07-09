@@ -13,6 +13,8 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:squash/Solo/Solo%20home%20page.dart';
 import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/Target_page.dart';
@@ -32,6 +34,7 @@ class SoloScreen extends StatefulWidget {
 
 class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMixin {
   SoloScreenState(this.cameras);
+  final FocusNode _nodeText3 = FocusNode();
 
   bool delete_mode = false;
 
@@ -63,7 +66,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   DateTime time;
 
-  List<int> sides = [];
+  List<int> sides = [0];
 
   List<Widget> settings;
   int side_count = 2;
@@ -257,17 +260,73 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
         });
   }
 
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+
+        KeyboardActionsItem(
+          focusNode: _nodeText3,
+          onTapAction: () {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text("Custom Action"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("OK"),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  );
+                });
+          },
+        ),
+      ],
+    );
+  }
+
+
   text_dialog() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Name Custom Exersie"),
+          backgroundColor: Theme.of(context).primaryColor,
+          title: new Text("Number of Shots",style: TextStyle(color: Colors.white),),
           content: new TextField(
             autofocus: true,
-            decoration: new InputDecoration(labelText: 'Custom Name', fillColor: main),
+            keyboardType: TextInputType.numberWithOptions(signed: true),
+            focusNode: _nodeText3,
+
+
+            inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly
+          ], // Only numb
+
+            style: TextStyle(color: Colors.white),
+
+            decoration: new InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 10,
+                    ),
+                    gapPadding: 5),
+                focusedBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(25.0),
+                  borderSide: BorderSide(color: Colors.white54),
+                ),
+                focusColor: Colors.pink,
+                fillColor: Colors.pink,
+                labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+
             onSubmitted: (value) {
-              name = value;
+              shot_number =int.parse(value);
 
               Navigator.of(context).pop();
             },
@@ -285,8 +344,14 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     return Column(
       children: [
         GestureDetector(
-          onTap: () {
-            show_shot_picker();
+          onTap: () async {
+           // show_shot_picker();
+
+           await text_dialog();
+           setState(() {
+
+           });
+
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -640,7 +705,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
                 border:
 
-                Border.all(color: !sides.contains(data["id"])?Colors.white.withOpacity(0.5):Colors.white,
+                Border.all(color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white,
 
 
                     width: 4),
@@ -662,12 +727,12 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                   width: 130,
                   child: Stack(
                     children: [
-                      Positioned(left: 50.0, top: 15, child: Container(width: 5, height: 100, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(left: 25.0, top: 15, child: Container(width: 5, height: 30, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(left: 50.0, top: 20, child: Container(width: 5, height: 95, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(left: 25.0, top: 20, child: Container(width: 5, height: 25, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
                       Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(right: 25.0, top: 15, child: Container(width: 5, height: 30, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
+                      Positioned(right: 25.0, top: 20, child: Container(width: 5, height: 25, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
                       Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(1):Colors.white)),
+                      Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
 
                     ],
                   ),
@@ -868,7 +933,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
         SliverPersistentHeader(
           pinned: true,
           floating: false,
-          delegate: MyDynamicHeader("Solo", "Exercise", false, true),
+          delegate: MyDynamicHeader("Solo", "Exercise", false,widget.analytics,widget.observer, true),
         ),
         SliverPersistentHeader(
           pinned: false,
@@ -899,9 +964,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
           pinned: true,
           delegate: _SliverAppBarDelegate(
             TabBar(
-                indicatorColor: Colors.white60,
-                indicatorWeight: 3,
-                labelColor: Colors.white,
+
                 tabs: [
                   new Tab(
                     //  icon: new Icon(Icons.sports_tennis),
@@ -943,7 +1006,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).splashColor,
       child: _tabBar,
     );
   }

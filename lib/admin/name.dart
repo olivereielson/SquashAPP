@@ -26,7 +26,7 @@ class name_edit extends StatelessWidget{
     _testSetCurrentScreen();
     return Scaffold(
 
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).splashColor,
 
 
       body: Padding(

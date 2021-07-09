@@ -76,16 +76,9 @@ class _Solo_StatState extends State<Solo_Stat> {
     ave_solo_dur = DataMethods().ave_solo_dur(solo_storage_box);
     ave_shot_num = DataMethods().ave_shot_num(solo_storage_box);
 
-    eventDay.clear();
-
-    for (int i = 0; i < solo_storage_box.length; i++) {
-      DateTime cdate = DateTime(solo_storage_box.getAt(i).start.year, solo_storage_box.getAt(i).start.month, solo_storage_box.getAt(i).start.day);
-
-      //print(cdate.day);
-
-    }
-
     setState(() {});
+
+    print("solo calcuated");
   }
 
   Widget single_card(String top_name, String bottom_name, String data) {
@@ -243,7 +236,7 @@ class _Solo_StatState extends State<Solo_Stat> {
                     borderData: FlBorderData(
                       show: false,
                     ),
-                    sections: DataMethods().solo_type_slice_data(solo_type_pie_chart_data, Theme.of(context).primaryColor, _count)),
+                    sections: DataMethods().solo_type_slice_data(solo_type_pie_chart_data, Theme.of(context).splashColor, _count,Colors.white)),
               ),
             ),
           ],

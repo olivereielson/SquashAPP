@@ -31,15 +31,15 @@ class counter_widget extends StatefulWidget {
   bool pause;
   List<TargetFocus> targets = [];
 
-  counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side,this.pause,this.targets});
+  counter_widget({this.type, this.main, this.time, this.done, this.is_working, this.counter_value, this.counter_goal, this.activities, this.current_side, this.pause, this.targets});
 
   @override
-  counter_widget_state createState() => new counter_widget_state(time.inSeconds, type,counter_value);
+  counter_widget_state createState() => new counter_widget_state(time.inSeconds, type, counter_value);
 }
 
 class counter_widget_state extends State<counter_widget> {
+  counter_widget_state(this._start, this.type, this.counter_value);
 
-  counter_widget_state(this._start, this.type,this.counter_value);
   Soundpool _soundpool;
 
   int type;
@@ -53,7 +53,7 @@ class counter_widget_state extends State<counter_widget> {
   int _start;
   int counter_value;
 
-  bool stop_done=true;
+  bool stop_done = true;
 
   bool is_working = false;
 
@@ -87,13 +87,11 @@ class counter_widget_state extends State<counter_widget> {
             }
           });
         } else {
-          if(!widget.pause){
-
+          if (!widget.pause) {
             setState(() {
               _start--;
             });
           }
-
         }
       },
     );
@@ -109,8 +107,8 @@ class counter_widget_state extends State<counter_widget> {
         radius: 210,
         animation: true,
         linearGradient: LinearGradient(colors: [
-          widget.main,
-          Colors.indigo,
+          Colors.white,
+          Colors.white,
         ]),
         animateFromLastPercent: true,
         addAutomaticKeepAlive: true,
@@ -152,7 +150,7 @@ class counter_widget_state extends State<counter_widget> {
               child: Container(
                   height: 150,
                   width: 150,
-                  decoration: BoxDecoration(color: Color.fromRGBO(20, 20, 50, 1), borderRadius: BorderRadius.all(Radius.circular(25))),
+                  decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(25))),
                   child: Icon(
                     Icons.play_arrow,
                     color: Colors.white,
@@ -168,19 +166,14 @@ class counter_widget_state extends State<counter_widget> {
   Widget Counter() {
     if (is_working) {
       if (widget.counter_value == widget.counter_goal) {
-
-
         playsound();
 
         if (sides_done == widget.activities.length - 1) {
-
-          if(stop_done){
+          if (stop_done) {
             widget.done(true);
-            stop_done=false;
+            stop_done = false;
             print("done");
-
           }
-
         } else {
           print(widget.counter_value);
           is_working = false;
@@ -190,7 +183,6 @@ class counter_widget_state extends State<counter_widget> {
           Future.delayed(Duration.zero, () async {
             widget.current_side(widget.activities[sides_done]);
           });
-
         }
       }
 
@@ -201,10 +193,7 @@ class counter_widget_state extends State<counter_widget> {
         percent: (widget.counter_value / widget.counter_goal),
         radius: 200,
         animation: true,
-        linearGradient: LinearGradient(colors: [
-          widget.main,
-          Colors.lightBlueAccent,
-        ]),
+        linearGradient: LinearGradient(colors: [Colors.white, Colors.white]),
         animateFromLastPercent: true,
         animationDuration: 1200,
         backgroundWidth: 20,
@@ -232,17 +221,7 @@ class counter_widget_state extends State<counter_widget> {
             ),
             GestureDetector(
               onTap: () async {
-
-
-
-
-
                 setState(() {
-
-
-
-
-
                   is_working = true;
                   widget.current_side(widget.activities[sides_done]);
                   widget.is_working(is_working);
@@ -254,7 +233,7 @@ class counter_widget_state extends State<counter_widget> {
               child: Container(
                   height: 150,
                   width: 150,
-                  decoration: BoxDecoration(color:  Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(25))),
+                  decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(25))),
                   child: Icon(
                     Icons.play_arrow,
                     color: Colors.white,
@@ -273,44 +252,36 @@ class counter_widget_state extends State<counter_widget> {
       child: Container(
         width: 320,
         height: 320,
-        decoration: BoxDecoration(color: Theme.of(context).primaryColor.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(25))),
+        decoration: BoxDecoration(color: Theme.of(context).splashColor.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(25))),
         child: type == 0 ? timer() : Counter(),
       ),
     );
   }
 
   Future<void> playsound() async {
-
     var _alarmSound = await _soundId;
 
-    int streamId = await _soundpool.play(_alarmSound,repeat: 2);
-
-
+    int streamId = await _soundpool.play(_alarmSound, repeat: 2);
   }
 
   Future<void> loadsound() async {
-
-
     _soundId = await rootBundle.load("assets/sounds/ding.mp4").then((ByteData soundData) {
       return _soundpool.load(soundData);
     });
 
-    var id= await _soundId;
+    var id = await _soundId;
 
     _soundpool.setVolume(soundId: id, volume: 1.0);
-
   }
-
 
   @override
   void initState() {
-
-    _soundpool = Soundpool(streamType: StreamType.notification,);
+    _soundpool = Soundpool(
+      streamType: StreamType.notification,
+    );
     loadsound();
 
-
     super.initState();
-
   }
 
   @override

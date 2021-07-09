@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/hive_classes.dart';
 
@@ -34,7 +35,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
   List<BarChartGroupData> barchrt = [];
   List<double> single_corner_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   Map<DateTime, List<String>> eventDay = {};
-
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
  int _count=0;
 
   @override
@@ -43,7 +44,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
     super.initState();
   }
 
-  void calculate_ghost() {
+  calculate_ghost() {
     List<double> WVR = DataMethods().WorkRestPie(ghosting_box);
     work = WVR[0];
     rest = WVR[1];
@@ -58,20 +59,8 @@ class _Ghost_StatState extends State<Ghost_Stat> {
 
     ghost_type_pie_chart_data = DataMethods().GhostPieChart(ghosting_box);
 
-    barchrt = DataMethods().BarChartSpeed(ghosting_box, single_corner_speed, Theme.of(context).primaryColor);
-
-    for (int i = 0; i < ghosting_box.length; i++) {
-      DateTime cdate = DateTime(ghosting_box.getAt(i).start.year, ghosting_box.getAt(i).start.month, ghosting_box.getAt(i).start.day);
-
-      if (eventDay[cdate] != null) {
-        List<String> l = eventDay[cdate];
-        l.add("1" + i.toString());
-
-        eventDay[cdate] = l;
-      } else {
-        eventDay[cdate] = ["1" + i.toString()];
-      }
-    }
+    barchrt = DataMethods().BarChartSpeed(ghosting_box, single_corner_speed, Theme.of(context).splashColor);
+    print("ghost calucated");
   }
 
   Future<void> load_ghost_hive() async {
@@ -167,7 +156,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
 
                     sections: [
                       PieChartSectionData(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).splashColor,
                         value: work,
                         title: (work / (work + rest) * 100).toInt().toString() + '%',
                         radius: _count==0?60:50,
@@ -176,7 +165,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
 
                       ),
                       PieChartSectionData(
-                        color: Color.fromRGBO(40, 70, 130, 1),
+                        color: Theme.of(context).splashColor,
 
                         value: rest,
                         title: (rest / (work + rest) * 100).ceil().toString() + '%',
@@ -205,9 +194,9 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                   children: [
                     AnimatedContainer(
                       duration: Duration(milliseconds: 200),
-                      height: _count==1?30:25,
-                      width: _count==1?30:25,
-                      decoration: BoxDecoration(color:Color.fromRGBO(40, 70, 150, 1), borderRadius: BorderRadius.all(Radius.circular(5))),
+                      height: _count==1?35:25,
+                      width: _count==1?35:25,
+                      decoration: BoxDecoration(color:Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -222,9 +211,9 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                   children: [
                     AnimatedContainer(
                       duration: Duration(milliseconds: 200),
-                      height: _count==0?30:25,
-                      width: _count==0?30:25,
-                      decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.all(Radius.circular(5))),
+                      height: _count==0?35:25,
+                      width: _count==0?35:25,
+                      decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -304,7 +293,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
               ),
               barTouchData: BarTouchData(
                 touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Theme.of(context).primaryColor,
+                    tooltipBgColor: Theme.of(context).splashColor,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       String weekDay;
                       switch (group.x.toInt()) {
@@ -400,13 +389,13 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                         verticalInterval: 1,
                         getDrawingVerticalLine: (value) {
                           return FlLine(
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).splashColor,
                             strokeWidth: 1,
                           );
                         },
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).splashColor,
                             strokeWidth: 1,
                           );
                         },
@@ -485,7 +474,6 @@ class _Ghost_StatState extends State<Ghost_Stat> {
 
 
     return Scaffold(
-
 
       body: FutureBuilder(
         future:load_ghost_hive(),

@@ -28,7 +28,7 @@ class terms_page extends StatelessWidget {
   Widget build(BuildContext context) {
     _testSetCurrentScreen();
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).splashColor,
       appBar: AppBar(
         title: Text("Terms and Conditions"),
         elevation: 0,
@@ -63,7 +63,7 @@ class terms_page extends StatelessWidget {
                   },
                   child: Text(
                     "Accept",
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    style: TextStyle(color: Colors.grey),
                   ),
                 ),
               )

@@ -16,8 +16,9 @@ class MyPainter extends CustomPainter {
   List<Point> dst_point;
   bool showGreen;
   int currentSide;
+  Color line_color;
 
-  MyPainter(this.serve_box, this.dst_point, this.currentSide, this.showGreen);
+  MyPainter(this.serve_box, this.dst_point, this.currentSide, this.showGreen,this.line_color);
 
   Offset hom_trans(x, y, H) {
     var nums = Array2d([
@@ -40,7 +41,7 @@ class MyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Color.fromRGBO(40, 45, 81, 1)
+      ..color = line_color
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
 

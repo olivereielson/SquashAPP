@@ -273,7 +273,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).splashColor,
                   // set border color
                   width: 6.0), // set border width
               borderRadius: BorderRadius.all(Radius.circular(10.0)), // set rounded corner radius
@@ -300,7 +300,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).splashColor,
                   // set border color
                   width: 6.0), // set border width
               borderRadius: BorderRadius.all(Radius.circular(10.0)), // set rounded corner radius
@@ -367,13 +367,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           height: 300,
           width: 300,
           duration: rest_time.inSeconds,
-          fillColor: Theme.of(context).primaryColor,
+          fillColor: Theme.of(context).splashColor,
           strokeWidth: 30,
 
           initialDuration: 0,
 
           isReverse: true,
-          textStyle: TextStyle(color: resting?Colors.grey:Colors.transparent, fontWeight: FontWeight.bold, fontSize: 70),
+          textStyle: TextStyle(color: resting?Theme.of(context).highlightColor:Colors.transparent, fontWeight: FontWeight.bold, fontSize: 70),
           onComplete: () {
             setState(() {
               resting = !resting;
@@ -409,10 +409,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               height: 200,
               width: 200,
               duration: widget.round_time.inSeconds,
-              fillColor: Theme.of(context).primaryColor,
+              fillColor: Theme.of(context).splashColor,
               strokeWidth: 20,
               isReverse: true,
-              textStyle: TextStyle(color: Colors.black38, fontWeight: FontWeight.bold, fontSize: 70),
+              textStyle: TextStyle(color: Theme.of(context).highlightColor, fontWeight: FontWeight.bold, fontSize: 70),
               onComplete: () {
                 setState(() {
                   resting = true;
@@ -666,9 +666,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     width: 170,
                     height: 50,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).splashColor,
                         border: Border.all(
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).splashColor,
                         ),
                         borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
                     child: Center(
