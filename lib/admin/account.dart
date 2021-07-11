@@ -11,6 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:squash/admin/name.dart';
 
+import 'Badge Ghost Widget.dart';
+import 'Badge Solo Widget.dart';
 import 'Settings.dart';
 import '../extra/headers.dart';
 import '../extra/hive_classes.dart';
@@ -166,16 +168,50 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
     return name.substring(0, 1).toUpperCase();
   }
 
+  log_badges(int ghost, int solo, double best_speed) async {
+
+    var box = await Hive.openBox('badges');
+
+    box.put("solo_total", solo);
+    box.put("ghost_total", ghost);
+    box.put("best_speed", best_speed);
+
+
+
+
+
+  }
+
+
+
   void calcualte_levels() {
+
     shots_hit = 0;
     ghosts_done = 0;
+
+    double best_speed=999;
+
     for (int i = 0; i < solo_storage_box.length; i++) {
       shots_hit = solo_storage_box.getAt(i).bounces.length + shots_hit;
     }
 
+
     for (int i = 0; i < ghosting_box.length; i++) {
+
       ghosts_done = ghosting_box.getAt(i).corner_array.length + ghosts_done;
+
+      double box_average=ghosting_box.getAt(i).corner_array.length/ghosting_box.getAt(i).end.difference(ghosting_box.getAt(i).start).inSeconds;
+
+      if(box_average<best_speed){
+        best_speed=box_average;
+      }
+
     }
+
+
+
+
+
 
     for (int i = 0; i < goals.length; i++) {
       if (goals[i] < shots_hit) {
@@ -185,6 +221,49 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
         ghost_level = i;
       }
     }
+
+    log_badges(ghosts_done,shots_hit,best_speed);
+
+  }
+
+  Widget Badge(String badge,String title){
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.grey,
+              shape: BoxShape.circle
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+
+              decoration: BoxDecoration(
+                  color: Theme.of(context).splashColor,
+
+               shape: BoxShape.circle
+
+              ),
+
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Image.asset("assets/badges/$badge",height: 60,color: Colors.white,),
+              ),
+
+            ),
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(title,style: (TextStyle(fontWeight: FontWeight.bold)),),
+        )
+      ],
+    );
+
+
   }
 
   Widget info() {
@@ -194,8 +273,13 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
         if (loadfeed) {
           calcualte_levels();
 
-          return Column(
+          return ListView(
             children: [
+
+              Ghost_Bagde(),
+
+
+              Solo_Bagde(),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 child: Container(
@@ -293,7 +377,9 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
                     ],
                   ),
                 ),
-              )
+              ),
+
+
             ],
           );
         }
@@ -393,13 +479,16 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
         ),
       );
     }
-    return Scrollbar(
-      child: ListView.builder(
-        itemCount: feed.length,
-        itemBuilder: (BuildContext context, int index) {
-          return feed[feed.length - index - 1]["wid"];
-        },
-      ),
+
+
+
+
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: feed.length,
+      itemBuilder: (BuildContext context, int index) {
+        return feed[feed.length - index - 1]["wid"];
+      },
     );
   }
 
@@ -407,74 +496,80 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     if (true) {
       return Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverPersistentHeader(
-              pinned: true,
-              floating: false,
-              delegate: profileHeader(
-                  name,
-                  initals(),
-                  MediaQuery.of(context).size.width / 2,
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () async {
-                      String n = await Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.topToBottom,
-                          child: name_edit(widget.analytics, widget.observer),
-                        ),
-                      );
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
 
-                      widget.analytics.logEvent(name: 'Named_Edited', parameters: <String, dynamic>{"name": name});
+            return <Widget>[
 
-                      print(n);
-                      if (n != "" && n != null && n.replaceAll(" ", "") != "") {
-                        setState(() {
-                          name = n.capitalizeFirstofEach;
-                          print("name updated");
-                        });
-                      }
+              SliverPersistentHeader(
+                pinned: true,
+                floating: false,
+                delegate: profileHeader(
+                    name,
+                    initals(),
+                    MediaQuery.of(context).size.width / 2,
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () async {
+                        String n = await Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.topToBottom,
+                            child: name_edit(widget.analytics, widget.observer),
+                          ),
+                        );
 
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      prefs.setString('first_name', name);
-                    },
-                  ),
-                  widget.analytics,
-                  widget.observer),
-            ),
-            SliverPersistentHeader(
-              floating: false,
-              pinned: true,
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                    indicatorColor: Colors.white60,
-                    indicatorWeight: 3,
-                    automaticIndicatorColorAdjustment: true,
-                    tabs: [
-                      new Tab(
-                        //  icon: new Icon(Icons.sports_tennis),
-                        text: "Levels",
-                      ),
-                      new Tab(
-                        text: "Exercise Feed",
-                      ),
-                    ],
-                    controller: _tabController),
+                        widget.analytics.logEvent(name: 'Named_Edited', parameters: <String, dynamic>{"name": name});
+
+                        print(n);
+                        if (n != "" && n != null && n.replaceAll(" ", "") != "") {
+                          setState(() {
+                            name = n.capitalizeFirstofEach;
+                            print("name updated");
+                          });
+                        }
+
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        prefs.setString('first_name', name);
+                      },
+                    ),
+                    widget.analytics,
+                    widget.observer),
               ),
-            ),
-            SliverFixedExtentList(
-              itemExtent: 700.0,
-              delegate: SliverChildListDelegate([
-                TabBarView(
-                  children: [info(), exersise_feed()],
-                  controller: _tabController,
+              SliverPersistentHeader(
+                floating: false,
+                pinned: true,
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                      indicatorColor: Colors.white60,
+                      indicatorWeight: 3,
+                      automaticIndicatorColorAdjustment: true,
+                      tabs: [
+                        new Tab(
+                          //  icon: new Icon(Icons.sports_tennis),
+                          text: "Levels",
+                        ),
+                        new Tab(
+                          text: "Exercise Feed",
+                        ),
+                      ],
+                      controller: _tabController),
                 ),
-              ], addAutomaticKeepAlives: true),
-            ),
-          ],
-        ),
+              ),
+
+
+            ];
+
+          },
+          floatHeaderSlivers: false,
+
+          body:TabBarView(
+            children: [info(), exersise_feed()],
+            controller: _tabController,
+          ) ,
+        )
+
+
       );
     }
   }

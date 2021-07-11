@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'dart:io' show Platform;
 
+import 'package:animated_widgets/widgets/rotation_animated.dart';
+import 'package:animated_widgets/widgets/shake_animated_widget.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -13,11 +16,10 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:keyboard_actions/keyboard_actions_config.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:squash/Solo/Solo%20home%20page.dart';
 import 'package:squash/Solo/solo_defs.dart';
-import 'package:squash/Target_page.dart';
+import 'package:squash/Solo/Target_page.dart';
 import 'package:squash/extra/headers.dart';
 import 'package:tflite/tflite.dart';
 
@@ -26,7 +28,7 @@ class SoloScreen extends StatefulWidget {
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
 
-  SoloScreen(this.cameras,this.analytics,this.observer);
+  SoloScreen(this.cameras, this.analytics, this.observer);
 
   @override
   SoloScreenState createState() => new SoloScreenState(cameras);
@@ -34,10 +36,11 @@ class SoloScreen extends StatefulWidget {
 
 class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMixin {
   SoloScreenState(this.cameras);
+
   final FocusNode _nodeText3 = FocusNode();
+  final _mylistkey = GlobalKey<AnimatedListState>();
 
   bool delete_mode = false;
-
 
   final List<CameraDescription> cameras;
   TabController _tabController;
@@ -45,6 +48,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   bool use_round = false;
   bool use_time = false;
   bool use_target = false;
+  bool is_shaking = false;
 
   String name;
 
@@ -54,8 +58,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   int segmentedControlGroupValue = 1;
   Point location = Point(250.0, 250.0);
   bool target_locked = false;
-  String box = "solo3";
-  var Exersises;
+  String box = "solo55";
+  Box<Custom_Solo> solo;
 
   Duration total_time = Duration(seconds: 10);
 
@@ -74,8 +78,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   bool showGreen = true;
 
-
-
   @override
   void initState() {
     _tabController = new TabController(
@@ -83,6 +85,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       vsync: this,
     );
     _testSetCurrentScreen();
+    load_hive();
+
     super.initState();
   }
 
@@ -95,8 +99,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   loadModel() async {
     await Tflite.loadModel(
-      model: "assets/converted_model.tflite",
-      labels: "assets/ball.txt",
+      model: "assets/models/converted_model.tflite",
+      labels: "assets/models/ball.txt",
       useGpuDelegate: Platform.isAndroid ? true : true,
     );
   }
@@ -260,251 +264,117 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
         });
   }
 
-  KeyboardActionsConfig _buildConfig(BuildContext context) {
-    return KeyboardActionsConfig(
-      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor: Colors.grey[200],
-      nextFocus: true,
-      actions: [
-
-        KeyboardActionsItem(
-          focusNode: _nodeText3,
-          onTapAction: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    content: Text("Custom Action"),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text("OK"),
-                        onPressed: () => Navigator.of(context).pop(),
-                      )
-                    ],
-                  );
-                });
-          },
-        ),
-      ],
-    );
-  }
-
-
-  text_dialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
+  Future<void> text_dialog() async {
+    String n = await Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.topToBottom,
+        child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
-          title: new Text("Number of Shots",style: TextStyle(color: Colors.white),),
-          content: new TextField(
-            autofocus: true,
-            keyboardType: TextInputType.numberWithOptions(signed: true),
-            focusNode: _nodeText3,
-
-
-            inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly
-          ], // Only numb
-
-            style: TextStyle(color: Colors.white),
-
-            decoration: new InputDecoration(
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18)),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 10,
-                    ),
-                    gapPadding: 5),
-                focusedBorder: new OutlineInputBorder(
-                  borderRadius: new BorderRadius.circular(25.0),
-                  borderSide: BorderSide(color: Colors.white54),
+          body: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: Text(
+                    "Enter Custom Workout Name",
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  ),
                 ),
-                focusColor: Colors.pink,
-                fillColor: Colors.pink,
-                labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+                TextField(
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                      hintText: "Eg 6 corners",
+                      enabledBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                      hintStyle: TextStyle(color: Colors.white60),
+                      labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+                  onSubmitted: (name) {
+                    if (name.substring(name.length - 1) == "") {
+                      name = name.substring(0, name.length - 1);
+                    }
 
-            onSubmitted: (value) {
-              shot_number =int.parse(value);
-
-              Navigator.of(context).pop();
-            },
+                    Navigator.pop(context, name);
+                  },
+                )
+              ],
+            ),
           ),
-          actions: <Widget>[
-
-            // usually buttons at the bottom of the dialog
-          ],
-        );
-      },
+        ),
+      ),
     );
+
+    name = n.toString().toUpperCase();
+    if (name.replaceAll(" ", "") == "") {
+      name = "NO NAME";
+    }
   }
 
   Widget round() {
     return Column(
       children: [
-        GestureDetector(
-          onTap: () async {
-           // show_shot_picker();
-
-           await text_dialog();
-           setState(() {
-
-           });
-
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 90,
-              decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor,width: 3),
-                  color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        EvaIcons.hash,
-
-                        color:     Theme.of(context).primaryColor,
-                        size: 40,
-                      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 90,
+            decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 3), color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Icon(
+                      EvaIcons.hash,
+                      color: Theme.of(context).primaryColor,
+                      size: 40,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Number of Shots",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              )),
-                          Text(
-                            shot_number.toString(),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
-                          ),
-                        ],
-                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Number of Shots",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        Text(
+                          shot_number.toString(),
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
+                        ),
+                      ],
                     ),
-                    Spacer(),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
+                  ),
+                  Spacer(),
+                  Icon(Icons.chevron_right)
+                ],
               ),
             ),
           ),
         ),
+        target_select(),
         show_green(),
-      ],
-    );
-  }
-
-  Widget Target_input() {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            show_target_picker();
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: Container(
-              height: 90,
-              decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor,width: 3),
-                  color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        EvaIcons.hash,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Number of Targets", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-                          Text(
-                            taraget_count.toString(),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        /*
-        GestureDetector(
-          onTap: () {
-            show_rest_picker();
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-            child: Container(
-              height: 90,
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        Icons.timer,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Rest Time", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-                          Text(
-                            rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-         */
       ],
     );
   }
@@ -514,9 +384,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       padding: const EdgeInsets.all(8.0),
       child: Container(
         height: 90,
-        decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).primaryColor,width: 3),
-            color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
+        decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 3), color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Container(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -526,10 +394,13 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                 Container(
                   height: 50,
                   width: 50,
-                  decoration: BoxDecoration(
-
-                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Center(child: FaIcon(FontAwesomeIcons.bullseye,color: Theme.of(context).primaryColor,size: 30,)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: Center(
+                      child: FaIcon(
+                    FontAwesomeIcons.bullseye,
+                    color: Theme.of(context).primaryColor,
+                    size: 30,
+                  )),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -575,9 +446,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             },
             child: Container(
               height: 90,
-              decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor,width: 3),
-                  color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
+              decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 3), color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
               child: Container(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -587,10 +456,11 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                       Container(
                         height: 50,
                         width: 50,
-                        decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: Icon(
                           Icons.timer,
-                          color: Theme.of(context).primaryColor,size: 40,
+                          color: Theme.of(context).primaryColor,
+                          size: 40,
                         ),
                       ),
                       Padding(
@@ -625,123 +495,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             ),
           ),
         ),
+        target_select(),
         show_green(),
-
-        /*
-        GestureDetector(
-          onTap: () {
-            show_rest_picker();
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-            child: Container(
-              height: 90,
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.05), borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(color: Color.fromRGBO(40, 70, 130, 1), borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Icon(
-                        Icons.timer,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Rest Time", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-                          Text(
-                            rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: main),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right)
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-         */
       ],
-    );
-  }
-
-  Widget shot(Map data) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: GestureDetector(
-        onTap: () {
-          HapticFeedback.lightImpact();
-
-          if (sides.contains(data["id"])) {
-            setState(() {
-              sides.remove(data["id"]);
-            });
-          } else {
-            setState(() {
-              sides.add(data["id"]);
-            });
-          }
-          sides.sort();
-        },
-        child: Center(
-          child: Container(
-            height: 175,
-            width: 110,
-            decoration: BoxDecoration(
-
-                border:
-
-                Border.all(color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white,
-
-
-                    width: 4),
-
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    data["name"],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColorLight),
-                  ),
-                ),
-                Spacer(),
-                Container(
-                  height: 80,
-                  width: 130,
-                  child: Stack(
-                    children: [
-                      Positioned(left: 50.0, top: 20, child: Container(width: 5, height: 95, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(left: 25.0, top: 20, child: Container(width: 5, height: 25, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(left: 0.0, top: 40, child: Container(width: 25, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(right: 25.0, top: 20, child: Container(width: 5, height: 25, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(right: 0.0, top: 40, child: Container(width: 25, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-                      Positioned(left: 0, top: 15, child: Container(width: 130, height: 5, color: !sides.contains(data["id"])?Colors.white.withOpacity(0.7):Colors.white)),
-
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -769,6 +525,89 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
+  Widget target_select() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Hero(
+        tag: "hero1",
+        child: GestureDetector(
+          onTap: () async {
+
+            sides = await Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.fade,
+                child: target(
+                  analytics: widget.analytics,
+                  observer: widget.observer,
+                  sides: sides,
+                ),
+              ),
+            );
+
+
+
+
+
+                setState(() {});
+          },
+          child: Container(
+            height: 90,
+            decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 3), color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Center(
+                          child: Image.asset(
+                        "assets/icons/court_icon.png",
+                        height: 40,
+
+                        color: Theme.of(context).primaryColor,
+                      )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Selected Exercises",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "${sides.length.toString()} Selected",
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(Icons.chevron_right, color: Theme.of(context).primaryColor)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget timed() {
     return Stack(
       children: [
@@ -780,19 +619,14 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 30),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       GestureDetector(
                         onTap: () async {
                           await loadModel();
                           widget.analytics.logEvent(
                             name: 'Solo_Workout_Started',
-                            parameters: <String, dynamic>{
-                              'Sides': sides,
-                              'Shot_Count':shot_number,
-                              'time':total_time,
-                              'Type':'Timed'
-                            },
+                            parameters: <String, dynamic>{'Sides': sides, 'Shot_Count': shot_number, 'time': total_time, 'Type': 'Timed'},
                           );
 
                           Navigator.push(
@@ -806,8 +640,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                       shot_count: shot_number,
                                       sides: sides,
                                       showgreen: showGreen,
-                                  analytics: widget.analytics,
-                                  observer: widget.observer,
+                                      analytics: widget.analytics,
+                                      observer: widget.observer,
                                     )),
                           );
                         },
@@ -825,6 +659,50 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                   child: Text(
                                 "Start",
                                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                              ))),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          await text_dialog();
+
+                          widget.analytics.logEvent(
+                            name: 'Ghosting_Workout_Saved',
+                            parameters: <String, dynamic>{
+                              'name': name,
+                              'number_shot': shot_number,
+                              'solo_time': total_time.inSeconds,
+                              'sides': rest_time,
+                              'type': _tabController.index == 0 ? "count" : "timed"
+                            },
+                          );
+
+                          if (name != null && name != "") {
+                            var exersie = Custom_Solo()
+                              ..name = name
+                              ..number_shot = shot_number.toDouble()
+                              ..solo_time = total_time.inSeconds
+                              ..sides = sides
+                              ..type = _tabController.index;
+
+                            solo.add(exersie); // Store this object for the first time
+                            _mylistkey.currentState.insertItem(0);
+                          }
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 200,
+                          child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                Radius.circular(18),
+                              )),
+                              elevation: 2,
+                              color: Theme.of(context).splashColor,
+                              child: Center(
+                                  child: Text(
+                                "Save Custom Set",
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                               ))),
                         ),
                       ),
@@ -856,7 +734,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             GestureDetector(
                               onTap: () async {
@@ -871,12 +749,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                   await loadModel();
                                   widget.analytics.logEvent(
                                     name: 'Solo_Workout_Started',
-                                    parameters: <String, dynamic>{
-                                      'Sides': sides,
-                                      'Shot_Count':shot_number,
-                                      'time':total_time,
-                                      'Type':'Count'
-                                    },
+                                    parameters: <String, dynamic>{'Sides': sides, 'Shot_Count': shot_number, 'time': total_time, 'Type': 'Count'},
                                   );
                                   Navigator.push(
                                     context,
@@ -889,29 +762,71 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                               shot_count: shot_number,
                                               sides: sides,
                                               showgreen: showGreen,
-                                          analytics: widget.analytics,
-                                          observer: widget.observer,
+                                              analytics: widget.analytics,
+                                              observer: widget.observer,
                                             )),
                                   );
                                 }
                               },
-                              child: Center(
-                                child: Container(
-                                  height: 50,
-                                  width: 150,
-                                  child: Card(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                        Radius.circular(18),
-                                      )),
-                                      elevation: 2,
-                                      color: Theme.of(context).splashColor,
-                                      child: Center(
-                                          child: Text(
-                                        "Start",
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                      ))),
-                                ),
+                              child: Container(
+                                height: 50,
+                                width: 150,
+                                child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                      Radius.circular(18),
+                                    )),
+                                    elevation: 2,
+                                    color: Theme.of(context).splashColor,
+                                    child: Center(
+                                        child: Text(
+                                      "Start",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ))),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                await text_dialog();
+
+                                widget.analytics.logEvent(
+                                  name: 'Ghosting_Workout_Saved',
+                                  parameters: <String, dynamic>{
+                                    'name': name,
+                                    'number_shot': shot_number,
+                                    'solo_time': total_time.inSeconds,
+                                    'sides': rest_time,
+                                    'type': _tabController.index == 0 ? "count" : "timed"
+                                  },
+                                );
+
+                                if (name != null && name != "") {
+                                  var exersie = Custom_Solo()
+                                    ..name = name
+                                    ..number_shot = shot_number.toDouble()
+                                    ..solo_time = total_time.inSeconds
+                                    ..sides = sides
+                                    ..type = _tabController.index;
+
+                                  solo.add(exersie); // Store this object for the first time
+                                  _mylistkey.currentState.insertItem(0);
+                                }
+                              },
+                              child: Container(
+                                height: 50,
+                                width: 200,
+                                child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                      Radius.circular(18),
+                                    )),
+                                    elevation: 2,
+                                    color: Theme.of(context).splashColor,
+                                    child: Center(
+                                        child: Text(
+                                      "Save Custom Set",
+                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ))),
                               ),
                             ),
                           ],
@@ -926,69 +841,293 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
+  Widget Show_Custom_Card(int index) {
+    return Container(
+      width: 215,
+      height: 220,
+      child: ShakeAnimatedWidget(
+        enabled: is_shaking,
+        duration: Duration(milliseconds: 500),
+        shakeAngle: Rotation.deg(z: 1),
+        curve: Curves.linear,
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  width: 200,
+                  height: 180,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 170,
+                                child: AutoSizeText(
+                                  Hive.box<Custom_Solo>("solosaved1").getAt(index).name,
+                                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
+                                  maxLines: 1,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              Hive.box<Custom_Solo>("solosaved1").getAt(index).type == 0
+                                  ? Hive.box<Custom_Solo>("solosaved1").getAt(index).number_shot.toInt().toString() + " shots"
+                                  : Duration(seconds: Hive.box<Custom_Solo>("solosaved1").getAt(index).solo_time).toString().substring(2, 7) + " Round Time",
+                              style: TextStyle(
+                                color: Colors.white60,
+                              ),
+                            ),
+                            for (int i = 0; i < Hive.box<Custom_Solo>("solosaved1").getAt(index).sides.length; i++)
+                              Text(
+                                SoloDefs().Exersise[i]["name"],
+                                style: TextStyle(
+                                  color: Colors.white60,
+                                ),
+                              )
+                          ],
+                        )
+                      ],
+                    ),
+                  )),
+            ),
+            Container(
+              child: is_shaking
+                  ? Positioned(
+                      left: 0,
+                      top: 0,
+                      child: GestureDetector(
+                          onTap: () {
+                            if (solo.length != 1) {
+                              Widget temp = Show_Custom_Card(index);
+
+                              _mylistkey.currentState.removeItem(
+                                index,
+                                (context, Animation<double> animation) => ScaleTransition(
+                                  scale: animation,
+                                  child: temp,
+                                ),
+                                duration: Duration(milliseconds: 700),
+                              );
+
+                              setState(() {
+                                solo.deleteAt(index);
+                              });
+                            } else {
+                              final snackBar = SnackBar(
+                                content: Text('You must have at least one saved workout!'),
+                              );
+
+                              // Find the ScaffoldMessenger in the widget tree
+                              // and use it to show a SnackBar.
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            }
+                          },
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              color: Theme.of(context).backgroundColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Icon(
+                                  Icons.clear,
+                                  color: Theme.of(context).primaryColorDark,
+                                  size: 15,
+                                )),
+                          )),
+                    )
+                  : Text(""),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  load_hive() async {
+    if (!Hive.isAdapterRegistered(12)) {
+      Hive.registerAdapter(CustomSoloAdapter());
+    }
+
+    if (Hive.isBoxOpen("solosaved1")) {
+
+      solo = Hive.box<Custom_Solo>("solosaved1");
+    } else {
+      solo = await Hive.openBox<Custom_Solo>("solosaved1");
+    }
+    print("Solo Hive Opended");
+
+    if(solo.length==0){
+
+        var exersie = Custom_Solo()
+          ..name = "Default"
+          ..number_shot = shot_number.toDouble()
+          ..solo_time = total_time.inSeconds
+          ..sides = sides
+          ..type = _tabController.index;
+
+        solo.add(exersie); // Store this object for the first time
+        _mylistkey.currentState.insertItem(0);
+      }
+
+
+
+    setState(() {});
+  }
+
+  AnimatedList tw() {
+    return AnimatedList(
+        key: _mylistkey,
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.all(8),
+        initialItemCount: Hive.box<Custom_Solo>("solosaved1").length,
+        itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+          return SizeTransition(
+            sizeFactor: animation,
+            axis: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                  onLongPress: () {
+                    setState(() {});
+                    is_shaking = true;
+                  },
+                  onTap: () async {
+                    await loadModel();
+                    widget.analytics.logEvent(name: "Solo_Workout_From_Saved_List");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SoloHome(
+                                cameras: cameras,
+                                start_camera: start_camera,
+                                type: 1,
+                                time: total_time,
+                                shot_count: shot_number,
+                                sides: sides,
+                                showgreen: showGreen,
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                              )),
+                    );
+                  },
+                  child: Show_Custom_Card(index)),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(slivers: [
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-          delegate: MyDynamicHeader("Solo", "Exercise", false,widget.analytics,widget.observer, true),
-        ),
-        SliverPersistentHeader(
-          pinned: false,
-          floating: false,
-          delegate: header_shot(
-
-            ListView.builder(
-
-              itemCount: SoloDefs().Exersise.length,
-
-              scrollDirection: Axis.horizontal,
-
-
-              itemBuilder: (BuildContext context, int index) {
-
-                return shot(SoloDefs().Exersise[index]);
-
+    return FutureBuilder(
+      future: load_hive(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (Hive.isBoxOpen("solosaved1")) {
+          return Scaffold(
+            body: GestureDetector(
+              onTap: () {
+                setState(() {
+                  is_shaking = false;
+                });
               },
-
-
-
-            )
-
-          ),
-        ),
-        SliverPersistentHeader(
-          floating: false,
-          pinned: true,
-          delegate: _SliverAppBarDelegate(
-            TabBar(
-
-                tabs: [
-                  new Tab(
-                    //  icon: new Icon(Icons.sports_tennis),
-                    text: "Count",
+              child: CustomScrollView(slivers: [
+                SliverPersistentHeader(
+                  pinned: true,
+                  floating: false,
+                  delegate: MyDynamicHeader("Solo", "Exercise", false, widget.analytics, widget.observer, true),
+                ),
+                SliverPersistentHeader(
+                  pinned: false,
+                  floating: false,
+                  delegate: header_shot(tw()),
+                ),
+                SliverPersistentHeader(
+                  floating: false,
+                  pinned: true,
+                  delegate: _SliverAppBarDelegate(
+                    TabBar(tabs: [
+                      new Tab(
+                        //  icon: new Icon(Icons.sports_tennis),
+                        text: "Count",
+                      ),
+                      new Tab(
+                        text: "Timed",
+                      ),
+                    ], controller: _tabController),
                   ),
-                  new Tab(
-                    text: "Timed",
-                  ),
-                ],
-                controller: _tabController),
-          ),
-        ),
-        SliverFixedExtentList(
-          itemExtent: 700.0,
-          delegate: SliverChildListDelegate([
-            TabBarView(
-              children: [count(), timed()],
-              controller: _tabController,
+                ),
+                SliverFixedExtentList(
+                  itemExtent: 700.0,
+                  delegate: SliverChildListDelegate([
+                    TabBarView(
+                      children: [count(), timed()],
+                      controller: _tabController,
+                    ),
+                  ], addAutomaticKeepAlives: true),
+                ),
+              ]),
             ),
-          ], addAutomaticKeepAlives: true),
-        ),
-      ]),
+          );
+        }
+        return Center(child: Text("Laoding"));
+      },
     );
+  }
+}
 
+@HiveType()
+class Custom_Solo extends HiveObject {
+  @HiveField(0)
+  String name;
+
+  @HiveField(1)
+  double number_shot;
+
+  @HiveField(2)
+  int solo_time;
+
+  @HiveField(3)
+  List<int> sides;
+
+  @HiveField(4)
+  int type;
+}
+
+class CustomSoloAdapter extends TypeAdapter<Custom_Solo> {
+  @override
+  final typeId = 12;
+
+  @override
+  Custom_Solo read(BinaryReader reader) {
+    return Custom_Solo()
+      ..name = reader.read()
+      ..number_shot = reader.read()
+      ..solo_time = reader.read()
+      ..sides = reader.read()
+      ..type = reader.read();
+  }
+
+  @override
+  void write(BinaryWriter writer, Custom_Solo obj) {
+    writer.write(obj.name);
+    writer.write(obj.number_shot);
+    writer.write(obj.solo_time);
+    writer.write(obj.sides);
+    writer.write(obj.type);
   }
 }
 

@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:confetti/confetti.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -35,7 +34,6 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
   _Finish_ScreenState(this.total_bounces);
   List<Bounce> total_bounces;
 
-  ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
   bool expanded = false;
 
   List<int> showing = [];

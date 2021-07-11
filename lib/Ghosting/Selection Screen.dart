@@ -455,8 +455,8 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
 
   loadModel() async {
     await Tflite.loadModel(
-      model: "assets/ssd_mobilenet.tflite",
-      labels: "assets/ssd_mobilenet.txt",
+      model: "assets/models/ssd_mobilenet.tflite",
+      labels: "assets/models/ssd_mobilenet.txt",
       useGpuDelegate: true,
     );
   }

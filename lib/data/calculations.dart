@@ -52,6 +52,18 @@ class DataMethods {
     return data;
   }
 
+
+  log_precision(solo) async {
+
+    var box = await Hive.openBox('badges');
+
+    if(box.get("solo_p",defaultValue: 0)<solo){
+      box.put("solo_p", solo);
+    }
+
+
+  }
+
   double percision(Box<Solo_stroage> solo_storage_box) {
     List<double> acc = [];
     for (int i = 0; i < solo_storage_box.length; i++) {
@@ -75,9 +87,12 @@ class DataMethods {
 
 
     if (acc.length == 0) {
+      log_precision(0);
       return 0;
     } else {
-      return acc.reduce((a, b) => a + b) / acc.length;
+      double p =acc.reduce((a, b) => a + b) / acc.length;
+      log_precision(p);
+      return p;
     }
   }
 

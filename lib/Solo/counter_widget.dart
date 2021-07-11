@@ -4,13 +4,10 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_beep/flutter_beep.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:squash/Solo/solo_defs.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-import 'package:soundpool/soundpool.dart';
 
 typedef void Callback(bool done);
 typedef void Callback1(int current_side);
@@ -40,7 +37,6 @@ class counter_widget extends StatefulWidget {
 class counter_widget_state extends State<counter_widget> {
   counter_widget_state(this._start, this.type, this.counter_value);
 
-  Soundpool _soundpool;
 
   int type;
 
@@ -70,7 +66,6 @@ class counter_widget_state extends State<counter_widget> {
           setState(() {
             timer.cancel();
             is_working = false;
-            playsound();
 
             widget.is_working(is_working);
 
@@ -166,7 +161,6 @@ class counter_widget_state extends State<counter_widget> {
   Widget Counter() {
     if (is_working) {
       if (widget.counter_value == widget.counter_goal) {
-        playsound();
 
         if (sides_done == widget.activities.length - 1) {
           if (stop_done) {
@@ -258,28 +252,10 @@ class counter_widget_state extends State<counter_widget> {
     );
   }
 
-  Future<void> playsound() async {
-    var _alarmSound = await _soundId;
-
-    int streamId = await _soundpool.play(_alarmSound, repeat: 2);
-  }
-
-  Future<void> loadsound() async {
-    _soundId = await rootBundle.load("assets/sounds/ding.mp4").then((ByteData soundData) {
-      return _soundpool.load(soundData);
-    });
-
-    var id = await _soundId;
-
-    _soundpool.setVolume(soundId: id, volume: 1.0);
-  }
 
   @override
   void initState() {
-    _soundpool = Soundpool(
-      streamType: StreamType.notification,
-    );
-    loadsound();
+
 
     super.initState();
   }
@@ -289,7 +265,6 @@ class counter_widget_state extends State<counter_widget> {
     if (_timer != null) {
       _timer.cancel();
     }
-    _soundpool.dispose();
     sc.dispose();
     super.dispose();
   }

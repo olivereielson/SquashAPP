@@ -92,65 +92,6 @@ class _setupState extends State<setup> {
       navigatorObservers: <NavigatorObserver>[setup.observer],
       theme: ThemeProvider.themeOf(theme).data,
 
-      darkTheme: ThemeData(
-
-
-
-          brightness: Brightness.dark,
-          backgroundColor: Color.fromRGBO(50, 50, 50, 1),
-          splashColor: Color.fromRGBO(60, 60, 100, 1),
-          appBarTheme: AppBarTheme(color: Color.fromRGBO(60, 60, 100, 1), textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
-          tabBarTheme: TabBarTheme(
-            labelStyle: TextStyle(color: Colors.white),
-            labelColor: Colors.white,
-          ),
-          focusColor: Colors.grey,
-          highlightColor: Colors.white,
-          textTheme: TextTheme(
-              bodyText1: TextStyle(color: Colors.white),
-              bodyText2: TextStyle(color: Colors.white),
-              caption: TextStyle(
-                color: Color.fromRGBO(20, 20, 60, 1),
-              )),
-          accentColor: Colors.lightBlueAccent,
-          cardTheme: CardTheme(),
-          //primaryColor: Color.fromRGBO(60, 60, 100, 1),
-          primaryColor: Colors.white,
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            selectedItemColor: Colors.white,
-            selectedIconTheme: IconThemeData(
-              color: Colors.white,
-            ),
-            unselectedItemColor: Colors.grey,
-          ),
-          primaryColorDark: Colors.grey,
-          indicatorColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.white)),
-
-      highContrastTheme: ThemeData(
-      brightness: Brightness.light,
-      dividerTheme: DividerThemeData(),
-      textTheme: TextTheme(bodyText2: TextStyle(color: Color.fromRGBO(60, 90, 130, 1)), caption: TextStyle(color: Color.fromRGBO(40, 70, 130, 1)), bodyText1: TextStyle(color: Colors.black)),
-      splashColor: Color.fromRGBO(60, 90, 130, 1),
-      backgroundColor: Colors.white,
-      tabBarTheme: TabBarTheme(
-      labelColor: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-    color: Colors.white,
-    ),
-    primaryColorDark: Colors.black87,
-    primaryColorLight: Colors.white,
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    selectedItemColor: Color.fromRGBO(66, 89, 138, 1),
-    unselectedItemColor: Colors.grey,
-    ),
-    highlightColor: Colors.black,
-
-    focusColor: Color.fromRGBO(66, 89, 138, 1),
-    primaryColor: Color.fromRGBO(66, 89, 138, 1)),
-
-
       home: home,
     );
   }
@@ -160,24 +101,8 @@ class _setupState extends State<setup> {
     return ThemeProvider(
 
       saveThemesOnChange: true,
-      loadThemeOnInit: false,
-      onInitCallback: (controller, previouslySavedThemeFuture) async {
-        print("jere");
-        String savedTheme = await previouslySavedThemeFuture;
-        if (savedTheme != null) {
-          controller.setTheme(savedTheme);
-        } else {
-          Brightness platformBrightness =
-              SchedulerBinding.instance?.window.platformBrightness ??
-                  Brightness.light;
-          if (platformBrightness == Brightness.dark) {
-            controller.setTheme('dark');
-          } else {
-            controller.setTheme('light');
-          }
-          controller.forgetSavedTheme();
-        }
-      },
+      loadThemeOnInit: true,
+
       themes: <AppTheme>[
         AppTheme(
             id: 'light',
@@ -185,7 +110,7 @@ class _setupState extends State<setup> {
                 brightness: Brightness.light,
                 dividerTheme: DividerThemeData(),
                 textTheme: TextTheme(bodyText2: TextStyle(color: Color.fromRGBO(60, 90, 130, 1)), caption: TextStyle(color: Color.fromRGBO(40, 70, 130, 1)), bodyText1: TextStyle(color: Colors.black)),
-                splashColor: Color.fromRGBO(60, 90, 130, 1),
+                splashColor: Color.fromRGBO(66, 89, 138, 1),
                 backgroundColor: Colors.white,
                 tabBarTheme: TabBarTheme(
                   labelColor: Colors.white,
@@ -208,8 +133,6 @@ class _setupState extends State<setup> {
         AppTheme(id: 'dark',
           description: "Dark Theme",
           data: ThemeData(
-
-
 
               brightness: Brightness.dark,
               backgroundColor: Color.fromRGBO(50, 50, 50, 1),

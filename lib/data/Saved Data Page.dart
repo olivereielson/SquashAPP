@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:animated_widgets/widgets/rotation_animated.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
-import 'package:blobs/blobs.dart';
 import 'package:custom_clippers/Clippers/directional_wave_clipper.dart';
 import 'package:custom_clippers/Clippers/multiple_points_clipper.dart';
 import 'package:custom_clippers/Clippers/sin_cosine_wave_clipper.dart';

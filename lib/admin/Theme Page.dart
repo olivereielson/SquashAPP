@@ -2,7 +2,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 import 'package:scidart/numdart.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -18,10 +17,7 @@ class theme_page extends StatefulWidget {
 
 class _theme_pageState extends State<theme_page> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  final _controller = CircleColorPickerController(
-    initialColor: Colors.blue,
 
-  );
   Color _currentColor=Colors.blue;
 
 

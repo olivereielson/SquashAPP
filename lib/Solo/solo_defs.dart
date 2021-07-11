@@ -21,24 +21,13 @@ class SoloDefs {
   ];
 
 
-
-
-
-
-
-
-
   List Exersise = [
     {"name": "Forehand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
     {"name": "Backhand Drives", "id": 1, "xmin": 10, "ymin": 930, "xmax": 540, "ymax": 1645, "BackHand": true},
     {"name": "Forehand Channel", "id": 2, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
     {"name": "Backhand Channel", "id": 3, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1645, "BackHand": true},
-
     {"name": "Forehand Half Channel", "id": 4, "xmin": 945, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
     {"name": "Backhand Half Channel", "id": 5, "xmin": 10, "ymin": 930, "xmax": 145, "ymax": 1645, "BackHand": true},
-
-
-
     {"name": "Forehand Service Box", "id": 6, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "BackHand": false},
     {"name": "BackHand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "BackHand": true},
   ];
@@ -68,8 +57,6 @@ class SoloDefs {
 
   }
 
-
-
   Offset hom_trans(x,y,H){
     var nums =Array2d([Array([x]),Array([y]),Array([1])]);
     var points= matrixDot(H,nums);
@@ -82,12 +69,6 @@ class SoloDefs {
 
 
   }
-
-
-
-
-
-
 
 }
 

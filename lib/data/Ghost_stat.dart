@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/hive_classes.dart';
 
@@ -35,7 +34,6 @@ class _Ghost_StatState extends State<Ghost_Stat> {
   List<BarChartGroupData> barchrt = [];
   List<double> single_corner_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   Map<DateTime, List<String>> eventDay = {};
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
  int _count=0;
 
   @override

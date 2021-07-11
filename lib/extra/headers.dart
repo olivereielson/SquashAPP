@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:avatars/avatars.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -209,7 +210,7 @@ class header_shot extends SliverPersistentHeaderDelegate {
             decoration: BoxDecoration(color: Theme.of(context).splashColor, borderRadius: BorderRadius.only(bottomRight: Radius.circular(0), bottomLeft: Radius.circular(0))),
             child: Stack(
               children: [
-                Positioned(left: 0, top: posy, child: Container(width: MediaQuery.of(context).size.width, height: 200, child: am)),
+                Positioned(left: 0, top: posy, child: Container(width: MediaQuery.of(context).size.width, height: 220, child: am)),
               ],
             ),
           ),
@@ -312,7 +313,8 @@ class profileHeader extends SliverPersistentHeaderDelegate {
                                     style: TextStyle(fontSize: Iconsize,color: Colors.grey.withOpacity(1) ),
                                     maxLines: 1,
                                   )
-                              ))),
+                              )))
+
                     ],
                   )),
               Positioned(
@@ -363,3 +365,24 @@ class profileHeader extends SliverPersistentHeaderDelegate {
   @override
   double get minExtent => 150.0;
 }
+
+
+/*
+                      Container(
+                          width: 100,
+                          decoration: new BoxDecoration(
+                            color: Colors.white.withOpacity(1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                              child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child:
+
+                                  AutoSizeText(
+                                    inital,
+                                    style: TextStyle(fontSize: Iconsize,color: Colors.grey.withOpacity(1) ),
+                                    maxLines: 1,
+                                  )
+                              )))
+ */

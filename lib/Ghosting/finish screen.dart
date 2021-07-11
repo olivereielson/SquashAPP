@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:confetti/confetti.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:fl_chart/fl_chart.dart';
