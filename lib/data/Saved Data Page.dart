@@ -389,6 +389,15 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                       onDayPressed: (DateTime date, List<Event> events) {
                         calculate_calender();
                         this.setState(() => _currentDate = date);
+                        widget.analytics.logEvent(name: "Calender_Updated",
+                          parameters: <String, dynamic>{
+                            'type': 'day_change',
+                          },
+                        );
+
+
+                        print(events.length);
+
 
                       },
                       weekendTextStyle: TextStyle(
@@ -414,6 +423,11 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
                       onCalendarChanged: (date) {
                         setState(() {
                           _monthdate = date;
+                          widget.analytics.logEvent(name: "Calender_Updated",
+                            parameters: <String, dynamic>{
+                              'type': 'month_change',
+                            },
+                          );
                         });
                       },
                       isScrollable: false,

@@ -42,6 +42,10 @@ class GhostScreen extends StatefulWidget {
 }
 
 class GhostScreenState extends State<GhostScreen> with SingleTickerProviderStateMixin {
+
+  GhostScreenState(this.cameras);
+
+
   double number_set = 10;
   double round_num = 2;
   Duration rest_time = Duration(seconds: 30);
@@ -68,13 +72,6 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
   ];
   TabController _tabController;
 
-  Future<void> load_hive() async {
-    Hive.registerAdapter(CustomAdapter());
-
-    Exersises = await Hive.openBox<Custom>(box);
-
-    setState(() {});
-  }
 
   @override
   void initState() {
@@ -84,19 +81,12 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     );
 
     Data_Sender().testSetCurrentScreen(widget.analytics,"Ghosting Selection Page","Ghosting_Selection_Page");
+    load_hive();
+    _testSetCurrentScreen();
 
     super.initState();
-
-    if (Hive.isBoxOpen(box)) {
-      setState(() {
-        Exersises = Hive.box<Custom>(box);
-      });
-    } else {
-      load_hive();
-    }
   }
 
-  GhostScreenState(this.cameras);
 
   Future<void> _testSetCurrentScreen() async {
     await widget.analytics.setCurrentScreen(
@@ -105,6 +95,37 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     );
   }
 
+  Future<void> load_hive() async {
+
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(CustomAdapter());
+    }
+
+    if (Hive.isBoxOpen(box)) {
+      setState(() {
+        Exersises = Hive.box<Custom>(box);
+      });
+    } else {
+      Exersises = await Hive.openBox<Custom>(box);
+    }
+
+    if(Exersises.length==0){
+      var exersie = Custom()
+        ..name = "Default"
+        ..number_set = number_set
+        ..round_num = round_num
+        ..rest_time = rest_time.inSeconds
+        ..start_time = start_time.inSeconds
+        ..corners = corners
+        ..type = 0
+        ..round_time = round_time.inSeconds;
+
+      Exersises.add(exersie); // Store this object for the first time
+      _mylistkey.currentState.insertItem(0);
+    }
+
+    setState(() {});
+  }
 
   void saved() {
     var exersie = Custom()
@@ -201,11 +222,11 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
   show_round_picker() {
     List<Widget> nums = [];
 
-    nums.add(Text("1 set", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color)));
+    nums.add(Text("1 Round", style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color)));
 
     for (int x = 2; x < 50; x++) {
       nums.add(Text(
-        x.toString() + " sets",
+        x.toString() + " Rounds",
         style: TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
       ));
     }
@@ -654,20 +675,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
         future: load_hive(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (Hive.isBoxOpen(box)) {
-            if (Exersises.length == 0) {
-              var exersie = Custom()
-                ..name = "Default"
-                ..number_set = number_set
-                ..round_num = round_num
-                ..rest_time = rest_time.inSeconds
-                ..start_time = start_time.inSeconds
-                ..corners = corners
-                ..type = 0
-                ..round_time = round_time.inSeconds;
 
-              Exersises.add(exersie); // Store this object for the first time
-              _mylistkey.currentState.insertItem(0);
-            }
 
             return Scaffold(
               body: GestureDetector(

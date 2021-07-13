@@ -427,7 +427,7 @@ class _Ghost_StatState extends State<Ghost_Stat> {
                           },
                           reservedSize: 30,
                           margin: 10,
-                          interval: 2,
+                          interval: 1,
                         ),
                       ),
                       minX: 0,

@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/hive_classes.dart';
 
@@ -42,6 +43,7 @@ class _Solo_StatState extends State<Solo_Stat> {
   ];
 
   Future _load_data;
+  List<FlSpot> dista = [];
 
   @override
   void initState() {
@@ -63,18 +65,24 @@ class _Solo_StatState extends State<Solo_Stat> {
     } else {
       solo_storage_box = await Hive.openBox<Solo_stroage>("Solo1");
     }
+    print(solo_storage_box.length);
     setState(() {
       calculate_solo();
     });
   }
 
   void calculate_solo() {
+    print("solo calcuated");
+
     solo_type_pie_chart_data = DataMethods().solo_pie_chart(solo_storage_box);
 
-    accuracy = DataMethods().percision(solo_storage_box);
 
     ave_solo_dur = DataMethods().ave_solo_dur(solo_storage_box);
     ave_shot_num = DataMethods().ave_shot_num(solo_storage_box);
+    accuracy = DataMethods().percision(solo_storage_box);
+
+    dista= DataMethods().normal_d(solo_storage_box);
+
 
     setState(() {});
 
@@ -132,47 +140,56 @@ class _Solo_StatState extends State<Solo_Stat> {
 
   Widget percsion() {
     //print(accuracy);
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 150,
-      decoration: BoxDecoration(color: Colors.transparent, border: Border.all(color: Theme.of(context).primaryColor, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Shot",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
+    return GestureDetector(
+
+      onTap: (){
+
+        calculate_solo();
+
+      },
+
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: 150,
+        decoration: BoxDecoration(color: Colors.transparent, border: Border.all(color: Theme.of(context).primaryColor, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Shot",
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
-                ),
-                Text(
-                  "Precision",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 30),
-              child: Text(accuracy.floor().toString() + "%",
-                  style: TextStyle(
-                    fontSize: 60,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  )),
-            )
-          ],
+                  Text(
+                    "Precision",
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 30),
+                child: Text(accuracy.floor().toString() + "%",
+                    style: TextStyle(
+                      fontSize: 60,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    )),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -245,6 +262,140 @@ class _Solo_StatState extends State<Solo_Stat> {
     );
   }
 
+  Widget dist() {
+    bool data = false;
+
+    for (final ghost in solo_storage_box.values) {
+      if (ghost.bounces.length > 0) {
+        data = true;
+        break;
+      }
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            "Precision Over Time",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Theme.of(context).primaryColor),
+          ),
+        ),
+        Container(
+          height: 300,
+          width: MediaQuery.of(context).size.width,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: LineChart(
+              LineChartData(
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 2,
+                      ),
+                      left: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 2,
+                      ),
+
+                    ),
+                  ),
+                  gridData: FlGridData(
+                    show: true,
+                    drawHorizontalLine: false,
+                    drawVerticalLine: false,
+                    horizontalInterval: 1,
+                    verticalInterval: 1,
+                    getDrawingVerticalLine: (value) {
+                      return FlLine(
+                        color: Theme.of(context).splashColor,
+                        strokeWidth: 1,
+                      );
+                    },
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color: Theme.of(context).splashColor,
+                        strokeWidth: 1,
+                      );
+                    },
+                  ),
+                  lineTouchData: LineTouchData(
+                      enabled: false,
+                      touchTooltipData: LineTouchTooltipData(
+                        tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+                      )),
+                  titlesData: FlTitlesData(
+                    show: true,
+
+                    bottomTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTextStyles: (value) =>  TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 16),
+                        rotateAngle: 90,
+                        getTitles: (val) {
+                          return DateFormat('Md').format(solo_storage_box.getAt(val.toInt()).start).toString();
+                        },
+
+                        margin: 10,
+                        interval: 1),
+
+                    leftTitles: SideTitles(
+                      showTitles: true,
+                      getTextStyles: (value) =>  TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                      getTitles: (val) {
+                        return val.toInt().toString() + "%";
+                      },
+                      interval: 10,
+                      reservedSize: 30,
+                      margin: 10,
+
+                    ),
+                  ),
+                  minX: 0,
+                  maxY: 100,
+                  minY: 0,
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: data?DataMethods().normal_d(solo_storage_box):[FlSpot(0,0)] ,
+                      isCurved: true,
+                      colors: [
+                        Theme.of(context).primaryColor                            //Color(0xff044d7c),
+                        //  Colors.lightBlue,
+                      ],
+                      barWidth: 2,
+
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(
+                        show: false,
+                      ),
+                      belowBarData: BarAreaData(
+                        show: false,
+                        colors: [
+
+                          Colors.white
+
+                        ],
+                      ),
+                    ),
+                  ]),
+            ),
+          ),
+        ),
+      ],
+    );
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -275,7 +426,8 @@ class _Solo_StatState extends State<Solo_Stat> {
                       ],
                     ),
                   ),
-                  percsion()
+                  percsion(),
+                  dist()
                 ],
               ),
             );

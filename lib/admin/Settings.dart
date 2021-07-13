@@ -5,12 +5,14 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 //import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:email_launcher/email_launcher.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:squash/admin/credits.dart';
+import 'package:squash/admin/lefy.dart';
 import 'package:squash/admin/terms_and_conditions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -34,6 +36,7 @@ class SettingsPageState extends State<SettingsPage> {
   bool gotinfo = false;
   bool share_data = true;
   bool dark_mode = false;
+  String hand="";
 
   int themeIndex = 0;
 
@@ -41,6 +44,7 @@ class SettingsPageState extends State<SettingsPage> {
   void initState() {
 
     _testSetCurrentScreen();
+
      
     super.initState();
 
@@ -55,6 +59,11 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Future<void> open_hand_box() async {
+    if(!Hive.isBoxOpen("solo_def")){
+      await Hive.openBox("solo_def");
+    }
+  }
 
   getversion() async {
     packageInfo = await PackageInfo.fromPlatform();
@@ -372,6 +381,98 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Widget lefy(){
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: GestureDetector(
+        onTap: () async {
+
+        hand= await Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.fade,
+              child: Left(analytics: widget.analytics,observer: widget.observer,hand:hand ,),
+            ),
+          );
+
+        setState(() {
+
+        });
+
+        },
+        child: Container(
+          height: 90,
+          decoration: BoxDecoration(              border: Border.all(color: Theme.of(context).primaryColor,width: 3),
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration( borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Padding(padding: const EdgeInsets.all(8.0), child: Icon(Icons.pan_tool_outlined,color: Theme.of(context).primaryColor,size: 40,)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Dominate Hand",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        FutureBuilder(
+
+
+                          future: open_hand_box(),
+                          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+
+                            if(Hive.isBoxOpen("solo_def")){
+
+                              hand=Hive.box("solo_def").get("hand");
+
+                              return Text(Hive.box("solo_def").get("hand")+" Hand");
+
+                            }
+
+                            return Text("loading");
+
+
+                          },
+
+
+
+                        )
+
+                      ],
+                    ),
+                  ),
+                  Spacer(),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+
+  }
+
 
   Future<void> credits() async {
     return showDialog<void>(
@@ -446,6 +547,7 @@ class SettingsPageState extends State<SettingsPage> {
     return Column(
       children: [
         darkmode(),
+        lefy(),
         //DataColect(),
       // Rate_App(),
         FeedBack(),

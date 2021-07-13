@@ -62,6 +62,7 @@ dependencies:
   theme_provider: ^0.5.0
   implicitly_animated_reorderable_list:
   avatars: ^2.1.0
+  statistical_dart:
 
 dev_dependencies:
 

@@ -1,10 +1,16 @@
 import 'dart:ui';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class Ghost_Bagde extends StatefulWidget{
+  final FirebaseAnalytics analytics;
+  Ghost_Bagde({@required this.analytics});
+
+
+
   @override
   _Ghost_BagdeState createState() => _Ghost_BagdeState();
 }
@@ -47,7 +53,7 @@ class _Ghost_BagdeState extends State<Ghost_Bagde> {
 
 
   openBadgeBox() async {
-     var box = await Hive.openBox('testBox');
+     var box = await Hive.openBox('badges');
 
      int ghost_total = box.get("ghost_total",defaultValue: 0);
      double best_speed = box.get("best_speed",defaultValue: 999.0);
@@ -136,6 +142,13 @@ class _Ghost_BagdeState extends State<Ghost_Bagde> {
                           );
                         }
                     )
+                );
+                widget.analytics.logEvent(name:"Badge_Clicked",
+                  parameters: <String, dynamic>{
+                    'type': 'Ghost_Badge',
+                    'title': title,
+                    'haswon': hasWon,
+                  },
                 );
 
               },

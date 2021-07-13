@@ -847,6 +847,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
+  statistical_dart:
+    dependency: "direct main"
+    description:
+      name: statistical_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   stream_channel:
     dependency: transitive
     description:

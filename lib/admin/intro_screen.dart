@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
 import 'package:intro_views_flutter/intro_views_flutter.dart';
@@ -164,6 +165,8 @@ class _TestScreenState extends State<TestScreen> {
   double right = 20;
   bool can_scroll = true;
 
+  String hand = "";
+
   void startTimer() {
     const oneSec = const Duration(seconds: 2);
     _timer = new Timer.periodic(
@@ -242,6 +245,117 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
+  Widget lefty() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              Text(
+                "What is your dominate hand?",
+                style: TextStyle(fontSize: 30, color: Colors.white),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        var box = await Hive.openBox('solo_def');
+                        box.put("hand", "Left");
+
+
+
+                        setState(() {
+                          hand = "left";
+                        });
+                        widget.analytics.logEvent(name: "Log_Hand",
+                          parameters: <String, dynamic>{
+                            'dom_hand': 'Left',
+                          },
+                        );
+                      },
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        width: 160,
+                        height: 160,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: hand != "left" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "left" ? 4 : 7), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                        child: Center(
+                            child: Text(
+                              "Left Hand",
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        var box = await Hive.openBox('solo_def');
+                        box.put("hand", "right");
+
+                        setState(() {
+                          hand = "Right";
+                        });
+                        widget.analytics.logEvent(name: "Log_Hand",
+                          parameters: <String, dynamic>{
+                            'dom_hand': 'right',
+                          },
+                        );
+                      },
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        width: 160,
+                        height: 160,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: hand != "right" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "right" ? 4 : 7),
+                            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                        child: Center(
+                            child: Text(
+                              "Right Hand",
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+
+
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 50),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+
+              children: [
+
+                AnimatedOpacity(
+
+                  opacity: hand==""?0:1,
+                  duration: Duration(milliseconds: 300),
+
+                  child: CupertinoButton(
+                      child: Text("Next",style: TextStyle(color: Theme.of(context).splashColor),), onPressed: (){
+                    _pageController.nextPage(duration: Duration(milliseconds: 500), curve:Curves.easeIn,);
+                  },
+                   color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          )
+
+        ],
+      ),
+    );
+  }
+
   Widget Term() {
     return SafeArea(
       child: Padding(
@@ -259,11 +373,13 @@ class _TestScreenState extends State<TestScreen> {
             ),
             Expanded(
               child: Container(
-                color: Colors.white.withOpacity(0.1),
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)), borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 child: ListView(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: SingleChildScrollView(
                           child: Text(
                         terms().terms_text,
@@ -286,6 +402,10 @@ class _TestScreenState extends State<TestScreen> {
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                       onPressed: () {
+
+                        widget.analytics.logEvent(name: "Terms_Accepted");
+
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => MyApp(widget.analytics, widget.observer)),
@@ -762,6 +882,7 @@ class _TestScreenState extends State<TestScreen> {
         children: [
           page1(),
           name(),
+          lefty(),
           Term(),
         ],
       ),

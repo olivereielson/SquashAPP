@@ -179,3 +179,59 @@ class CustomClipperImage3 extends CustomClipper<Path> {
     return true;
   }
 }
+
+//    {"name": "Forehand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
+@HiveType()
+class Solo_Defs extends HiveObject {
+  @HiveField(0)
+  String name;
+
+  @HiveField(1)
+  int id;
+
+  @HiveField(2)
+  int xmin;
+
+  @HiveField(3)
+  int ymin;
+
+  @HiveField(4)
+  int xmax;
+
+  @HiveField(5)
+  int ymax;
+
+  @HiveField(6)
+  bool right_side;
+
+
+}
+
+class Solo_Defs_Adapter extends TypeAdapter<Solo_Defs> {
+  @override
+  final typeId = 78;
+
+  @override
+  Solo_Defs read(BinaryReader reader) {
+    return Solo_Defs()
+      ..name = reader.read()
+      ..id = reader.read()
+      ..xmin = reader.read()
+      ..ymin = reader.read()
+      ..xmax = reader.read()
+      ..ymax = reader.read()
+      ..right_side = reader.read();
+  }
+
+  @override
+  void write(BinaryWriter writer, Solo_Defs obj) {
+    writer.write(obj.name);
+    writer.write(obj.id);
+    writer.write(obj.xmin);
+    writer.write(obj.ymin);
+    writer.write(obj.xmax);
+    writer.write(obj.ymax);
+    writer.write(obj.right_side);
+
+  }
+}

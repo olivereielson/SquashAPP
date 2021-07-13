@@ -70,11 +70,12 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
 
   DateTime time;
 
-  List<int> sides = [0];
+  List<int> sides = [0, 1, 2, 3];
 
   List<Widget> settings;
   int side_count = 2;
   int taraget_count = 50;
+  Future _load_data;
 
   bool showGreen = true;
 
@@ -84,8 +85,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       length: 2,
       vsync: this,
     );
+    _load_data = load_hive();
+
     _testSetCurrentScreen();
-    load_hive();
 
     super.initState();
   }
@@ -146,7 +148,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
-  show_shot_picker() {
+  show_shot_picker2() {
     List<Widget> nums = [];
 
     nums.add(Text(
@@ -180,6 +182,77 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                 children: nums),
           );
         });
+  }
+
+  show_shot_picker() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+            Radius.circular(18),
+          )),
+          title: new Text(
+            "Number of Shots",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          content: new TextField(
+            autofocus: true,
+            keyboardType: TextInputType.number,
+
+            decoration: new InputDecoration(
+                counterStyle: TextStyle(color: Colors.white),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 10,
+                    ),
+                    gapPadding: 5),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 1,
+                  ),
+                ),
+                labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white54),
+            onChanged: (value){
+
+              setState(() {
+                shot_number= int.parse(value);
+              });
+
+            },
+            onSubmitted: (value) {
+              setState(() {
+                shot_number= int.parse(value);
+
+              });
+
+              Navigator.of(context).pop();
+            },
+          ),
+          actions: [
+
+            CupertinoButton(
+
+              child: Text("Done",style: TextStyle(color:Colors.white),),
+              onPressed: (){
+
+                Navigator.pop(context);
+
+              },
+
+
+            )
+
+          ],
+        );
+      },
+    );
   }
 
   show_target_picker() {
@@ -330,45 +403,53 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            height: 90,
-            decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 3), color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
-                    child: Icon(
-                      EvaIcons.hash,
-                      color: Theme.of(context).primaryColor,
-                      size: 40,
+          child: GestureDetector(
+            onTap: ()  {
+
+              show_shot_picker();
+              SoloDefs().setup();
+
+            },
+            child: Container(
+              height: 90,
+              decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor, width: 3), color: Colors.grey.withOpacity(0.0), borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+                      child: Icon(
+                        EvaIcons.hash,
+                        color: Theme.of(context).primaryColor,
+                        size: 40,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Number of Shots",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            )),
-                        Text(
-                          shot_number.toString(),
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Number of Shots",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          Text(
+                            shot_number.toString(),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Spacer(),
-                  Icon(Icons.chevron_right)
-                ],
+                    Spacer(),
+                    Icon(Icons.chevron_right)
+                  ],
+                ),
               ),
             ),
           ),
@@ -532,7 +613,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
         tag: "hero1",
         child: GestureDetector(
           onTap: () async {
-
             sides = await Navigator.push(
               context,
               PageTransition(
@@ -545,11 +625,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
               ),
             );
 
-
-
-
-
-                setState(() {});
+            setState(() {});
           },
           child: Container(
             height: 90,
@@ -568,7 +644,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                           child: Image.asset(
                         "assets/icons/court_icon.png",
                         height: 40,
-
                         color: Theme.of(context).primaryColor,
                       )),
                     ),
@@ -854,8 +929,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
           children: [
             Center(
               child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 3), borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   width: 200,
                   height: 180,
                   child: Padding(
@@ -893,7 +967,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                             ),
                             for (int i = 0; i < Hive.box<Custom_Solo>("solosaved1").getAt(index).sides.length; i++)
                               Text(
-                                SoloDefs().Exersise[i]["name"],
+
+                                SoloDefs().get().getAt(sides[i]).name,
                                 style: TextStyle(
                                   color: Colors.white60,
                                 ),
@@ -964,27 +1039,22 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     }
 
     if (Hive.isBoxOpen("solosaved1")) {
-
       solo = Hive.box<Custom_Solo>("solosaved1");
     } else {
       solo = await Hive.openBox<Custom_Solo>("solosaved1");
     }
-    print("Solo Hive Opended");
 
-    if(solo.length==0){
+    if (solo.length == 0) {
+      var exersie = Custom_Solo()
+        ..name = "Default"
+        ..number_shot = shot_number.toDouble()
+        ..solo_time = total_time.inSeconds
+        ..sides = sides
+        ..type = _tabController.index;
 
-        var exersie = Custom_Solo()
-          ..name = "Default"
-          ..number_shot = shot_number.toDouble()
-          ..solo_time = total_time.inSeconds
-          ..sides = sides
-          ..type = _tabController.index;
-
-        solo.add(exersie); // Store this object for the first time
-        _mylistkey.currentState.insertItem(0);
-      }
-
-
+      solo.add(exersie); // Store this object for the first time
+      _mylistkey.currentState.insertItem(0);
+    }
 
     setState(() {});
   }
@@ -1034,7 +1104,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: load_hive(),
+      future: _load_data,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (Hive.isBoxOpen("solosaved1")) {
           return Scaffold(

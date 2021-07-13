@@ -59,6 +59,7 @@ class terms_page extends StatelessWidget {
                 child: CupertinoButton(
                   color: Colors.white,
                   onPressed: () {
+                    analytics.logEvent(name: "Terms_Accepted");
                     Navigator.pop(context);
                   },
                   child: Text(

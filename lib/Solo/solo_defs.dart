@@ -1,8 +1,10 @@
 import 'dart:ffi';
 import 'dart:ui';
 
+import 'package:hive/hive.dart';
 import 'package:scidart/numdart.dart';
 import 'package:squash/Solo/court_functions.dart';
+import 'package:squash/extra/hive_classes.dart';
 
 class SoloDefs {
 
@@ -22,15 +24,19 @@ class SoloDefs {
 
 
   List Exersise = [
-    {"name": "Forehand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
-    {"name": "Backhand Drives", "id": 1, "xmin": 10, "ymin": 930, "xmax": 540, "ymax": 1645, "BackHand": true},
-    {"name": "Forehand Channel", "id": 2, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
-    {"name": "Backhand Channel", "id": 3, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1645, "BackHand": true},
-    {"name": "Forehand Half Channel", "id": 4, "xmin": 945, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
-    {"name": "Backhand Half Channel", "id": 5, "xmin": 10, "ymin": 930, "xmax": 145, "ymax": 1645, "BackHand": true},
-    {"name": "Forehand Service Box", "id": 6, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "BackHand": false},
-    {"name": "BackHand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "BackHand": true},
+    {"name": "Forehand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": true},
+    {"name": "Backhand Drives", "id": 1, "xmin": 10, "ymin": 930, "xmax": 540, "ymax": 1645, "right_side": false},
+    {"name": "Forehand Channel", "id": 2, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": true},
+    {"name": "Backhand Channel", "id": 3, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1645, "right_side": false},
+    {"name": "Forehand Half Channel", "id": 4, "xmin": 945, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": true},
+    {"name": "Backhand Half Channel", "id": 5, "xmin": 10, "ymin": 930, "xmax": 145, "ymax": 1645, "right_side": false},
+    {"name": "Forehand Service Box", "id": 6, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "right_side": true},
+    {"name": "BackHand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "right_side": false},
   ];
+
+
+  Box<Solo_Defs> Exersise2;
+  String box="Solo_Defs";
 
 
   Map convert_points(int index,points){
@@ -70,15 +76,48 @@ class SoloDefs {
 
   }
 
+  setup() async {
+
+    if (!Hive.isAdapterRegistered(78)) {
+      Hive.registerAdapter(Solo_Defs_Adapter());
+    }
+
+    if (Hive.isBoxOpen(box)) {
+      Exersise2 = Hive.box<Solo_Defs>(box);
+    } else {
+      Exersise2 = await Hive.openBox<Solo_Defs>(box);
+    }
+    print(Exersise2.length);
+
+    if(Exersise2.length==0){
+
+      for(int i=0; i<Exersise.length;i++){
+
+        var temp = Solo_Defs()
+          ..name=Exersise[i]["name"]
+          ..xmin=Exersise[i]["xmin"]
+          ..ymin=Exersise[i]["ymin"]
+          ..xmax=Exersise[i]["xmax"]
+          ..ymax=Exersise[i]["ymax"]
+          ..right_side=Exersise[i]["right_side"];
+
+        Exersise2.add(temp);
+
+      }
+
+
+    }
+
+
+
+
+
+  }
+
+   Box<Solo_Defs> get(){
+    Exersise2 = Hive.box<Solo_Defs>(box);
+    return Exersise2;
+
+  }
+
 }
-
-
-
-
-//Map ForeHandDrives = {"name": "Forehand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false};
-
-//Map BackHandDrives = {"name": "Backhand Drives", "id": 1, "xmin": 10, "ymin": 930, "xmax": 540, "ymax": 1645, "BackHand": true};
-
-//Map ForeHandServiceBox = {"name": "Forehand Service Box", "id": 2, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "BackHand": false};
-
-//Map BackHandServiceBox = {"name": "BackHand Service Box", "id": 3, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "BackHand": true};

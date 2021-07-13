@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:soundpool/soundpool.dart';
 import 'package:squash/Ghosting/Selection%20Screen.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
+import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/admin/Settings.dart';
 import 'package:squash/data/save_page.dart';
 import 'package:squash/Solo/solo%20screen.dart';
@@ -61,7 +62,6 @@ class setup extends StatefulWidget {
 
 class _setupState extends State<setup> {
   bool first_run;
-
   Future _future;
 
   @override
@@ -129,7 +129,6 @@ class _setupState extends State<setup> {
                 focusColor: Color.fromRGBO(66, 89, 138, 1),
                 primaryColor: Color.fromRGBO(66, 89, 138, 1)),
             description: 'Light Theme'),
-
         AppTheme(id: 'dark',
           description: "Dark Theme",
           data: ThemeData(
@@ -166,7 +165,6 @@ class _setupState extends State<setup> {
               iconTheme: IconThemeData(color: Colors.white)),
 
         ),
-
         AppTheme(id: 'pink',
           description: "Pink Theme",
           data: ThemeData(
@@ -382,6 +380,10 @@ class _MyAppState extends State<MyApp> {
   PageController _pageController = new PageController();
 
   int current = 0;
+
+  SoloDefs soloDEf;
+
+
 
   @override
   Widget build(BuildContext context) {

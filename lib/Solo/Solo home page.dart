@@ -655,10 +655,10 @@ class SoloHomeState extends State<SoloHome> {
 
         temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
 
-        if (temp.x > SoloDefs().Exersise[current_side]["xmin"]-10 &&
-            temp.x < SoloDefs().Exersise[current_side]["xmax"]+10 &&
-            temp.y > SoloDefs().Exersise[current_side]["ymin"]-10 &&
-            temp.y < SoloDefs().Exersise[current_side]["ymax"]+10) {
+        if (temp.x > SoloDefs().Exersise[current_side]["xmin"]-5 &&
+            temp.x < SoloDefs().Exersise[current_side]["xmax"]+5 &&
+            temp.y > SoloDefs().Exersise[current_side]["ymin"]-5 &&
+            temp.y < SoloDefs().Exersise[current_side]["ymax"]+5) {
 
 
           ball.add(Positioned(
@@ -681,7 +681,7 @@ class SoloHomeState extends State<SoloHome> {
             double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
 
 
-            if(temp.x> SoloDefs().Exersise[current_side]["xmax"]+10){
+            if(temp.x> SoloDefs().Exersise[current_side]["xmax"]+5 || temp.y>SoloDefs().Exersise[current_side]["ymin"]){
               ball.add(Positioned(
                   left: line_x,
                   top: last_bounce[last_bounce.length - 3].y - h,
@@ -716,7 +716,7 @@ class SoloHomeState extends State<SoloHome> {
             double line_x2 = ((mid_om - dst_point[1].y) / slope2) + dst_point[1].x;
 
 
-            if(temp.x< SoloDefs().Exersise[current_side]["xmin"]-10){
+            if(temp.x< SoloDefs().Exersise[current_side]["xmin"]-5||temp.y>SoloDefs().Exersise[current_side]["ymin"]){
 
               print("heww");
               print(line_x2);

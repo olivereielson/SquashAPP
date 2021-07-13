@@ -171,7 +171,6 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
   log_badges(int ghost, int solo, double best_speed) async {
 
     var box = await Hive.openBox('badges');
-
     box.put("solo_total", solo);
     box.put("ghost_total", ghost);
     box.put("best_speed", best_speed);
@@ -276,10 +275,10 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
           return ListView(
             children: [
 
-              Ghost_Bagde(),
+              Ghost_Bagde(analytics: widget.analytics,),
 
 
-              Solo_Bagde(),
+              Solo_Bagde(analytics: widget.analytics,),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 child: Container(

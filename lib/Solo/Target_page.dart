@@ -265,7 +265,7 @@ class target_state extends State<target> {
                         animation: dragAnimation,
                         builder: (BuildContext context, Widget child) {
                           return Handle(
-                            delay: const Duration(milliseconds: 300),
+                            delay: const Duration(milliseconds: 500),
                             key: ValueKey(SoloDefs().Exersise[item]),
                             child: SizeFadeTransition(
                               sizeFraction: 0.7,
@@ -318,11 +318,13 @@ class target_state extends State<target> {
                           }
                         });
                       },
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
                         height: 50,
                         width: 50,
                         decoration: BoxDecoration(
-                            border: Border.all(color: !sides.contains(data["id"]) ? Colors.white.withOpacity(0.5) : Colors.white, width: 4), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                            border: Border.all(color: !sides.contains(data["id"]) ? Colors.white.withOpacity(0.5) : Colors.white, width: !sides.contains(data["id"])?4:7), borderRadius: BorderRadius
+                            .all(Radius.circular(20.0))),
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
