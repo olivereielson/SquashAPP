@@ -40,7 +40,7 @@ class SoloHome extends StatefulWidget {
   final int shot_count;
   final int type;
   final bool showgreen;
-  final List<int> sides;
+  final List<Solo_Defs> sides;
   final Duration time;
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
@@ -108,7 +108,7 @@ class SoloHomeState extends State<SoloHome> {
 
   bool on_ground = false;
 
-  int current_side = 0;
+  Solo_Defs current_side;
 
   var H;
 
@@ -210,7 +210,7 @@ class SoloHomeState extends State<SoloHome> {
   Future<void> saved_points() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (SoloDefs().get().getAt(current_side).right_side) {
+    if (current_side.right_side) {
       if (!prefs.containsKey("p2.y")) {
         prefs.setDouble("p0.x", 324.0);
         prefs.setDouble("p0.y", 489.0);
@@ -269,7 +269,7 @@ class SoloHomeState extends State<SoloHome> {
     ];
 
     dst_point.clear();
-    var H = find_homography3(!SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand, dst);
+    var H = find_homography3(!current_side.right_side ? scr_backhand : scr_forehand, dst);
 
     for (int i = 0; i < scr_points_corners.length; i++) {
       Point p = hom_trans(scr_points_corners[i][0], scr_points_corners[i][1], H);
@@ -295,11 +295,7 @@ class SoloHomeState extends State<SoloHome> {
             print(x);
             dynamic_bounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
 
-            if (current_side == 1 || current_side == 3) {
-              //  smartbounce_service_box(x, x, re["rect"]["h"] * MediaQuery.of(context).size.height);
-            } else {
-              // smartbounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
-            }
+
           }
         }
       });
@@ -311,7 +307,7 @@ class SoloHomeState extends State<SoloHome> {
       print('No camera is found');
     } else {
       controller = new CameraController(
-        widget.cameras[1],
+        widget.cameras[0],
         ResolutionPreset.high,
       );
 
@@ -346,279 +342,7 @@ class SoloHomeState extends State<SoloHome> {
     }
   }
 
-  void smartbounce2(x, y, h) {
-    if (y < dst_point[0].y - 30 && x > dst_point[0].x) {
-      below = false;
-    }
 
-    if (last_bounce.length > 7) {
-      int len = last_bounce.length;
-
-      double mid_om = last_bounce[last_bounce.length - 3].y;
-
-      if (last_bounce[len - 6].y < mid_om &&
-          last_bounce[len - 4].y < mid_om &&
-          last_bounce[len - 2].y < mid_om &&
-          last_bounce[len - 1].y < mid_om &&
-          dst_point[0].y - 30 < mid_om &&
-          mid_om - last_bounce[len - 5].y > 15 &&
-          !below) {
-        double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
-
-        double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
-
-        List<dynamic> dst = [
-          [points[2].x, points[2].y],
-          [points[3].x, points[3].y],
-          [points[1].x, points[1].y],
-          [points[0].x, points[0].y],
-        ];
-
-        //print(back_hand);
-
-        var H = find_homography3(dst, !SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
-
-        Point temp;
-
-        if (last_bounce[last_bounce.length - 3].x < line_x) {
-          ball.add(Positioned(
-              left: line_x,
-              top: last_bounce[last_bounce.length - 3].y - h,
-              child: Icon(
-                Icons.circle,
-                size: 15,
-                color: line_x - last_bounce[last_bounce.length - 3].x > 40 ? Colors.pink : Colors.yellow,
-              )));
-          ball.add(Positioned(
-              left: last_bounce[last_bounce.length - 3].x,
-              top: last_bounce[last_bounce.length - 3].y - h,
-              child: Icon(
-                Icons.circle,
-                size: 15,
-                color: Colors.deepPurple,
-              )));
-          temp = hom_trans(line_x, last_bounce[last_bounce.length - 3].y - h, H);
-        } else {
-          ball.add(Positioned(
-              left: last_bounce[last_bounce.length - 3].x,
-              top: last_bounce[last_bounce.length - 3].y - h,
-              child: Icon(
-                Icons.circle,
-                size: 15,
-                color: Colors.black,
-              )));
-
-          temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
-        }
-
-        setState(() {
-          bounces.add(temp);
-        });
-        total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
-
-        //total_bounces.add(temp);
-
-        last_bounce.clear();
-        below = true;
-      } else {
-        last_bounce.removeAt(len - 7);
-      }
-    }
-
-    last_bounce.add(Point(x, y));
-  }
-
-  void smartbounce(x, y, h) {
-    int max = 7;
-
-    if (y < dst_point[0].y - 15 && x > dst_point[0].x - 30) {
-      setState(() {
-        below = false;
-        blew_count++;
-      });
-    }
-
-    if (last_bounce.length > max) {
-      int len = last_bounce.length;
-
-      double mid_om = last_bounce[last_bounce.length - 3].y;
-
-      if (last_bounce[len - 6].y < mid_om &&
-          last_bounce[len - 4].y < mid_om &&
-          last_bounce[len - 2].y < mid_om &&
-          last_bounce[len - 1].y < mid_om &&
-          points[1].y < mid_om &&
-          mid_om - last_bounce[len - 5].y > 5 &&
-          !below &&
-          blew_count >= 5) {
-        double lineX;
-        double lineY;
-
-        List<dynamic> dst = [
-          [points[2].x, points[2].y],
-          [points[3].x, points[3].y],
-          [points[1].x, points[1].y],
-          [points[0].x, points[0].y],
-        ];
-
-        var H = find_homography3(dst, !SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
-        Point temp;
-
-        //finds the best point if ball bounces off court
-        ball.clear();
-
-        if (SoloDefs().get().getAt(current_side).right_side) {
-          double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
-
-          lineX = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
-          lineY = (slope * (last_bounce[last_bounce.length - 3].x - dst_point[0].x)) + dst_point[0].y;
-
-          if (last_bounce[last_bounce.length - 3].x < lineX) {
-            temp = hom_trans(lineX, lineY - h, H);
-
-            ball.add(Positioned(
-                left: lineX,
-                top: lineY - h,
-                child: Icon(
-                  Icons.circle,
-                  size: 15,
-                  color: Colors.pink,
-                )));
-          } else {
-            temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
-
-            ball.add(Positioned(
-                left: last_bounce[last_bounce.length - 3].x,
-                top: last_bounce[last_bounce.length - 3].y - h,
-                child: Icon(
-                  Icons.circle,
-                  size: 15,
-                  color: Colors.black,
-                )));
-          }
-        } else {
-          double slope = (dst_point[1].y - dst_point[3].y) / (dst_point[1].x - dst_point[3].x);
-
-          lineX = ((mid_om - dst_point[1].y) / slope) + dst_point[1].x;
-          lineY = (slope * (last_bounce[last_bounce.length - 3].x - dst_point[1].x)) + dst_point[1].y;
-
-          if (last_bounce[last_bounce.length - 3].x > lineX) {
-            temp = hom_trans(lineX, lineY - h, H);
-
-            ball.add(Positioned(
-                left: lineX,
-                top: lineY - h,
-                child: Icon(
-                  Icons.circle,
-                  size: 15,
-                  color: Colors.pink,
-                )));
-          } else {
-            temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
-
-            ball.add(Positioned(
-                left: last_bounce[last_bounce.length - 3].x,
-                top: last_bounce[last_bounce.length - 3].y - h,
-                child: Image.asset(
-                  "assets/icons/squash.png",
-                  color: Colors.black,
-                  height: 20,
-                  width: 20,
-                )));
-          }
-        }
-
-        setState(() {
-          bounces.add(temp);
-        });
-        total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
-
-        //last_bounce.clear();
-        setState(() {
-          blew_count = 0;
-
-          below = true;
-        });
-
-        //print(get_data);
-
-      } else {
-        last_bounce.removeAt(len - max);
-      }
-    }
-
-    last_bounce.add(Point(x, y));
-  }
-
-  void smartbounce_service_box(x, y, h) {
-    if (y < dst_point[0].y - 30 && x > dst_point[0].x) {
-      setState(() {
-        below = false;
-        blew_count++;
-      });
-    }
-
-    if (last_bounce.length > 7) {
-      int len = last_bounce.length;
-
-      double mid_om = last_bounce[last_bounce.length - 3].y;
-
-      if (last_bounce[len - 6].y < mid_om &&
-          last_bounce[len - 4].y < mid_om &&
-          last_bounce[len - 2].y < mid_om &&
-          last_bounce[len - 1].y < mid_om &&
-          dst_point[0].y < mid_om &&
-          mid_om - last_bounce[len - 5].y > 5 &&
-          !below &&
-          blew_count >= 2) {
-        List<dynamic> dst = [
-          [points[2].x, points[2].y],
-          [points[3].x, points[3].y],
-          [points[1].x, points[1].y],
-          [points[0].x, points[0].y],
-        ];
-
-        //print(back_hand);
-
-        var H = find_homography3(dst,!SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
-
-        Point temp;
-
-        temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
-
-        List<int> c =!SoloDefs().get().getAt(current_side).right_side ? [0, 280, 930, 1200] : [810, 1080, 930, 1200];
-
-        if (temp.x > c[0] && temp.x < c[1] && temp.y > c[2] && temp.y < c[3]) {
-          ball.add(Positioned(
-              left: last_bounce[last_bounce.length - 3].x,
-              top: last_bounce[last_bounce.length - 3].y - h,
-              child: Icon(
-                Icons.circle,
-                size: 15,
-                color: Colors.black,
-              )));
-
-          bounces.add(temp);
-          total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
-        } else {
-          ball.add(Positioned(
-              left: last_bounce[last_bounce.length - 3].x,
-              top: last_bounce[last_bounce.length - 3].y - h,
-              child: Icon(
-                Icons.cancel,
-                size: 15,
-                color: Colors.redAccent,
-              )));
-        }
-        last_bounce.clear();
-        below = true;
-      } else {
-        last_bounce.removeAt(len - 7);
-      }
-    }
-
-    last_bounce.add(Point(x, y));
-  }
 
   void dynamic_bounce(x, y, h) {
     if (y < dst_point[0].y - 30 && x > dst_point[0].x) {
@@ -650,16 +374,16 @@ class SoloHomeState extends State<SoloHome> {
 
         //print(back_hand);
 
-        var H = find_homography3(dst, !SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst, !current_side.right_side ? scr_backhand : scr_forehand);
 
         Point temp;
 
         temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
 
-        if (temp.x > SoloDefs().get().getAt(current_side).xmin-5 &&
-            temp.x < SoloDefs().get().getAt(current_side).xmax+5 &&
-            temp.y > SoloDefs().get().getAt(current_side).ymin-5 &&
-            temp.y < SoloDefs().get().getAt(current_side).ymax+5) {
+        if (temp.x > current_side.xmin-5 &&
+            temp.x < current_side.xmax+5 &&
+            temp.y > current_side.ymin-5 &&
+            temp.y < current_side.ymax+5) {
 
 
           ball.add(Positioned(
@@ -672,17 +396,17 @@ class SoloHomeState extends State<SoloHome> {
               )));
 
           bounces.add(temp);
-          total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
+          total_bounces.add(new Bounce(temp.x, temp.y, current_side, DateTime.now()));
         } else {
 
-          if(SoloDefs().get().getAt(current_side).right_side){
+          if(current_side.right_side){
 
             double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
 
             double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
 
 
-            if(temp.x> SoloDefs().get().getAt(current_side).xmin+5 || temp.y>SoloDefs().get().getAt(current_side).ymin){
+            if(temp.x> current_side.xmin+5 || temp.y>current_side.ymin){
               ball.add(Positioned(
                   left: line_x,
                   top: last_bounce[last_bounce.length - 3].y - h,
@@ -693,7 +417,7 @@ class SoloHomeState extends State<SoloHome> {
                   )));
               temp = hom_trans(line_x, last_bounce[last_bounce.length - 3].y, H);
               bounces.add(temp);
-              total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
+              total_bounces.add(new Bounce(temp.x, temp.y, current_side, DateTime.now()));
             }else{
 
               ball.add(Positioned(
@@ -717,7 +441,7 @@ class SoloHomeState extends State<SoloHome> {
             double line_x2 = ((mid_om - dst_point[1].y) / slope2) + dst_point[1].x;
 
 
-            if(temp.x<SoloDefs().get().getAt(current_side).xmin-5||temp.y>SoloDefs().get().getAt(current_side).ymin){
+            if(temp.x<current_side.xmin-5||temp.y>current_side.ymin){
 
 
               ball.add(Positioned(
@@ -733,7 +457,7 @@ class SoloHomeState extends State<SoloHome> {
 
               temp = hom_trans(line_x2, last_bounce[last_bounce.length - 3].y, H);
               bounces.add(temp);
-              total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
+              total_bounces.add(new Bounce(temp.x, temp.y, current_side, DateTime.now()));
 
             }else{
               ball.add(Positioned(
@@ -1264,7 +988,7 @@ class SoloHomeState extends State<SoloHome> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (!SoloDefs().get().getAt(current_side).right_side) {
+    if (!current_side.right_side) {
       prefs.setDouble('p0b.x', points[0].x);
       prefs.setDouble('p0b.y', points[0].y);
 
@@ -1484,18 +1208,6 @@ class SoloHomeState extends State<SoloHome> {
                     current_side: (vals) {
                       current_side = vals;
 
-                      print("int=$vals");
-
-                      if (vals < 2) {
-                        saved_points();
-
-                        //   generate_cout_point();
-                      } else {
-                        setState(() {
-                          saved_points();
-                          //   generate_cout_point();
-                        });
-                      }
                       setState(() {
                         bounces.clear();
                         ball.clear();

@@ -44,14 +44,14 @@ class SavedDataState extends State<SavedData> {
   void initState() {
     RandomColor _randomColor = RandomColor();
 
-    for (int i = 0; i < SoloDefs().Exersise.length; i++) {
+    for (int i = 0; i < SoloDefs().get().length; i++) {
       dots_colors.add(_randomColor.randomColor(colorHue: ColorHue.blue));
     }
 
     for (int i = 0; i < solo_storage_box.bounces.length; i++) {
       if (!showing.contains(solo_storage_box.bounces[i].type)) {
-        showing.add(solo_storage_box.bounces[i].type.toInt());
-        show_dots.add(solo_storage_box.bounces[i].type.toInt());
+        showing.add(solo_storage_box.bounces[i].type.id);
+        show_dots.add(solo_storage_box.bounces[i].type.id);
       }
     }
 
@@ -175,7 +175,7 @@ class SavedDataState extends State<SavedData> {
       double x1 = (solo_storage_box.bounces[i].x_pos * MediaQuery.of(context).size.width) / 1080;
       double y1 = (MediaQuery.of(context).size.height-offset)-((solo_storage_box.bounces[i].y_pos * (h)) / 1645);
 
-      int gfg = solo_storage_box.bounces[i].type.toInt();
+      int gfg = solo_storage_box.bounces[i].type.id;
 
       Color spot_color = dots_colors[gfg];
 

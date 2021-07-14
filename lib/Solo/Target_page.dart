@@ -20,7 +20,7 @@ import 'package:squash/extra/hive_classes.dart';
 class target extends StatefulWidget {
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
-  List<int> sides;
+  List<Solo_Defs> sides;
 
   target({@required this.analytics, @required this.observer, @required this.sides});
 
@@ -29,9 +29,10 @@ class target extends StatefulWidget {
 }
 
 class target_state extends State<target> {
-  target_state(this.sides);
+  target_state(this.sides2);
 
-  List<int> sides;
+  List<Solo_Defs> sides2;
+  List<Solo_Defs> sides=[];
 
   Color court_color = Color.fromRGBO(4, 12, 128, 1);
 
@@ -42,6 +43,9 @@ class target_state extends State<target> {
 
   @override
   void initState() {
+
+
+    sides=sides2.toList();
 
     _testSetCurrentScreen();
     super.initState();
@@ -244,6 +248,9 @@ class target_state extends State<target> {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return GestureDetector(
       onTap: (){
 
@@ -265,7 +272,7 @@ class target_state extends State<target> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back_ios),
               onPressed: () {
-                Navigator.pop(context, sides);
+                Navigator.pop(context,sides);
               },
             ),
             elevation: 0,
@@ -276,7 +283,7 @@ class target_state extends State<target> {
               Container(
                 height: 250,
                 width: MediaQuery.of(context).size.width,
-                child: ImplicitlyAnimatedReorderableList<int>(
+                child: ImplicitlyAnimatedReorderableList<Solo_Defs>(
                   // The current items in the list.
                   scrollDirection: Axis.horizontal,
                   items: sides,
@@ -302,7 +309,7 @@ class target_state extends State<target> {
                                 sizeFraction: 0.7,
                                 curve: Curves.easeInOut,
                                 animation: itemAnimation,
-                                child: Material(color: color, elevation: elevation, type: MaterialType.transparency, child: shot(SoloDefs().get().getAt(item))),
+                                child: Material(color: color, elevation: elevation, type: MaterialType.transparency, child: shot(item)),
                               ),
                             );
                           },
@@ -392,10 +399,10 @@ class target_state extends State<target> {
                           onTap: () {
                             if(!is_shaking){
                               setState(() {
-                                if (sides.contains(index)) {
-                                  sides.remove(index);
+                                if (sides.contains(SoloDefs().get().getAt(index))) {
+                                  sides.remove(SoloDefs().get().getAt(index));
                                 } else {
-                                  sides.add(index);
+                                  sides.add(SoloDefs().get().getAt(index));
                                 }
                               });
                               widget.analytics.logEvent(name: "Solo_Custom_Court_Toggled");
@@ -422,7 +429,7 @@ class target_state extends State<target> {
                                     height: 100,
                                     width: 100,
                                     decoration: BoxDecoration(
-                                        border: Border.all(color: !sides.contains(SoloDefs().get().getAt(index).id) ? Colors.white.withOpacity(0.5) : Colors.white, width: !sides.contains(SoloDefs().get().getAt(index).id)?4:7),
+                                        border: Border.all(color: !sides.contains(SoloDefs().get().getAt(index)) ? Colors.white.withOpacity(0.5) : Colors.white, width: !sides.contains(SoloDefs().get().getAt(index))?4:7),
                                         borderRadius:
                                     BorderRadius
                                         .all(Radius.circular(20.0))),
@@ -456,15 +463,15 @@ class target_state extends State<target> {
 
                                           child: GestureDetector(
                                               onTap: () async {
-                                                await Hive.box<Custom_Solo>("solosaved1").deleteFromDisk();
 
                                                 if(is_shaking){
                                                   widget.analytics.logEvent(name: "Solo_Custom_Court_Removed");
                                                   setState(() {
-                                                    SoloDefs().delete(index);
-                                                    if(sides.contains(index)){
-                                                      sides.removeAt(index);
+                                                    if(sides.contains(SoloDefs().get().getAt(index))){
+                                                      sides.remove(SoloDefs().get().getAt(index));
                                                     }
+                                                    SoloDefs().delete(index);
+
                                                   });
                                                 }
 

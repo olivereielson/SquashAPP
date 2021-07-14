@@ -271,7 +271,7 @@ class _TestScreenState extends State<TestScreen> {
 
 
                         setState(() {
-                          hand = "left";
+                          hand = "Left";
                         });
                         widget.analytics.logEvent(name: "Log_Hand",
                           parameters: <String, dynamic>{
@@ -284,7 +284,8 @@ class _TestScreenState extends State<TestScreen> {
                         width: 160,
                         height: 160,
                         decoration: BoxDecoration(
-                            border: Border.all(color: hand != "left" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "left" ? 4 : 7), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                            border: Border.all(color: hand != "Left" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "Left" ? 4 : 7), borderRadius: BorderRadius.all(Radius.circular
+                          (20.0))),
                         child: Center(
                             child: Text(
                               "Left Hand",
@@ -295,7 +296,7 @@ class _TestScreenState extends State<TestScreen> {
                     GestureDetector(
                       onTap: () async {
                         var box = await Hive.openBox('solo_def');
-                        box.put("hand", "right");
+                        box.put("hand", "Right");
 
                         setState(() {
                           hand = "Right";
@@ -311,7 +312,7 @@ class _TestScreenState extends State<TestScreen> {
                         width: 160,
                         height: 160,
                         decoration: BoxDecoration(
-                            border: Border.all(color: hand != "right" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "right" ? 4 : 7),
+                            border: Border.all(color: hand != "Right" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "Right" ? 4 : 7),
                             borderRadius: BorderRadius.all(Radius.circular(20.0))),
                         child: Center(
                             child: Text(

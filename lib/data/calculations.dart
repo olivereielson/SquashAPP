@@ -19,7 +19,7 @@ class DataMethods {
 
     for (int i = 0; i < solo_storage_box.length; i++) {
       for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
-        solo_type_pie_chart_data[solo_storage_box.getAt(i).bounces[x].type.toInt()]++;
+        solo_type_pie_chart_data[solo_storage_box.getAt(i).bounces[x].type.id]++;
       }
     }
 

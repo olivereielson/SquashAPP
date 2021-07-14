@@ -95,7 +95,7 @@ class Bounce extends HiveObject {
   double y_pos;
 
   @HiveField(2)
-  double type;
+  Solo_Defs type;
 
   @HiveField(3)
   DateTime date;
@@ -119,66 +119,7 @@ class BounceAdapter extends TypeAdapter<Bounce> {
   }
 }
 
-class CustomClipperImage extends CustomClipper<Path> {
-  @override
-  getClip(Size size) {
-    var path = Path();
-    path.lineTo(50, 0.0);
 
-    var endPoint = Offset(size.width*0.5, size.height);
-    var controlPoint = Offset(size.width *1.3, size.height*0.3);
-    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    path.lineTo(.0, size.height);
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper oldClipper) {
-    return true;
-  }
-}
-
-class CustomClipperImage2 extends CustomClipper<Path> {
-  @override
-  getClip(Size size) {
-    var path = Path();
-    path.lineTo(size.width, 0.0);
-
-    var controlPoint = Offset(size.width, 0);
-    var endPoint = Offset(size.width ,size.height);
-    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    path.lineTo(size.width*0.5, 0);
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper oldClipper) {
-    return true;
-  }
-}
-
-class CustomClipperImage3 extends CustomClipper<Path> {
-  @override
-  getClip(Size size) {
-    var path = Path();
-    path.lineTo(0.0, 0);
-    path.lineTo(size.width, 0);
-
-    var endPoint = Offset(0, size.height);
-    var controlPoint = Offset(size.width / 0.7, size.height);
-    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    path.lineTo(0.0, size.height);
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper oldClipper) {
-    return true;
-  }
-}
 
 //    {"name": "Forehand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "BackHand": false},
 @HiveType()

@@ -15,7 +15,7 @@ class MyPainter extends CustomPainter {
   List<Point> serve_box;
   List<Point> dst_point;
   bool showGreen;
-  int currentSide;
+  Solo_Defs currentSide;
   Color line_color;
 
   MyPainter(this.serve_box, this.dst_point, this.currentSide, this.showGreen,this.line_color);

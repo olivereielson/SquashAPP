@@ -39,22 +39,21 @@ class SoloDefs {
   String box="Solo_Defs1";
 
 
-  Map convert_points(int index,points){
-    Exersise2 = Hive.box<Solo_Defs>(box);
+  Map convert_points(Solo_Defs def,points){
 
     var H;
 
 
-    if(!Exersise2.getAt(index).right_side) {
+    if(!def.right_side) {
        H= find_homography3(scr_backhand, points);
     }else{
        H = find_homography3(scr_forehand, points);
     }
 
-    Offset p1=hom_trans(Exersise2.getAt(index).xmin.toDouble(), Exersise2.getAt(index).ymin.toDouble(), H);
-    Offset p2=hom_trans(Exersise2.getAt(index).xmax.toDouble(), Exersise2.getAt(index).ymin.toDouble(), H);
-    Offset p3=hom_trans(Exersise2.getAt(index).xmax.toDouble(), Exersise2.getAt(index).ymax.toDouble(), H);
-    Offset p4=hom_trans(Exersise2.getAt(index).xmin.toDouble(), Exersise2.getAt(index).ymax.toDouble(), H);
+    Offset p1=hom_trans(def.xmin.toDouble(), def.ymin.toDouble(), H);
+    Offset p2=hom_trans(def.xmax.toDouble(), def.ymin.toDouble(), H);
+    Offset p3=hom_trans(def.xmax.toDouble(), def.ymax.toDouble(), H);
+    Offset p4=hom_trans(def.xmin.toDouble(), def.ymax.toDouble(), H);
 
 
     return <String,Offset> {"p1":p1,"p2":p2,"p3":p3,"p4":p4};

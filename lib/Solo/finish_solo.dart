@@ -46,9 +46,8 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
 
     RandomColor _randomColor = RandomColor();
 
-    for (int i=0;i<SoloDefs().Exersise.length; i++){
+    for (int i=0;i<SoloDefs().get().length; i++){
       dots_colors.add(_randomColor.randomColor(colorHue: ColorHue.blue));
-
     }
 
 
@@ -56,8 +55,8 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
 
       if(!showing.contains(total_bounces[i].type)){
 
-        showing.add(total_bounces[i].type.toInt());
-        show_dots.add(total_bounces[i].type.toInt());
+        showing.add(total_bounces[i].type.id);
+        show_dots.add(total_bounces[i].type.id);
       }
 
 
@@ -179,6 +178,7 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
 
   Widget flat_bounce() {
 
+
     List<Widget> spots = [];
     double h = (MediaQuery.of(context).size.width * 1645) / 1080;
 
@@ -190,7 +190,9 @@ class _Finish_ScreenState extends State<Finish_Screen_Solo> {
       double x1 = ( total_bounces[i].x_pos * MediaQuery.of(context).size.width) / 1080;
       double y1 = (MediaQuery.of(context).size.height-offset)-(( total_bounces[i].y_pos * (h)) / 1645);
 
-      int gfg =  total_bounces[i].type.toInt();
+      int gfg =  total_bounces[i].type.id;
+
+      //print(total_bounces[i].type.id);
 
       Color spot_color = dots_colors[gfg];
 

@@ -7,10 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:squash/Solo/solo_defs.dart';
+import 'package:squash/extra/hive_classes.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 typedef void Callback(bool done);
-typedef void Callback1(int current_side);
+typedef void Callback1(Solo_Defs current_side);
 typedef void Callback2(bool is_working);
 
 class counter_widget extends StatefulWidget {
@@ -18,7 +19,7 @@ class counter_widget extends StatefulWidget {
   final Callback1 current_side;
   final Callback2 is_working;
 
-  List<int> activities;
+  List<Solo_Defs> activities;
 
   Color main;
   Duration time;
@@ -128,7 +129,7 @@ class counter_widget_state extends State<counter_widget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-            SoloDefs().get().getAt(widget.activities[sides_done]).name,
+              widget.activities[sides_done].name,
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
             ),
             GestureDetector(
@@ -210,7 +211,7 @@ class counter_widget_state extends State<counter_widget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              SoloDefs().get().getAt(widget.activities[sides_done]).name,
+              widget.activities[sides_done].name,
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
             ),
             GestureDetector(
