@@ -383,6 +383,12 @@ class _MyAppState extends State<MyApp> {
 
   SoloDefs soloDEf;
 
+  @override
+  void initState() {
+    SoloDefs().setup();
+    super.initState();
+  }
+
 
 
   @override

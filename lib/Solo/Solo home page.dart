@@ -210,10 +210,11 @@ class SoloHomeState extends State<SoloHome> {
   Future<void> saved_points() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (!SoloDefs().Exersise[current_side]["BackHand"]) {
+    if (SoloDefs().get().getAt(current_side).right_side) {
       if (!prefs.containsKey("p2.y")) {
         prefs.setDouble("p0.x", 324.0);
         prefs.setDouble("p0.y", 489.0);
+
 
         prefs.setDouble("p1.x", 157.0);
         prefs.setDouble("p1.y", 498.0);
@@ -268,7 +269,7 @@ class SoloHomeState extends State<SoloHome> {
     ];
 
     dst_point.clear();
-    var H = find_homography3(SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand, dst);
+    var H = find_homography3(!SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand, dst);
 
     for (int i = 0; i < scr_points_corners.length; i++) {
       Point p = hom_trans(scr_points_corners[i][0], scr_points_corners[i][1], H);
@@ -375,7 +376,7 @@ class SoloHomeState extends State<SoloHome> {
 
         //print(back_hand);
 
-        var H = find_homography3(dst, SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst, !SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
 
         Point temp;
 
@@ -460,13 +461,13 @@ class SoloHomeState extends State<SoloHome> {
           [points[0].x, points[0].y],
         ];
 
-        var H = find_homography3(dst, SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst, !SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
         Point temp;
 
         //finds the best point if ball bounces off court
         ball.clear();
 
-        if (!SoloDefs().Exersise[current_side]["BackHand"]) {
+        if (SoloDefs().get().getAt(current_side).right_side) {
           double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
 
           lineX = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
@@ -579,13 +580,13 @@ class SoloHomeState extends State<SoloHome> {
 
         //print(back_hand);
 
-        var H = find_homography3(dst, SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst,!SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
 
         Point temp;
 
         temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
 
-        List<int> c = SoloDefs().Exersise[current_side]["BackHand"] ? [0, 280, 930, 1200] : [810, 1080, 930, 1200];
+        List<int> c =!SoloDefs().get().getAt(current_side).right_side ? [0, 280, 930, 1200] : [810, 1080, 930, 1200];
 
         if (temp.x > c[0] && temp.x < c[1] && temp.y > c[2] && temp.y < c[3]) {
           ball.add(Positioned(
@@ -649,16 +650,16 @@ class SoloHomeState extends State<SoloHome> {
 
         //print(back_hand);
 
-        var H = find_homography3(dst, SoloDefs().Exersise[current_side]["BackHand"] ? scr_backhand : scr_forehand);
+        var H = find_homography3(dst, !SoloDefs().get().getAt(current_side).right_side ? scr_backhand : scr_forehand);
 
         Point temp;
 
         temp = hom_trans(last_bounce[last_bounce.length - 3].x, last_bounce[last_bounce.length - 3].y, H);
 
-        if (temp.x > SoloDefs().Exersise[current_side]["xmin"]-5 &&
-            temp.x < SoloDefs().Exersise[current_side]["xmax"]+5 &&
-            temp.y > SoloDefs().Exersise[current_side]["ymin"]-5 &&
-            temp.y < SoloDefs().Exersise[current_side]["ymax"]+5) {
+        if (temp.x > SoloDefs().get().getAt(current_side).xmin-5 &&
+            temp.x < SoloDefs().get().getAt(current_side).xmax+5 &&
+            temp.y > SoloDefs().get().getAt(current_side).ymin-5 &&
+            temp.y < SoloDefs().get().getAt(current_side).ymax+5) {
 
 
           ball.add(Positioned(
@@ -674,14 +675,14 @@ class SoloHomeState extends State<SoloHome> {
           total_bounces.add(new Bounce(temp.x, temp.y, current_side.toDouble(), DateTime.now()));
         } else {
 
-          if(!SoloDefs().Exersise[current_side]["BackHand"]){
+          if(SoloDefs().get().getAt(current_side).right_side){
 
             double slope = (dst_point[0].y - dst_point[2].y) / (dst_point[0].x - dst_point[2].x);
 
             double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
 
 
-            if(temp.x> SoloDefs().Exersise[current_side]["xmax"]+5 || temp.y>SoloDefs().Exersise[current_side]["ymin"]){
+            if(temp.x> SoloDefs().get().getAt(current_side).xmin+5 || temp.y>SoloDefs().get().getAt(current_side).ymin){
               ball.add(Positioned(
                   left: line_x,
                   top: last_bounce[last_bounce.length - 3].y - h,
@@ -716,10 +717,8 @@ class SoloHomeState extends State<SoloHome> {
             double line_x2 = ((mid_om - dst_point[1].y) / slope2) + dst_point[1].x;
 
 
-            if(temp.x< SoloDefs().Exersise[current_side]["xmin"]-5||temp.y>SoloDefs().Exersise[current_side]["ymin"]){
+            if(temp.x<SoloDefs().get().getAt(current_side).xmin-5||temp.y>SoloDefs().get().getAt(current_side).ymin){
 
-              print("heww");
-              print(line_x2);
 
               ball.add(Positioned(
                   right: line_x2,
@@ -1265,7 +1264,7 @@ class SoloHomeState extends State<SoloHome> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (SoloDefs().Exersise[current_side]["BackHand"]) {
+    if (!SoloDefs().get().getAt(current_side).right_side) {
       prefs.setDouble('p0b.x', points[0].x);
       prefs.setDouble('p0b.y', points[0].y);
 

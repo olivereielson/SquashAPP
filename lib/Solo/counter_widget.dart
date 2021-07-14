@@ -128,7 +128,7 @@ class counter_widget_state extends State<counter_widget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              SoloDefs().Exersise[widget.activities[sides_done]]["name"],
+            SoloDefs().get().getAt(widget.activities[sides_done]).name,
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
             ),
             GestureDetector(
@@ -210,7 +210,7 @@ class counter_widget_state extends State<counter_widget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              SoloDefs().Exersise[widget.activities[sides_done]]["name"],
+              SoloDefs().get().getAt(widget.activities[sides_done]).name,
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
             ),
             GestureDetector(

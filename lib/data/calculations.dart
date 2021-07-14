@@ -13,7 +13,7 @@ class DataMethods {
   List<double> solo_pie_chart(Box<Solo_stroage> solo_storage_box) {
     List<double> solo_type_pie_chart_data = [];
 
-    for (int i = 0; i < SoloDefs().Exersise.length; i++) {
+    for (int i = 0; i < SoloDefs().get().length; i++) {
       solo_type_pie_chart_data.add(0);
     }
 
@@ -31,7 +31,7 @@ class DataMethods {
 
     var sum = slice_data.reduce((a, b) => a + b);
 
-    for (int i = 0; i < SoloDefs().Exersise.length; i++) {
+    for (int i = 0; i < SoloDefs().get().length; i++) {
       data.add(
         PieChartSectionData(
           color: colors,

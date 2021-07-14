@@ -224,7 +224,8 @@ class _Solo_StatState extends State<Solo_Stat> {
                     child: Row(
                       children: [
                         Text(
-                          SoloDefs().Exersise[_count]["name"],
+                        SoloDefs().get().getAt(_count).name,
+
                           // This key causes the AnimatedSwitcher to interpret this as a "new"
                           // child each time the count changes, so that it will begin its animation
                           // when the count changes.

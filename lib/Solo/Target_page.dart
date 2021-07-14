@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:implicitly_animated_reorderable_list/implicitly_animated_reorderable_list.dart';
 import 'package:implicitly_animated_reorderable_list/transitions.dart';
 import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
+import 'package:squash/Solo/New%20Target.dart';
 import 'package:squash/Solo/solo_defs.dart';
 
 class target extends StatefulWidget {
@@ -255,7 +256,7 @@ class target_state extends State<target> {
 
                 itemBuilder: (context, itemAnimation, item, index) {
                   return Reorderable(
-                    key: ValueKey(SoloDefs().Exersise[item]),
+                    key: ValueKey(  SoloDefs().get().getAt(index)),
                     builder: (context, dragAnimation, inDrag) {
                       final t = dragAnimation.value;
                       final elevation = lerpDouble(0, 8, t);
@@ -266,7 +267,7 @@ class target_state extends State<target> {
                         builder: (BuildContext context, Widget child) {
                           return Handle(
                             delay: const Duration(milliseconds: 500),
-                            key: ValueKey(SoloDefs().Exersise[item]),
+                            key: ValueKey(SoloDefs().get().getAt(index)),
                             child: SizeFadeTransition(
                               sizeFraction: 0.7,
                               curve: Curves.easeInOut,
@@ -304,10 +305,45 @@ class target_state extends State<target> {
                     crossAxisSpacing: 25.0,
                     mainAxisSpacing: 25.0,
                   ),
-                  itemCount: SoloDefs().Exersise.length,
+                  itemCount: SoloDefs().get().length+1,
                   itemBuilder: (BuildContext context, int index) {
-                    var data = SoloDefs().Exersise[index];
 
+                    if(index==SoloDefs().get().length){
+
+                      return GestureDetector(
+                        onTap: () {
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => create_target(analytics: widget.analytics, observer: widget.observer)),
+                          );
+
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white.withOpacity(0.5), width: 4),
+                              borderRadius:
+                              BorderRadius
+                                  .all(Radius.circular(20.0))),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Create New",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColorLight),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+
+                    }
+
+                    var data = SoloDefs().get().get(index);
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -323,13 +359,15 @@ class target_state extends State<target> {
                         height: 50,
                         width: 50,
                         decoration: BoxDecoration(
-                            border: Border.all(color: !sides.contains(data["id"]) ? Colors.white.withOpacity(0.5) : Colors.white, width: !sides.contains(data["id"])?4:7), borderRadius: BorderRadius
+                            border: Border.all(color: !sides.contains(SoloDefs().get().getAt(index).id) ? Colors.white.withOpacity(0.5) : Colors.white, width: !sides.contains(SoloDefs().get().getAt(index).id)?4:7),
+                            borderRadius:
+                        BorderRadius
                             .all(Radius.circular(20.0))),
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              data["name"],
+                              data.name,
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColorLight),
                             ),

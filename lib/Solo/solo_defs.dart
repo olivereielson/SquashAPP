@@ -36,7 +36,7 @@ class SoloDefs {
 
 
   Box<Solo_Defs> Exersise2;
-  String box="Solo_Defs";
+  String box="Solo_Defs1";
 
 
   Map convert_points(int index,points){
@@ -95,6 +95,7 @@ class SoloDefs {
 
         var temp = Solo_Defs()
           ..name=Exersise[i]["name"]
+          ..id=i
           ..xmin=Exersise[i]["xmin"]
           ..ymin=Exersise[i]["ymin"]
           ..xmax=Exersise[i]["xmax"]
