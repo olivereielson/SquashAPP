@@ -24,12 +24,20 @@ class _create_targetState extends State<create_target> {
 
   double box_size = 50;
   Point location = Point(250, 250);
-  double locationB=400;
+  double locationB = 400;
 
   int _side = 0;
-  Color line_color=Colors.grey;
+  Color line_color = Colors.grey;
 
-  String box="Solo_Defs1";
+  String box = "Solo_Defs1";
+
+
+  @override
+  void initState() {
+
+    _testSetCurrentScreen();
+    super.initState();
+  }
 
   Widget draw_court() {
     Color court_color = Colors.white;
@@ -86,43 +94,43 @@ class _create_targetState extends State<create_target> {
     );
   }
 
+  Future<void> _testSetCurrentScreen() async {
+    await widget.analytics.setCurrentScreen(
+      screenName: 'Create_Solo_Court_Page',
+      screenClassOverride: 'Create_Solo_Court_Page',
+    );
+  }
+
+
   Widget fixed_target() {
     return Positioned(
-        left: location.x.toDouble()- (box_size / 2),
-        top: location.y.toDouble()-(box_size / 2),
+        left: location.x.toDouble() - (box_size / 2),
+        top: location.y.toDouble() - (box_size / 2),
         child: Draggable(
-
           child: Container(
             width: box_size,
             height: box_size,
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
           ),
-
-
           rootOverlay: true,
-
-          dragAnchorStrategy: (t,off,context){
-            return Offset(off.size.width/2, off.size.height/2);
-
+          dragAnchorStrategy: (t, off, context) {
+            return Offset(off.size.width / 2, off.size.height / 2);
           },
-          onDragUpdate: (detatils){
-
-
+          onDragUpdate: (detatils) {
             setState(() {
-
               location = Point(detatils.localPosition.dx.toInt(), detatils.localPosition.dy.toInt());
             });
-
           },
-
-
           onDraggableCanceled: (velocity, offset) {
             setState(() {
               //location = Point(offset.dx.toInt() - (box_size / 2), offset.dy.toInt() - (box_size / 2));
               //location = Point(offset.dx.toInt(), offset.dy.toInt());
             });
           },
-          childWhenDragging: Icon(Icons.circle,color: Colors.transparent,),
+          childWhenDragging: Icon(
+            Icons.circle,
+            color: Colors.transparent,
+          ),
           feedback: Container(
             width: box_size,
             height: box_size,
@@ -130,21 +138,24 @@ class _create_targetState extends State<create_target> {
           ),
         ));
   }
+
   Widget fixed_targetB() {
     return Positioned(
-        left: location.x.toDouble()- (box_size / 2),
-        top: locationB- (box_size / 2),
+        left: location.x.toDouble() - (box_size / 2),
+        top: locationB - (box_size / 2),
         child: Draggable(
           child: Container(
             width: box_size,
             height: box_size,
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(1)),
           ),
-          childWhenDragging: Icon(Icons.circle,color: Colors.transparent,),
-          dragAnchorStrategy: (t,off,context){
-            return Offset(off.size.width/2, off.size.height/2);
+          childWhenDragging: Icon(
+            Icons.circle,
+            color: Colors.transparent,
+          ),
+          dragAnchorStrategy: (t, off, context) {
+            return Offset(off.size.width / 2, off.size.height / 2);
           },
-
           onDraggableCanceled: (velocity, offset) {
             setState(() {
               // location = Point(offset.dx.toInt() + (box_size / 2), offset.dy.toInt() + (box_size / 2));
@@ -152,15 +163,12 @@ class _create_targetState extends State<create_target> {
               //locationB=offset.dy;
             });
           },
-          onDragUpdate: (detatils){
-
-
+          onDragUpdate: (detatils) {
             setState(() {
               location = Point(detatils.globalPosition.dx.toInt(), location.y);
-              locationB=detatils.globalPosition.dy;
+              locationB = detatils.globalPosition.dy;
               //location = Point(detatils.globalPosition.dx.toInt(), detatils.globalPosition.dy.toInt());
             });
-
           },
           feedback: Container(
             width: box_size,
@@ -170,100 +178,64 @@ class _create_targetState extends State<create_target> {
         ));
   }
 
-  Widget lines(){
-
-
+  Widget lines() {
     return Positioned(
-
       top: location.y.toDouble(),
       left: location.x.toDouble(),
-
       child: Container(
-        height: locationB-location.y.toDouble(),
+        height: locationB - location.y.toDouble(),
         color: line_color,
         width: 5,
-
-
-
       ),
     );
-
-
-
   }
 
-  Widget lines2(){
-
-
+  Widget lines2() {
     return Positioned(
-
       top: location.y.toDouble(),
-      left: _side==1?location.x.toDouble():0,
-
+      left: _side == 1 ? location.x.toDouble() : 0,
       child: Container(
         height: 5,
         color: line_color,
-        width: _side==1? MediaQuery.of(context).size.width-location.x.toDouble():MediaQuery.of(context).size.width-(MediaQuery.of(context).size.width-location.x.toDouble()),
-
-
-
+        width: _side == 1 ? MediaQuery.of(context).size.width - location.x.toDouble() : MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width - location.x.toDouble()),
       ),
     );
-
-
-
   }
 
-  Widget lines3(){
-
-
-
+  Widget lines3() {
     return Positioned(
-
       top: locationB,
-      left: _side==1?location.x.toDouble():0,
-
+      left: _side == 1 ? location.x.toDouble() : 0,
       child: Container(
         height: 5,
         color: line_color,
-        width: _side==1? MediaQuery.of(context).size.width-location.x.toDouble():MediaQuery.of(context).size.width-(MediaQuery.of(context).size.width-location.x.toDouble()),
-
-
-
+        width: _side == 1 ? MediaQuery.of(context).size.width - location.x.toDouble() : MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width - location.x.toDouble()),
       ),
     );
-
-
-
   }
 
   Future<String> text_dialog() async {
-
-    String n= await Navigator.push(
+    String n = await Navigator.push(
       context,
       PageTransition(
         type: PageTransitionType.topToBottom,
         child: Scaffold(
-
           backgroundColor: Theme.of(context).primaryColor,
-
           body: Padding(
             padding: const EdgeInsets.all(15.0),
             child: Column(
-
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-
               children: [
-
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Text("Enter Custom Workout Name",style: TextStyle(color: Colors.white,fontSize: 25),),
+                  child: Text(
+                    "Enter Custom Workout Name",
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  ),
                 ),
-
                 TextField(
                   style: TextStyle(color: Colors.white),
-
                   decoration: InputDecoration(
                       hintText: "Eg 6 corners",
                       enabledBorder: UnderlineInputBorder(
@@ -280,66 +252,36 @@ class _create_targetState extends State<create_target> {
                           width: 2,
                         ),
                       ),
-
                       hintStyle: TextStyle(color: Colors.white60),
                       labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
-
-                  onSubmitted: (name){
-
-
-
-                    if (name.substring(name.length-1)==""){
-                      name=name.substring(0,name.length-1);
+                  onSubmitted: (name) {
+                    if (name.substring(name.length - 1) == "") {
+                      name = name.substring(0, name.length - 1);
                     }
 
-
-                    Navigator.pop(context,name);
-
-
+                    Navigator.pop(context, name);
                   },
-
-
-
-
-
                 )
-
-
               ],
-
-
             ),
           ),
-
-
         ),
       ),
     );
 
-
-
-
-    if(n.replaceAll(" ", "")==""){
-
+    if (n.replaceAll(" ", "") == "") {
       return "NO NAME";
-
     }
     return n.toString().toUpperCase();
-
   }
 
-  int Xcorrection(int val){
-
-    return (1080*val)~/MediaQuery.of(context).size.width;
-
+  int Xcorrection(int val) {
+    return (1080 * val) ~/ MediaQuery.of(context).size.width;
   }
 
-  int Ycorrection(int val){
-
-    return (1645*val)~/MediaQuery.of(context).size.height;
-
+  int Ycorrection(int val) {
+    return (1645 * val) ~/ MediaQuery.of(context).size.height;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -367,10 +309,8 @@ class _create_targetState extends State<create_target> {
                     ),
                     IconButton(
                         onPressed: () async {
-
                           String name = await text_dialog();
                           Box<Solo_Defs> Exersise2;
-
 
                           if (Hive.isBoxOpen(box)) {
                             Exersise2 = Hive.box<Solo_Defs>(box);
@@ -378,22 +318,33 @@ class _create_targetState extends State<create_target> {
                             Exersise2 = await Hive.openBox<Solo_Defs>(box);
                           }
 
-
-
                           var temp = Solo_Defs()
-                            ..name=name
-                            ..id=Exersise2.length+1
-                            ..xmin=_side==0?10:Xcorrection(location.x)
-                            ..ymin=Ycorrection(location.y)
-                            ..xmax=_side==0?Xcorrection(location.x):1080
-                            ..ymax=Ycorrection(locationB.toInt())
-                            ..right_side=_side==0?false:true;
+                            ..name = name
+                            ..id = Exersise2.length
+                            ..xmin = _side == 0 ? 10 : Xcorrection(location.x)
+                            ..ymin = Ycorrection(location.y)
+                            ..xmax = _side == 0 ? Xcorrection(location.x) : 1080
+                            ..ymax = Ycorrection(locationB.toInt())
+                            ..right_side = _side == 0 ? false : true;
 
                           Exersise2.add(temp);
 
+                          //print(Exersise2.length);
+                          //print(Exersise2.getAt(index));
 
+                          widget.analytics.logEvent(
+                            name: "Custom_Solo_Court_Saved",
+                            parameters: <String, dynamic>{
+                              'type': _side == 0 ? 'Left' : 'Right',
+                              'name': name,
+                              'xmin': _side == 0 ? 10 : Xcorrection(location.x),
+                              'ymin': Ycorrection(location.y),
+                              'xmax': _side == 0 ? Xcorrection(location.x) : 1080,
+                              'ymax': Ycorrection(locationB.toInt())
+                            },
+                          );
 
-
+                          Navigator.pop(context);
                         },
                         icon: Icon(
                           Icons.save,
@@ -441,7 +392,6 @@ class _create_targetState extends State<create_target> {
           lines(),
           lines2(),
           lines3(),
-
           fixed_target(),
           fixed_targetB(),
         ],

@@ -710,7 +710,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                 builder: (context) => SoloHome(
                                       cameras: cameras,
                                       start_camera: start_camera,
-                                      type: 0,
+                                      type: _tabController.index,
                                       time: total_time,
                                       shot_count: shot_number,
                                       sides: sides,
@@ -832,7 +832,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                         builder: (context) => SoloHome(
                                               cameras: cameras,
                                               start_camera: start_camera,
-                                              type: 1,
+                                              type: _tabController.index,
                                               time: total_time,
                                               shot_count: shot_number,
                                               sides: sides,
@@ -968,7 +968,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                             for (int i = 0; i < Hive.box<Custom_Solo>("solosaved1").getAt(index).sides.length; i++)
                               Text(
 
-                                SoloDefs().get().getAt(sides[i]).name,
+                                SoloDefs().get().getAt(Hive.box<Custom_Solo>("solosaved1").getAt(index).sides[i]).name,
                                 style: TextStyle(
                                   color: Colors.white60,
                                 ),
@@ -1085,10 +1085,10 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                           builder: (context) => SoloHome(
                                 cameras: cameras,
                                 start_camera: start_camera,
-                                type: 1,
-                                time: total_time,
-                                shot_count: shot_number,
-                                sides: sides,
+                                type: Hive.box<Custom_Solo>("solosaved1").getAt(index).type,
+                                time: Duration(seconds: Hive.box<Custom_Solo>("solosaved1").getAt(index).solo_time),
+                                shot_count: Hive.box<Custom_Solo>("solosaved1").getAt(index).number_shot.toInt(),
+                                sides: Hive.box<Custom_Solo>("solosaved1").getAt(index).sides,
                                 showgreen: showGreen,
                                 analytics: widget.analytics,
                                 observer: widget.observer,

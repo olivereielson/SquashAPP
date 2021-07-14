@@ -40,19 +40,21 @@ class SoloDefs {
 
 
   Map convert_points(int index,points){
+    Exersise2 = Hive.box<Solo_Defs>(box);
 
     var H;
-    if(Exersise[index]["BackHand"]) {
+
+
+    if(!Exersise2.getAt(index).right_side) {
        H= find_homography3(scr_backhand, points);
     }else{
        H = find_homography3(scr_forehand, points);
-
     }
 
-    Offset p1=hom_trans(Exersise[index]["xmin"].toDouble(), Exersise[index]["ymin"].toDouble(), H);
-    Offset p2=hom_trans(Exersise[index]["xmax"].toDouble(), Exersise[index]["ymin"].toDouble(), H);
-    Offset p3=hom_trans(Exersise[index]["xmax"].toDouble(), Exersise[index]["ymax"].toDouble(), H);
-    Offset p4=hom_trans(Exersise[index]["xmin"].toDouble(), Exersise[index]["ymax"].toDouble(), H);
+    Offset p1=hom_trans(Exersise2.getAt(index).xmin.toDouble(), Exersise2.getAt(index).ymin.toDouble(), H);
+    Offset p2=hom_trans(Exersise2.getAt(index).xmax.toDouble(), Exersise2.getAt(index).ymin.toDouble(), H);
+    Offset p3=hom_trans(Exersise2.getAt(index).xmax.toDouble(), Exersise2.getAt(index).ymax.toDouble(), H);
+    Offset p4=hom_trans(Exersise2.getAt(index).xmin.toDouble(), Exersise2.getAt(index).ymax.toDouble(), H);
 
 
     return <String,Offset> {"p1":p1,"p2":p2,"p3":p3,"p4":p4};
@@ -87,7 +89,6 @@ class SoloDefs {
     } else {
       Exersise2 = await Hive.openBox<Solo_Defs>(box);
     }
-    print(Exersise2.length);
 
     if(Exersise2.length==0){
 
@@ -112,6 +113,12 @@ class SoloDefs {
 
 
 
+
+  }
+
+  delete(int index){
+    Exersise2 = Hive.box<Solo_Defs>(box);
+    Exersise2.deleteAt(index);
 
   }
 

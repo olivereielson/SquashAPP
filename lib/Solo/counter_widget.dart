@@ -247,7 +247,7 @@ class counter_widget_state extends State<counter_widget> {
         width: 320,
         height: 320,
         decoration: BoxDecoration(color: Theme.of(context).splashColor.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(25))),
-        child: type == 0 ? timer() : Counter(),
+        child: type == 1 ? timer() : Counter(),
       ),
     );
   }
