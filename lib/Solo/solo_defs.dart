@@ -34,14 +34,14 @@ class SoloDefs {
     {"name": "BackHand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "right_side": false},
   ];
   List Exersise_Lefty = [
-    {"name": "Backhand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": false},
-    {"name": "Forehand Drives", "id": 1, "xmin": 10, "ymin": 930, "xmax": 540, "ymax": 1645, "right_side": true},
-    {"name": "Backhand Channel", "id": 2, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": false},
-    {"name": "Forehand Channel", "id": 3, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1645, "right_side": true},
-    {"name": "Backhand Half Channel", "id": 4, "xmin": 945, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": false},
-    {"name": "Forehand Half Channel", "id": 5, "xmin": 10, "ymin": 930, "xmax": 145, "ymax": 1645, "right_side": true},
-    {"name": "BackHand Service Box", "id": 6, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "right_side": false},
-    {"name": "Forehand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "right_side": true},
+    {"name": "Backhand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": true},
+    {"name": "Forehand Drives", "id": 1, "xmin": 10, "ymin": 930, "xmax": 540, "ymax": 1645, "right_side": false},
+    {"name": "Backhand Channel", "id": 2, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": true},
+    {"name": "Forehand Channel", "id": 3, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1645, "right_side": false},
+    {"name": "Backhand Half Channel", "id": 4, "xmin": 945, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": true},
+    {"name": "Forehand Half Channel", "id": 5, "xmin": 10, "ymin": 930, "xmax": 145, "ymax": 1645, "right_side": false},
+    {"name": "BackHand Service Box", "id": 6, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "right_side": true},
+    {"name": "Forehand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "right_side": false},
   ];
 
   Box<Solo_Defs> Exersise2;

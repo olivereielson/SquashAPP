@@ -59,7 +59,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
   int segmentedControlGroupValue = 1;
   Point location = Point(250.0, 250.0);
   bool target_locked = false;
-  String hive_box = "solosavaeaaaaz11saass9995";
+  String hive_box = "solo_saved10";
   Box<Custom_Solo> solo;
 
   Duration total_time = Duration(seconds: 10);
@@ -85,6 +85,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     _tabController = new TabController(
       length: 2,
       vsync: this,
+
     );
 
     _load_data = load_hive();
@@ -150,42 +151,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
-  show_shot_picker2() {
-    List<Widget> nums = [];
-
-    nums.add(Text(
-      "1 Shot",
-    ));
-
-    for (int x = 2; x < 1000; x++) {
-      nums.add(Text(
-        x.toString() + " Shots",
-      ));
-    }
-
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
-        ),
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 300,
-            child: CupertinoPicker(
-                looping: true,
-                backgroundColor: Colors.transparent,
-                onSelectedItemChanged: (value) {
-                  setState(() {
-                    shot_number = value + 1;
-                    extra_num = value + 1;
-                  });
-                },
-                itemExtent: 50,
-                children: nums),
-          );
-        });
-  }
-
   show_shot_picker() {
     showDialog(
       context: context,
@@ -249,42 +214,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
-  show_target_picker() {
-    List<Widget> nums = [];
-
-    nums.add(Text(
-      "1 Target",
-    ));
-
-    for (int x = 2; x < 20; x++) {
-      nums.add(Text(
-        x.toString() + " Targets",
-      ));
-    }
-
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
-        ),
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 300,
-            child: CupertinoPicker(
-                looping: true,
-                backgroundColor: Colors.transparent,
-                onSelectedItemChanged: (value) {
-                  setState(() {
-                    taraget_count = value + 1;
-                    extra_num = value + 1;
-                  });
-                },
-                itemExtent: 50,
-                children: nums),
-          );
-        });
-  }
-
   show_time_picker() {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
@@ -300,29 +229,6 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
               onTimerDurationChanged: (data) {
                 setState(() {
                   total_time = data;
-                  extra_num = data.inSeconds;
-                });
-              },
-            ),
-          );
-        });
-  }
-
-  show_rest_picker() {
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
-        ),
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 250,
-            child: CupertinoTimerPicker(
-              mode: CupertinoTimerPickerMode.ms,
-              initialTimerDuration: rest_time,
-              onTimerDurationChanged: (data) {
-                setState(() {
-                  rest_time = data;
                   extra_num = data.inSeconds;
                 });
               },
@@ -353,6 +259,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                 ),
                 TextField(
                   style: TextStyle(color: Colors.white),
+                  maxLength: 15,
                   decoration: InputDecoration(
                       hintText: "Eg 6 corners",
                       enabledBorder: UnderlineInputBorder(
@@ -369,6 +276,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                           width: 2,
                         ),
                       ),
+                      counterStyle: TextStyle(color: Colors.white),
+
                       hintStyle: TextStyle(color: Colors.white60),
                       labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
                   onSubmitted: (name) {
@@ -386,7 +295,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
       ),
     );
 
-    name = n.toString().toUpperCase();
+    name = n.toString().capitalizeFirstofEach;
     if (name.replaceAll(" ", "") == "") {
       name = "NO NAME";
     }
@@ -672,14 +581,15 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
     );
   }
 
-  Widget timed() {
+  Widget t(int index){
+
     return Stack(
       children: [
         Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
             child: Column(
               children: [
-                Time_Input(),
+                index==0?round():Time_Input(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 30),
                   child: Row(
@@ -692,29 +602,36 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                               content: Text('No Exercises Selected'),
                               duration: Duration(seconds: 1),
                             );
-
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                            widget.analytics.logEvent(name: "No_Solo_Exercise_Selected_Warning",
+
+                              parameters: <String, dynamic>{'Type': "Start_Button"},
+
+                            );
+
+
                           } else {
                             await loadModel();
                             widget.analytics.logEvent(
                               name: 'Solo_Workout_Started',
-                              parameters: <String, dynamic>{'Sides': sides2, 'Shot_Count': shot_number, 'time': total_time, 'Type': 'Timed'},
+                              parameters: <String, dynamic>{'Sides': sides2.length, 'Shot_Count': shot_number, 'time': total_time.inSeconds, 'Type': index==0?'Count':'Timed',"Show_Green":showGreen},
                             );
 
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SoloHome(
-                                        cameras: cameras,
-                                        start_camera: start_camera,
-                                        type: _tabController.index,
-                                        time: total_time,
-                                        shot_count: shot_number,
-                                        sides: sides2,
-                                        showgreen: showGreen,
-                                        analytics: widget.analytics,
-                                        observer: widget.observer,
-                                      )),
+                                    cameras: cameras,
+                                    start_camera: start_camera,
+                                    type: _tabController.index,
+                                    time: total_time,
+                                    shot_count: shot_number,
+                                    sides: sides2,
+                                    showgreen: showGreen,
+                                    analytics: widget.analytics,
+                                    observer: widget.observer,
+                                  )),
                             );
                           }
                         },
@@ -724,15 +641,15 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                           child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
-                                Radius.circular(18),
-                              )),
+                                    Radius.circular(18),
+                                  )),
                               elevation: 2,
                               color: Theme.of(context).splashColor,
                               child: Center(
                                   child: Text(
-                                "Start",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                              ))),
+                                    "Start",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ))),
                         ),
                       ),
                       GestureDetector(
@@ -744,17 +661,22 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                             );
 
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            widget.analytics.logEvent(name: "No_Solo_Exercise_Selected_Warning",
+                              parameters: <String, dynamic>{'Type': "Save_Button"},
+                            );
+
                           } else {
                             await text_dialog();
 
                             widget.analytics.logEvent(
-                              name: 'Ghosting_Workout_Saved',
+                              name: 'Solo_Workout_Saved',
                               parameters: <String, dynamic>{
                                 'name': name,
                                 'number_shot': shot_number,
                                 'solo_time': total_time.inSeconds,
                                 'sides': sides2.length,
-                                'type': _tabController.index == 0 ? "count" : "timed"
+                                'type': _tabController.index == 0 ? "count" : "timed",
+                                'Show_Green':showGreen
                               },
                             );
 
@@ -777,15 +699,15 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                           child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
-                                Radius.circular(18),
-                              )),
+                                    Radius.circular(18),
+                                  )),
                               elevation: 2,
                               color: Theme.of(context).splashColor,
                               child: Center(
                                   child: Text(
-                                "Save Custom Set",
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                              ))),
+                                    "Save Custom Set",
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ))),
                         ),
                       ),
                     ],
@@ -795,141 +717,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
             )),
       ],
     );
-  }
 
-  Widget count() {
-    return Column(
-      children: [
-        Expanded(
-          child: Stack(
-            children: [
-              Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                        ),
-                        child: round(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-                                if (sides2.length == 0) {
-                                  final snackBar = SnackBar(
-                                    content: Text('No Exercises Selected'),
-                                    duration: Duration(seconds: 1),
-                                  );
 
-                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                } else {
-                                  await loadModel();
-                                  widget.analytics.logEvent(
-                                    name: 'Solo_Workout_Started',
-                                    parameters: <String, dynamic>{'Sides': sides2.length, 'Shot_Count': shot_number, 'time': total_time, 'Type': 'Count'},
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SoloHome(
-                                              cameras: cameras,
-                                              start_camera: start_camera,
-                                              type: _tabController.index,
-                                              time: total_time,
-                                              shot_count: shot_number,
-                                              sides: sides2,
-                                              showgreen: showGreen,
-                                              analytics: widget.analytics,
-                                              observer: widget.observer,
-                                            )),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                height: 50,
-                                width: 150,
-                                child: Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    )),
-                                    elevation: 2,
-                                    color: Theme.of(context).splashColor,
-                                    child: Center(
-                                        child: Text(
-                                      "Start",
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ))),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                if (sides2.length == 0) {
-                                  final snackBar = SnackBar(
-                                    content: Text('No Exercises Selected'),
-                                    duration: Duration(seconds: 1),
-                                  );
-
-                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                } else {
-                                  await text_dialog();
-
-                                  widget.analytics.logEvent(
-                                    name: 'Ghosting_Workout_Saved',
-                                    parameters: <String, dynamic>{
-                                      'name': name,
-                                      'number_shot': shot_number,
-                                      'solo_time': total_time.inSeconds,
-                                      'sides': sides2.length,
-                                      'type': _tabController.index == 0 ? "count" : "timed"
-                                    },
-                                  );
-
-                                  if (name != null && name != "") {
-                                    var exersie = Custom_Solo()
-                                      ..name = name
-                                      ..number_shot = shot_number.toDouble()
-                                      ..solo_time = total_time.inSeconds.toInt()
-                                      ..sides = sides2
-                                      ..type = _tabController.index;
-
-                                    solo.add(exersie); // Store this object fsor the first time
-                                    _mylistkey.currentState.insertItem(0);
-                                  }
-                                }
-                              },
-                              child: Container(
-                                height: 50,
-                                width: 200,
-                                child: Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                      Radius.circular(18),
-                                    )),
-                                    elevation: 2,
-                                    color: Theme.of(context).splashColor,
-                                    child: Center(
-                                        child: Text(
-                                      "Save Custom Set",
-                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ))),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 
   Widget Show_Custom_Card(int index) {
@@ -1160,7 +949,8 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                   itemExtent: 700.0,
                   delegate: SliverChildListDelegate([
                     TabBarView(
-                      children: [count(), timed()],
+
+                      children: [t(0), t(1)],
                       controller: _tabController,
                     ),
                   ], addAutomaticKeepAlives: true),
@@ -1240,4 +1030,11 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
     return true;
   }
+}
+extension CapExtension on String {
+  String get inCaps => this.length > 0 ? '${this[0].toUpperCase()}${this.substring(1)}' : '';
+
+  String get allInCaps => this.toUpperCase();
+
+  String get capitalizeFirstofEach => this.replaceAll(RegExp(' +'), ' ').split(" ").map((str) => str.inCaps).join(" ");
 }

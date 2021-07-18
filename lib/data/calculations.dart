@@ -10,7 +10,17 @@ import 'package:squash/extra/hive_classes.dart';
 import 'package:statistical_dart/statistical_dart.dart';
 
 class DataMethods {
-  List<double> solo_pie_chart(Box<Solo_stroage> solo_storage_box) {
+
+
+  List<double> solo_pie_chart2(Box<Solo_stroage> solo_storage_box) {
+
+
+
+
+
+
+
+
     List<double> solo_type_pie_chart_data = [];
 
     for (int i = 0; i < SoloDefs().get().length; i++) {
@@ -20,25 +30,74 @@ class DataMethods {
     for (int i = 0; i < solo_storage_box.length; i++) {
       for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
         solo_type_pie_chart_data[solo_storage_box.getAt(i).bounces[x].type.id]++;
+
       }
     }
 
     return solo_type_pie_chart_data;
   }
+  List<String> solo_pie_chart_names2(Box<Solo_stroage> solo_storage_box) {
+    List<String> solo_names = [];
 
-  List<PieChartSectionData> solo_type_slice_data(List<double> slice_data, colors, index, text_color) {
+    for (int i = 0; i < solo_storage_box.length; i++) {
+      for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
+        if(!solo_names.contains(solo_storage_box.getAt(i).bounces[x].type.name)){
+
+          solo_names.add(solo_storage_box.getAt(i).bounces[x].type.name);
+
+        }
+      }
+    }
+
+    print(solo_names);
+    return solo_names;
+  }
+
+  Map<String,int> solo_pie_chart(Box<Solo_stroage> solo_storage_box) {
+    Map<String,int> identifier = new Map();
+
+
+    for (int i = 0; i < solo_storage_box.length; i++) {
+      for (int x = 0; x < solo_storage_box.getAt(i).bounces.length; x++) {
+
+        if(identifier.containsKey(solo_storage_box.getAt(i).bounces[x].type.name)){
+          identifier[solo_storage_box.getAt(i).bounces[x].type.name]=identifier[solo_storage_box.getAt(i).bounces[x].type.name]+1;
+        }else{
+
+          identifier[solo_storage_box.getAt(i).bounces[x].type.name]=0;
+
+        }
+
+
+      }
+    }
+    print(identifier);
+
+    return identifier;
+  }
+
+
+  List<PieChartSectionData> solo_type_slice_data(Map<String,int>slice_data, colors, index, text_color) {
+
+
+
     List<PieChartSectionData> data = [];
 
-    var sum = slice_data.reduce((a, b) => a + b);
+    double sum = 0.0;
+    // looping over data array
+    slice_data.forEach((item,a){
+      sum =sum+ a;
+    });
 
-    for (int i = 0; i < SoloDefs().get().length; i++) {
+
+    for (int i = 0; i < slice_data.length; i++) {
       data.add(
         PieChartSectionData(
           color: colors,
-          value: slice_data[i],
-          title: ((slice_data[i] / sum) * 100).toInt().toString() + '%',
+          value: slice_data.values.toList()[i].toDouble(),
+          title: ((slice_data.values.toList()[i].toDouble() / sum) * 100).toInt().toString() + '%',
           radius: index == i ? 70 : 60,
-          titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data[i] / sum) * 100).toInt() < 7 ? Colors.transparent : text_color),
+          titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: ((slice_data.values.toList()[i].toDouble() / sum) * 100).toInt() < 7 ? Colors.transparent : text_color),
           titlePositionPercentageOffset: 0.55,
         ),
       );

@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'dart:math';
 import 'dart:ui';
 import 'package:camera/camera.dart';
@@ -9,30 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
-import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scidart/numdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squash/Solo/bndboxsolo.dart';
 import 'package:squash/Solo/solo_defs.dart';
-import 'package:squash/extra/headers.dart';
 import 'package:squash/maginfine/magnifier.dart';
 import 'package:tflite/tflite.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:wakelock/wakelock.dart';
-
-import '../Ghosting/Selection Screen.dart';
-import '../Ghosting/bndbox.dart';
-import '../Ghosting/camera.dart';
 import '../maginfine/touchBubble.dart';
 import 'counter_widget.dart';
 import 'court_functions.dart';
 import 'court_painter.dart';
 import '../extra/hive_classes.dart';
 import 'finish_solo.dart';
-import 'package:flutter/foundation.dart';
 
 class SoloHome extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -178,7 +168,6 @@ class SoloHomeState extends State<SoloHome> {
     );
   }
 
-
   void showTutorial() {
     TutorialCoachMark(
       context,
@@ -288,11 +277,10 @@ class SoloHomeState extends State<SoloHome> {
         if (re["detectedClass"] == "ball") {
           double x = (re["rect"]["x"] * MediaQuery.of(context).size.width);
           double y = re["rect"]["y"] * MediaQuery.of(context).size.height;
-          ball_conf = ((re["confidenceInClass"] * 100).toString());
+          //ball_conf = ((re["confidenceInClass"] * 100).toString());
           y = y + (re["rect"]["h"] * MediaQuery.of(context).size.height);
           if (is_working && !pause) {
 
-            print(x);
             dynamic_bounce(x, y, re["rect"]["h"] * MediaQuery.of(context).size.height);
 
 
@@ -342,8 +330,6 @@ class SoloHomeState extends State<SoloHome> {
     }
   }
 
-
-
   void dynamic_bounce(x, y, h) {
     if (y < dst_point[0].y - 30 && x > dst_point[0].x) {
       setState(() {
@@ -351,6 +337,8 @@ class SoloHomeState extends State<SoloHome> {
         blew_count++;
       });
     }
+
+
 
     if (last_bounce.length > 7) {
       int len = last_bounce.length;
@@ -406,7 +394,7 @@ class SoloHomeState extends State<SoloHome> {
             double line_x = ((mid_om - dst_point[0].y) / slope) + dst_point[0].x;
 
 
-            if(temp.x> current_side.xmin+5 || temp.y>current_side.ymin){
+            if(temp.x> current_side.xmin+5 && temp.y>current_side.ymin && temp.y<current_side.ymax ){
               ball.add(Positioned(
                   left: line_x,
                   top: last_bounce[last_bounce.length - 3].y - h,
@@ -441,16 +429,16 @@ class SoloHomeState extends State<SoloHome> {
             double line_x2 = ((mid_om - dst_point[1].y) / slope2) + dst_point[1].x;
 
 
-            if(temp.x<current_side.xmin-5||temp.y>current_side.ymin){
+            if(temp.x<current_side.xmin-5 && temp.y>current_side.ymin&& temp.y<current_side.ymax ){
 
 
               ball.add(Positioned(
-                  right: line_x2,
+                  left: line_x2,
                   top: last_bounce[last_bounce.length - 3].y - h,
                   child: Icon(
                     Icons.check_circle,
                     size: 15,
-                    color: Colors.black,
+                    color: Colors.green,
                   )));
 
 
@@ -683,7 +671,10 @@ class SoloHomeState extends State<SoloHome> {
 
     try {
       await controller.initialize();
-    } on CameraException catch (e) {}
+    } on CameraException catch (e) {
+      print(e);
+
+    }
 
     if (mounted) {
       setState(() {});

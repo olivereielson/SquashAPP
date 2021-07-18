@@ -58,6 +58,11 @@ class _Ghost_StatState extends State<Ghost_Stat> {
     ghost_type_pie_chart_data = DataMethods().GhostPieChart(ghosting_box);
 
     barchrt = DataMethods().BarChartSpeed(ghosting_box, single_corner_speed, Theme.of(context).splashColor);
+
+    widget.analytics.setUserProperty(name: "ave_ghost_dur", value: ave_ghost_dur.toString());
+    widget.analytics.setUserProperty(name: "ave_ghost_num", value: ave_ghost_num.toString());
+
+
     print("ghost calucated");
   }
 

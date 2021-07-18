@@ -4,6 +4,7 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:squash/Solo/solo%20screen.dart';
 import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/hive_classes.dart';
 
@@ -26,6 +27,8 @@ class _LeftState extends State<Left> {
 
   String hand;
   String box = "Solo_Defs1";
+  String hive_box = "solo_saved10";
+  String start_hand;
 
   Future<void> _testSetCurrentScreen() async {
     await widget.analytics.setCurrentScreen(
@@ -36,10 +39,38 @@ class _LeftState extends State<Left> {
 
   @override
   void initState() {
+    start_hand=widget.hand.toString();
     _testSetCurrentScreen();
     super.initState();
   }
 
+  self_destruct() async {
+
+    Box<Solo_Defs> Exersise2;
+    Box<Custom_Solo> solo;
+
+    if (Hive.isBoxOpen(box)) {
+      Exersise2 = Hive.box<Solo_Defs>(box);
+    } else {
+      Exersise2 = await Hive.openBox<Solo_Defs>(box);
+    }
+
+    if (!Hive.isAdapterRegistered(12)) {
+      Hive.registerAdapter(CustomSoloAdapter());
+    }
+
+    if (Hive.isBoxOpen(hive_box)) {
+      solo = Hive.box<Custom_Solo>(hive_box);
+    } else {
+      solo = await Hive.openBox<Custom_Solo>(hive_box);
+    }
+
+    await solo.clear();
+    await Exersise2.clear();
+    await SoloDefs().setup();
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +107,7 @@ class _LeftState extends State<Left> {
                             setState(() {
                               hand = "Left";
                             });
+                            widget.analytics.setUserProperty(name: "Dominate_Hand", value: "Lefty");
                             widget.analytics.logEvent(name: "Log_Hand",
                               parameters: <String, dynamic>{
                                 'dom_hand': 'Left',
@@ -104,6 +136,8 @@ class _LeftState extends State<Left> {
                             setState(() {
                               hand = "Right";
                             });
+                            widget.analytics.setUserProperty(name: "Dominate_Hand", value: "Righty");
+
                             widget.analytics.logEvent(name: "Log_Hand",
                               parameters: <String, dynamic>{
                                 'dom_hand': 'Right',
@@ -145,18 +179,16 @@ class _LeftState extends State<Left> {
                       duration: Duration(milliseconds: 300),
 
                       child: CupertinoButton(
-                        child: Text("Close",style: TextStyle(color: Theme.of(context).splashColor),), onPressed: () async {
+                        child: Text("Save",style: TextStyle(color: Theme.of(context).splashColor),), onPressed: () async {
 
-                        Box<Solo_Defs> Exersise2;
 
-                        if (Hive.isBoxOpen(box)) {
-                          Exersise2 = Hive.box<Solo_Defs>(box);
-                        } else {
-                          Exersise2 = await Hive.openBox<Solo_Defs>(box);
-                        }
+                          if(start_hand!=hand){
 
-                        await Exersise2.clear();
-                        await SoloDefs().setup();
+                            await self_destruct();
+                            print("reset saved workouts");
+
+                          }
+
 
                           Navigator.pop(context,hand);
 

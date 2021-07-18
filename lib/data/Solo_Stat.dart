@@ -26,7 +26,7 @@ class _Solo_StatState extends State<Solo_Stat> {
   int ave_solo_dur;
   int ave_shot_num;
   Map<DateTime, List<String>> eventDay = {};
-  List<double> solo_type_pie_chart_data = [0, 0, 0, 0];
+  Map<String,int> solo_type_pie_chart_data = {};
   int _count = 1;
   List<Color> type_pie_color = [
     Color.fromRGBO(66, 89, 138, 1),
@@ -44,6 +44,8 @@ class _Solo_StatState extends State<Solo_Stat> {
 
   Future _load_data;
   List<FlSpot> dista = [];
+  Map<String,int> Solo_Names={};
+
 
   @override
   void initState() {
@@ -72,16 +74,20 @@ class _Solo_StatState extends State<Solo_Stat> {
   }
 
   void calculate_solo() {
-    print("solo calcuated");
+    //Solo_Names=DataMethods().solo_pie_chart_names(solo_storage_box);
+
 
     solo_type_pie_chart_data = DataMethods().solo_pie_chart(solo_storage_box);
-
-
     ave_solo_dur = DataMethods().ave_solo_dur(solo_storage_box);
     ave_shot_num = DataMethods().ave_shot_num(solo_storage_box);
     accuracy = DataMethods().percision(solo_storage_box);
 
     dista= DataMethods().normal_d(solo_storage_box);
+
+
+    widget.analytics.setUserProperty(name: "ave_solo_dur", value: ave_solo_dur.toString());
+    widget.analytics.setUserProperty(name: "ave_shot_num", value: ave_shot_num.toString());
+    widget.analytics.setUserProperty(name: "accuracy", value: accuracy.toString());
 
 
     setState(() {});
@@ -221,18 +227,13 @@ class _Solo_StatState extends State<Solo_Stat> {
                         scale: animation,
                       );
                     },
-                    child: Row(
-                      children: [
-                        Text(
-                        SoloDefs().get().getAt(_count).name,
+                    child: Text(
+                     solo_type_pie_chart_data.keys.toList()[_count],
 
-                          // This key causes the AnimatedSwitcher to interpret this as a "new"
-                          // child each time the count changes, so that it will begin its animation
-                          // when the count changes.
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
-                        ),
-                      ],
-                      key: ValueKey<int>(_count),
+                      // This key causes the AnimatedSwitcher to interpret this as a "new"
+                      // child each time the count changes, so that it will begin its animation
+                      // when the count changes.
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
                     ),
                   ),
                 ],
@@ -399,6 +400,7 @@ class _Solo_StatState extends State<Solo_Stat> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: FutureBuilder(
         future: _load_data,
@@ -444,49 +446,4 @@ class _Solo_StatState extends State<Solo_Stat> {
     );
   }
 
-  Widget old() {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      body: FutureBuilder(
-        future: _load_data,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (Hive.isBoxOpen("Solo1") && solo_storage_box.length != 0) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView(
-                children: [
-                  type_pie_chart(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        single_card(
-                          "Average",
-                          "Duration",
-                          Duration(seconds: ave_solo_dur).toString().substring(2, 7),
-                        ),
-                        single_card(
-                          "Average",
-                          "Shots",
-                          ave_shot_num.toString(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  percsion()
-                ],
-              ),
-            );
-          } else {
-            return Center(
-                child: Text(
-              "No Data to Analyze",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ));
-          }
-        },
-      ),
-    );
-  }
 }

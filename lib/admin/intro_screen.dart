@@ -153,6 +153,9 @@ class _TestScreenState extends State<TestScreen> {
                         setState(() {
                           hand = "Left";
                         });
+
+                        widget.analytics.setUserProperty(name: "Dominate_Hand", value: "Lefty");
+
                         widget.analytics.logEvent(
                           name: "Log_Hand",
                           parameters: <String, dynamic>{
@@ -182,6 +185,8 @@ class _TestScreenState extends State<TestScreen> {
                         setState(() {
                           hand = "Right";
                         });
+                        widget.analytics.setUserProperty(name: "Dominate_Hand", value: "Righty");
+
                         widget.analytics.logEvent(
                           name: "Log_Hand",
                           parameters: <String, dynamic>{

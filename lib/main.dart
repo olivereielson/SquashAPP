@@ -205,18 +205,18 @@ class _setupState extends State<setup> {
               iconTheme: IconThemeData(color: Colors.white)),
 
         ),
-        AppTheme(id: 'red',
-          description: "Red Theme",
+        AppTheme(id: 'black',
+          description: "Black Theme",
           data: ThemeData(
 
 
 
               backgroundColor: Colors.white,
-              splashColor: Colors.red,
-              primaryColor: Colors.red,
+              splashColor: Color.fromRGBO(40, 40, 40, 1),
+              primaryColor: Color.fromRGBO(40, 40, 40, 1),
 
 
-              appBarTheme: AppBarTheme(color: Colors.red, textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
+              appBarTheme: AppBarTheme(color: Color.fromRGBO(40, 40, 40, 1), textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
               tabBarTheme: TabBarTheme(
                 labelStyle: TextStyle(color: Colors.white),
                 labelColor: Colors.white,
@@ -224,8 +224,8 @@ class _setupState extends State<setup> {
               focusColor: Colors.grey,
               highlightColor: Colors.white,
               textTheme: TextTheme(
-                  bodyText1: TextStyle(color: Colors.red),
-                  bodyText2: TextStyle(color: Colors.red),
+                  bodyText1: TextStyle(color: Color.fromRGBO(40, 40, 40, 1),),
+                  bodyText2: TextStyle(color: Color.fromRGBO(40, 40, 40, 1),),
                   caption: TextStyle(
                     color: Color.fromRGBO(20, 20, 60, 1),
                   )),
@@ -233,9 +233,9 @@ class _setupState extends State<setup> {
               cardTheme: CardTheme(),
               //primaryColor: Color.fromRGBO(60, 60, 100, 1),
               bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                selectedItemColor: Colors.red,
+                selectedItemColor: Color.fromRGBO(40, 40, 40, 1),
                 selectedIconTheme: IconThemeData(
-                  color: Colors.red,
+                  color: Color.fromRGBO(40, 40, 40, 1),
                 ),
                 unselectedItemColor: Colors.grey,
               ),
@@ -249,6 +249,7 @@ class _setupState extends State<setup> {
           data: ThemeData(
 
 
+              brightness: Brightness.light,
 
               backgroundColor: Color.fromRGBO(50, 50, 50, 1),
               splashColor: Colors.deepPurple,
@@ -288,15 +289,15 @@ class _setupState extends State<setup> {
           data: ThemeData(
 
 
-              brightness: Brightness.dark,
+              brightness: Brightness.light,
 
 
               backgroundColor: Color.fromRGBO(50, 50, 50, 1),
-              splashColor: Colors.greenAccent,
-              primaryColor: Colors.greenAccent,
+              splashColor: Color.fromRGBO(42, 154, 96, 1),
+              primaryColor: Color.fromRGBO(42, 154, 96, 1),
 
 
-              appBarTheme: AppBarTheme(color: Colors.greenAccent, textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
+              appBarTheme: AppBarTheme(color: Color.fromRGBO(42, 154, 96, 1), textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
               tabBarTheme: TabBarTheme(
                 labelStyle: TextStyle(color: Colors.white),
                 labelColor: Colors.white,
@@ -304,8 +305,8 @@ class _setupState extends State<setup> {
               focusColor: Colors.grey,
               highlightColor: Colors.white,
               textTheme: TextTheme(
-                  bodyText1: TextStyle(color: Colors.greenAccent),
-                  bodyText2: TextStyle(color: Colors.greenAccent),
+                  bodyText1: TextStyle(color: Color.fromRGBO(42, 154, 96, 1)),
+                  bodyText2: TextStyle(color: Color.fromRGBO(42, 154, 96, 1)),
                   caption: TextStyle(
                     color: Color.fromRGBO(20, 20, 60, 1),
                   )),
@@ -313,9 +314,9 @@ class _setupState extends State<setup> {
               cardTheme: CardTheme(),
               //primaryColor: Color.fromRGBO(60, 60, 100, 1),
               bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                selectedItemColor: Colors.greenAccent,
+                selectedItemColor: Color.fromRGBO(42, 154, 96, 1),
                 selectedIconTheme: IconThemeData(
-                  color: Colors.greenAccent,
+                  color: Color.fromRGBO(42, 154, 96, 1),
                 ),
                 unselectedItemColor: Colors.grey,
               ),
@@ -377,7 +378,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  PageController _pageController = new PageController();
+  PageController _pageController = new PageController(keepPage: false);
 
   int current = 0;
 
@@ -423,6 +424,7 @@ class _MyAppState extends State<MyApp> {
       ),
       body: PageView(
         pageSnapping: true,
+
         allowImplicitScrolling: true,
         controller: _pageController,
         physics: NeverScrollableScrollPhysics(),

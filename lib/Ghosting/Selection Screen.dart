@@ -368,6 +368,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                 TextField(
                   style: TextStyle(color: Colors.white),
 
+                  maxLength: 15,
                   decoration: InputDecoration(
                       hintText: "Eg 6 corners",
                       enabledBorder: UnderlineInputBorder(
@@ -377,6 +378,8 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                           width: 2,
                         ),
                       ),
+                      counterStyle: TextStyle(color: Colors.white),
+
                       focusedBorder: UnderlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0)),
                         borderSide: BorderSide(
@@ -422,56 +425,12 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
 
 
 
-    name = n.toString().toUpperCase();
+    name = n.toString().capitalizeFirstofEach;
     if(name.replaceAll(" ", "")==""){
 
       name="NO NAME";
 
     }
-  }
-
-  text_dialog2() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-            Radius.circular(18),
-          )),
-          title: new Text(
-            "Name Custom Exersise",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          content: new TextField(
-            autofocus: true,
-            decoration: new InputDecoration(
-                labelText: 'Custom Name',
-                counterStyle: TextStyle(color: Colors.white),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18)),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 10,
-                    ),
-                    gapPadding: 5),
-                focusedBorder: new OutlineInputBorder(
-                  borderRadius: new BorderRadius.circular(25.0),
-                  borderSide: BorderSide(color: Colors.white54),
-                ),
-                labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
-            maxLength: 6,
-            style: TextStyle(color: Colors.white54),
-            onSubmitted: (value) {
-              name = value;
-
-              Navigator.of(context).pop();
-            },
-          ),
-        );
-      },
-    );
   }
 
   loadModel() async {
@@ -635,6 +594,7 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                             // Find the ScaffoldMessenger in the widget tree
                             // and use it to show a SnackBar.
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                           }
                         },
                         child: Container(
@@ -824,6 +784,16 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                                             await loadModel();
                                             widget.analytics.logEvent(
                                               name: 'Ghosting_Workout_Started',
+                                              parameters: <String, dynamic>{
+                                                'name': name,
+                                                'number_set':number_set,
+                                                'round_num':round_num,
+                                                'rest_time':rest_time,
+                                                'start_time':start_time,
+                                                'corners':corners.length,
+                                                'round_time':round_time,
+                                                'type': _tabController.index==0?"count":"timed"
+                                              },
                                             );
 
                                             //
@@ -1021,6 +991,16 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
 
                                             widget.analytics.logEvent(
                                               name: 'Ghosting_Workout_Start',
+                                              parameters: <String, dynamic>{
+                                                'name': name,
+                                                'number_set':number_set,
+                                                'round_num':round_num,
+                                                'rest_time':rest_time,
+                                                'start_time':start_time,
+                                                'corners':corners.length,
+                                                'round_time':round_time,
+                                                'type': _tabController.index==0?"count":"timed"
+                                              },
                                             );
 
                                             await loadModel();
@@ -1285,4 +1265,11 @@ class _SliverAppBarDelegate2 extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SliverAppBarDelegate2 oldDelegate) {
     return true;
   }
+}
+extension CapExtension on String {
+  String get inCaps => this.length > 0 ? '${this[0].toUpperCase()}${this.substring(1)}' : '';
+
+  String get allInCaps => this.toUpperCase();
+
+  String get capitalizeFirstofEach => this.replaceAll(RegExp(' +'), ' ').split(" ").map((str) => str.inCaps).join(" ");
 }

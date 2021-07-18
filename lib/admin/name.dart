@@ -46,6 +46,7 @@ class name_edit extends StatelessWidget{
             TextField(
               style: TextStyle(color: Colors.white),
 
+              maxLength: 20,
               decoration: InputDecoration(
                   hintText: "Eg Joe Smith",
                   enabledBorder: UnderlineInputBorder(
@@ -62,7 +63,7 @@ class name_edit extends StatelessWidget{
                       width: 2,
                     ),
                   ),
-
+                  counterStyle: TextStyle(color: Colors.white),
                   hintStyle: TextStyle(color: Colors.white60),
                   labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
 

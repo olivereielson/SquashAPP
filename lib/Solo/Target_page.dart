@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:animated_widgets/widgets/rotation_animated.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,96 +58,7 @@ class target_state extends State<target> {
       screenClassOverride: 'Choose_Solo_Court_Page',
     );
   }
-  Widget draw_court() {
-    return Stack(
-      children: [
-        Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
-            child: Container(
-              height: 15,
-              width: MediaQuery.of(context).size.width,
-              color: court_color,
-            )),
-        Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
-            left: MediaQuery.of(context).size.width / 2,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.57,
-              width: 15,
-              color: court_color,
-            )),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
-          left: -15,
-          child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                  color: court_color,
-                  // set border color
-                  width: 15.0), // set border width
-              // set rounded corner radius
-            ),
-          ),
-        ),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
-          right: -15,
-          child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                  color: court_color,
-                  // set border color
-                  width: 15.0), // set border width
-              // set rounded corner radius
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget Target() {
-    return MatrixGestureDetector(
-        onMatrixUpdate: (m, tm, sm, rm) {
-          notifier.value = m;
-        },
-        shouldRotate: false,
-        child: AnimatedBuilder(
-          animation: notifier,
-          builder: (ctx, child) {
-            return Transform(
-              transform: notifier.value,
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: court_color,
-                      border: Border.all(
-                          color: court_color,
-                          // set border color
-                          width: 30.0), // set border width
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)), // set rounded corner radius
-                    ),
-                  ),
-                  RotatedBox(
-                      quarterTurns: 1,
-                      child: Center(
-                          child: Text(
-                        "Target",
-                        style: TextStyle(fontSize: 200, color: Colors.white, fontWeight: FontWeight.bold),
-                      )))
-                ],
-              ),
-            );
-          },
-        ));
-  }
 
   Widget fixed_target() {
     return Positioned(
@@ -354,7 +266,8 @@ class target_state extends State<target> {
 
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => create_target(analytics: widget.analytics, observer: widget.observer)),
+                              MaterialPageRoute(builder: (context) => create_target(analytics: widget.analytics, observer: widget.observer,screenH: MediaQuery.of(context).size.height,),fullscreenDialog:
+                              true),
                             );
 
                           },
@@ -436,9 +349,10 @@ class target_state extends State<target> {
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text(
+                                        child: AutoSizeText(
                                           SoloDefs().get().getAt(index).name.toString(),
                                           textAlign: TextAlign.center,
+                                          maxLines: 2,
                                           style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal, color: Theme.of(context).primaryColorLight),
                                         ),
                                       ),
@@ -495,46 +409,3 @@ class target_state extends State<target> {
   }
 }
 
-/*
-            Container(
-              height: 250,
-              width: MediaQuery.of(context).size.width,
-              child: ReorderableListView.builder(
-
-                scrollDirection: Axis.horizontal,
-
-
-
-                proxyDecorator: (s,i,a){
-
-                  return s;
-
-                },
-
-
-
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-
-                onReorder: (int oldIndex, int newIndex) {
-
-                  setState(() {
-                    if(newIndex>oldIndex){
-                      newIndex-=1;
-                    }
-                    int items =sides.removeAt(oldIndex);
-                    sides.insert(newIndex, items);
-                  });
-
-
-                },
-                itemCount: sides.length,
-                itemBuilder: (BuildContext context, int index) {
-
-                  return shot(SoloDefs().Exersise[sides[index]]);
-
-
-              },
-              ),
-            ),
-
- */
