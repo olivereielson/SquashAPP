@@ -152,18 +152,32 @@ class _AcountState extends State<Acount> with SingleTickerProviderStateMixin {
 
   String initals() {
 
+    name=name.replaceAll("  ", " ");
+
     if(name==""){
       return "";
     }
+
+
 
 
     if (name.split(" ").length == 1) {
       return name.substring(0, 1).toUpperCase();
     }
 
-    if (name.split(" ").length >= 2) {
-      return name.substring(0, 1).toUpperCase() + name.split(" ")[1].substring(0, 1).toUpperCase();
+    try{
+
+      if (name.split(" ").length >= 2) {
+        return name.substring(0, 1).toUpperCase() + name.split(" ")[1].substring(0, 1).toUpperCase();
+      }
+    }catch(e){
+
+      return name.substring(0, 1).toUpperCase();
+
+
     }
+
+
 
     return name.substring(0, 1).toUpperCase();
   }

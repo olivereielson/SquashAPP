@@ -28,135 +28,6 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
-  final pages = [
-    PageViewModel(
-      pageColor: Color.fromRGBO(60, 90, 130, 1),
-      titleTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 30),
-      bodyTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-      mainImage: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Welcome to Squash Labs",
-            style: TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 30),
-          ),
-        ],
-      ),
-    ),
-    PageViewModel(
-      pageColor: Color.fromRGBO(60, 90, 130, 1),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Whats your name?"),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40),
-            child: TextField(
-              onSubmitted: (name) async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString("first_name", name);
-              },
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                  hintText: "Eg Joe Smith",
-                  enabledBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(0)),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 2,
-                    ),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(0)),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 2,
-                    ),
-                  ),
-                  hintStyle: TextStyle(color: Colors.white60),
-                  labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
-            ),
-          ),
-        ],
-      ),
-      titleTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 30),
-      bodyTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-    ),
-    PageViewModel(
-      pageColor: Color.fromRGBO(60, 90, 130, 1),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Terms and Conditions"),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40),
-            child: Container(
-                color: Colors.white.withOpacity(0.1),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SingleChildScrollView(
-                      child: Text(
-                    terms().terms_text,
-                    style: TextStyle(fontSize: 10),
-                  )),
-                )),
-          ),
-        ],
-      ),
-      titleTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 30),
-      bodyTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-    ),
-    PageViewModel(
-      pageColor: Color.fromRGBO(60, 90, 130, 1),
-      body: const Text(
-        'Ghosting exercises powered by artificial intelligence',
-      ),
-      title: const Text(
-        'Ghosting Practice',
-        softWrap: false,
-        maxLines: 1,
-        overflow: TextOverflow.visible,
-      ),
-      titleTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 40),
-      bodyTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-      mainImage: Image.asset(
-        'assets/court_intro.png',
-      ),
-    ),
-    PageViewModel(
-      pageColor: Color.fromRGBO(60, 90, 130, 1),
-      body: const Text(
-        'Improve your game with the help a artificial intelligence powered solo exercises',
-      ),
-      title: const Text('Solo Practice'),
-      mainImage: Image.asset(
-        'assets/solo_intro.png',
-        height: 285.0,
-        width: 285.0,
-        alignment: Alignment.center,
-      ),
-      titleTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-      bodyTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-    ),
-    PageViewModel(
-      pageColor: Color.fromRGBO(60, 90, 130, 1),
-      body: const Text(
-        'Track your progress with real time data analytics',
-      ),
-      title: const Text('Data Analytics  '),
-      mainImage: Image.asset(
-        'assets/data_intro.png',
-        color: Colors.white,
-        height: 285.0,
-        width: 285.0,
-        alignment: Alignment.center,
-      ),
-      titleTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-      bodyTextStyle: const TextStyle(fontFamily: 'MyFont', color: Colors.white),
-    ),
-  ];
-
   int number = 2;
   Timer _timer;
   PageController _pageController;
@@ -187,13 +58,24 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   Widget page1() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
       children: [
-        Text(
-          "Welcome to Squash Labs",
-          style: TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 30),
+        Positioned(
+            bottom: 40,
+            right: 40,
+            child: TextButton(
+                onPressed: () {
+                  _pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.bounceIn);
+                },
+                child: Text(
+                  "Next",
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                ))),
+        Center(
+          child: Text(
+            "Welcome to Squash Labs",
+            style: TextStyle(fontFamily: 'MyFont', color: Colors.white, fontSize: 30),
+          ),
         ),
       ],
     );
@@ -268,12 +150,11 @@ class _TestScreenState extends State<TestScreen> {
                         var box = await Hive.openBox('solo_def');
                         box.put("hand", "Left");
 
-
-
                         setState(() {
                           hand = "Left";
                         });
-                        widget.analytics.logEvent(name: "Log_Hand",
+                        widget.analytics.logEvent(
+                          name: "Log_Hand",
                           parameters: <String, dynamic>{
                             'dom_hand': 'Left',
                           },
@@ -284,13 +165,13 @@ class _TestScreenState extends State<TestScreen> {
                         width: 160,
                         height: 160,
                         decoration: BoxDecoration(
-                            border: Border.all(color: hand != "Left" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "Left" ? 4 : 7), borderRadius: BorderRadius.all(Radius.circular
-                          (20.0))),
+                            border: Border.all(color: hand != "Left" ? Colors.white.withOpacity(0.5) : Colors.white, width: hand != "Left" ? 4 : 7),
+                            borderRadius: BorderRadius.all(Radius.circular(20.0))),
                         child: Center(
                             child: Text(
-                              "Left Hand",
-                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                            )),
+                          "Left Hand",
+                          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                        )),
                       ),
                     ),
                     GestureDetector(
@@ -301,9 +182,10 @@ class _TestScreenState extends State<TestScreen> {
                         setState(() {
                           hand = "Right";
                         });
-                        widget.analytics.logEvent(name: "Log_Hand",
+                        widget.analytics.logEvent(
+                          name: "Log_Hand",
                           parameters: <String, dynamic>{
-                            'dom_hand': 'right',
+                            'dom_hand': 'Right',
                           },
                         );
                       },
@@ -316,9 +198,9 @@ class _TestScreenState extends State<TestScreen> {
                             borderRadius: BorderRadius.all(Radius.circular(20.0))),
                         child: Center(
                             child: Text(
-                              "Right Hand",
-                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                            )),
+                          "Right Hand",
+                          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                        )),
                       ),
                     )
                   ],
@@ -326,32 +208,31 @@ class _TestScreenState extends State<TestScreen> {
               ),
             ],
           ),
-
-
-
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-
               children: [
-
                 AnimatedOpacity(
-
-                  opacity: hand==""?0:1,
+                  opacity: hand == "" ? 0 : 1,
                   duration: Duration(milliseconds: 300),
-
                   child: CupertinoButton(
-                      child: Text("Next",style: TextStyle(color: Theme.of(context).splashColor),), onPressed: (){
-                    _pageController.nextPage(duration: Duration(milliseconds: 500), curve:Curves.easeIn,);
-                  },
-                   color: Colors.white,
+                    child: Text(
+                      "Next",
+                      style: TextStyle(color: Theme.of(context).splashColor),
+                    ),
+                    onPressed: () {
+                      _pageController.nextPage(
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.easeIn,
+                      );
+                    },
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
           )
-
         ],
       ),
     );
@@ -374,9 +255,7 @@ class _TestScreenState extends State<TestScreen> {
             ),
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)), borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), border: Border.all(color: Colors.white.withOpacity(0.1)), borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 child: ListView(
                   children: [
                     Padding(
@@ -403,9 +282,7 @@ class _TestScreenState extends State<TestScreen> {
                         style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
                       onPressed: () {
-
                         widget.analytics.logEvent(name: "Terms_Accepted");
-
 
                         Navigator.push(
                           context,
@@ -886,31 +763,6 @@ class _TestScreenState extends State<TestScreen> {
           lefty(),
           Term(),
         ],
-      ),
-    );
-
-    return Builder(
-      builder: (context) => IntroViewsFlutter(
-        pages,
-        showNextButton: true,
-        showBackButton: true,
-        showSkipButton: false,
-        doneText: SafeArea(child: Text("Start")),
-        nextText: SafeArea(child: Text("Next")),
-        backText: SafeArea(child: Text("Back")),
-        columnMainAxisAlignment: MainAxisAlignment.center,
-        onTapDoneButton: () {
-          // Use Navigator.pushReplacement if you want to dispose the latest route
-          // so the user will not be able to slide back to the Intro Views.
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => MyApp(widget.analytics, widget.observer)),
-          );
-        },
-        pageButtonTextStyles: const TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-        ),
       ),
     );
   }

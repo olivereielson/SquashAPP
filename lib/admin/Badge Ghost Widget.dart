@@ -143,7 +143,8 @@ class _Ghost_BagdeState extends State<Ghost_Bagde> {
                         }
                     )
                 );
-                widget.analytics.logEvent(name:"Badge_Clicked",
+                widget.analytics.logEvent(
+                  name:"Badge_Clicked",
                   parameters: <String, dynamic>{
                     'type': 'Ghost_Badge',
                     'title': title,

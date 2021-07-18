@@ -831,7 +831,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                                   await loadModel();
                                   widget.analytics.logEvent(
                                     name: 'Solo_Workout_Started',
-                                    parameters: <String, dynamic>{'Sides': sides2, 'Shot_Count': shot_number, 'time': total_time, 'Type': 'Count'},
+                                    parameters: <String, dynamic>{'Sides': sides2.length, 'Shot_Count': shot_number, 'time': total_time, 'Type': 'Count'},
                                   );
                                   Navigator.push(
                                     context,

@@ -4,6 +4,8 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:squash/Solo/solo_defs.dart';
+import 'package:squash/extra/hive_classes.dart';
 
 class Left extends StatefulWidget{
   final FirebaseAnalytics analytics;
@@ -23,6 +25,7 @@ class _LeftState extends State<Left> {
   _LeftState(this.hand);
 
   String hand;
+  String box = "Solo_Defs1";
 
   Future<void> _testSetCurrentScreen() async {
     await widget.analytics.setCurrentScreen(
@@ -142,7 +145,18 @@ class _LeftState extends State<Left> {
                       duration: Duration(milliseconds: 300),
 
                       child: CupertinoButton(
-                        child: Text("Close",style: TextStyle(color: Theme.of(context).splashColor),), onPressed: (){
+                        child: Text("Close",style: TextStyle(color: Theme.of(context).splashColor),), onPressed: () async {
+
+                        Box<Solo_Defs> Exersise2;
+
+                        if (Hive.isBoxOpen(box)) {
+                          Exersise2 = Hive.box<Solo_Defs>(box);
+                        } else {
+                          Exersise2 = await Hive.openBox<Solo_Defs>(box);
+                        }
+
+                        await Exersise2.clear();
+                        await SoloDefs().setup();
 
                           Navigator.pop(context,hand);
 

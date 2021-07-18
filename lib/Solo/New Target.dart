@@ -41,51 +41,68 @@ class _create_targetState extends State<create_target> {
 
   Widget draw_court() {
     Color court_color = Colors.white;
+
+    double h = (MediaQuery.of(context).size.width * 1645) / 1080;
+
     return Stack(
       children: [
         Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
+            bottom: (h * 0.44)+100,
             child: Container(
-              height: 15,
+              height: 10,
               width: MediaQuery.of(context).size.width,
               color: court_color,
             )),
         Positioned(
-            top: MediaQuery.of(context).size.height * 0.57,
-            left: MediaQuery.of(context).size.width / 2,
+            bottom: h+100,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.57,
-              width: 15,
+              height: 10,
+              width: MediaQuery.of(context).size.width,
               color: court_color,
             )),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
-          left: -15,
+            bottom: 100,
+            child: Container(
+              height: 10,
+              width: MediaQuery.of(context).size.width,
+              color: court_color,
+            )),
+        Positioned(
+            bottom: 100 ,
+            left: MediaQuery.of(context).size.width / 2,
+            child: Container(
+              height: (h * 0.44),
+              width: 10,
+              color: court_color,
+            )),
+        Positioned(
+          bottom: (h * 0.44)+100-MediaQuery.of(context).size.width / 4 ,
+          left: -10,
           child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
+            width: MediaQuery.of(context).size.width / 4 + 20,
+            height: MediaQuery.of(context).size.width / 4 + 10,
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
                   color: court_color,
                   // set border color
-                  width: 15.0), // set border width
+                    width: 10.0), // set border width
               // set rounded corner radius
             ),
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.57,
+          bottom: (h * 0.44)+100-MediaQuery.of(context).size.width / 4 ,
           right: -15,
           child: Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.width / 4,
+            width: MediaQuery.of(context).size.width / 4 + 20,
+            height: MediaQuery.of(context).size.width / 4 + 10,
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
                   color: court_color,
                   // set border color
-                  width: 15.0), // set border width
+                  width: 10.0), // set border width
               // set rounded corner radius
             ),
           ),
@@ -100,7 +117,6 @@ class _create_targetState extends State<create_target> {
       screenClassOverride: 'Create_Solo_Court_Page',
     );
   }
-
 
   Widget fixed_target() {
     return Positioned(
@@ -117,8 +133,23 @@ class _create_targetState extends State<create_target> {
             return Offset(off.size.width / 2, off.size.height / 2);
           },
           onDragUpdate: (detatils) {
+
+
+
             setState(() {
+
+              if (locationB - detatils.localPosition.dy.toInt() < 20) {
+                locationB = detatils.localPosition.dy + 20;
+
+              }
+
+
+
               location = Point(detatils.localPosition.dx.toInt(), detatils.localPosition.dy.toInt());
+              //print(Ycorrection(location.y).toString()+"Alfta");
+              print(Xcorrection(location.x).toString()+"Alfta");
+
+
             });
           },
           onDraggableCanceled: (velocity, offset) {
@@ -165,10 +196,12 @@ class _create_targetState extends State<create_target> {
           },
           onDragUpdate: (detatils) {
             setState(() {
-              location = Point(detatils.globalPosition.dx.toInt(), location.y);
-              locationB = detatils.globalPosition.dy;
+              location = Point(detatils.localPosition.dx.toInt(), location.y);
+              locationB = detatils.localPosition.dy;
               //location = Point(detatils.globalPosition.dx.toInt(), detatils.globalPosition.dy.toInt());
             });
+            print(Ycorrection(locationB.toInt()));
+
           },
           feedback: Container(
             width: box_size,
@@ -276,11 +309,22 @@ class _create_targetState extends State<create_target> {
   }
 
   int Xcorrection(int val) {
-    return (1080 * val) ~/ MediaQuery.of(context).size.width;
+
+    int correction=(1080 * val) ~/ MediaQuery.of(context).size.width;
+    print(correction);
+
+    return correction;
   }
 
   int Ycorrection(int val) {
-    return (1645 * val) ~/ MediaQuery.of(context).size.height;
+
+    double h = (MediaQuery.of(context).size.width * 1645) / 1080;
+
+    int correction=(1645 * (val-156)) ~/ h;
+
+    //print(correction);
+
+    return correction;
   }
 
   @override
@@ -293,6 +337,7 @@ class _create_targetState extends State<create_target> {
               child: SafeArea(
             right: false,
             left: false,
+
             child: Column(
               children: [
                 Row(
@@ -346,21 +391,28 @@ class _create_targetState extends State<create_target> {
 
                           Navigator.pop(context);
                         },
-                        icon: Icon(
-                          Icons.save,
-                          color: Colors.white,
+                        icon: Column(
+                          children: [
+                            Icon(
+                              Icons.save,
+                              color: Colors.white,
+                            ),
+                          ],
                         )),
                   ],
                 ),
               ],
             ),
           )),
+          draw_court(),
+
           Positioned(
               top: 80,
               left: (MediaQuery.of(context).size.width - 300) / 2,
               child: SafeArea(
                 child: Container(
                   width: 300,
+                  color: Theme.of(context).splashColor,
                   child: CupertinoSlidingSegmentedControl(
                     children: <int, Widget>{
                       0: Padding(
@@ -388,7 +440,6 @@ class _create_targetState extends State<create_target> {
                   ),
                 ),
               )),
-          draw_court(),
           lines(),
           lines2(),
           lines3(),

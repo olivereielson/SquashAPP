@@ -33,7 +33,16 @@ class SoloDefs {
     {"name": "Forehand Service Box", "id": 6, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "right_side": true},
     {"name": "BackHand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "right_side": false},
   ];
-
+  List Exersise_Lefty = [
+    {"name": "Backhand Drives", "id": 0, "xmin": 540, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": false},
+    {"name": "Forehand Drives", "id": 1, "xmin": 10, "ymin": 930, "xmax": 540, "ymax": 1645, "right_side": true},
+    {"name": "Backhand Channel", "id": 2, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": false},
+    {"name": "Forehand Channel", "id": 3, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1645, "right_side": true},
+    {"name": "Backhand Half Channel", "id": 4, "xmin": 945, "ymin": 930, "xmax": 1080, "ymax": 1645, "right_side": false},
+    {"name": "Forehand Half Channel", "id": 5, "xmin": 10, "ymin": 930, "xmax": 145, "ymax": 1645, "right_side": true},
+    {"name": "BackHand Service Box", "id": 6, "xmin": 810, "ymin": 930, "xmax": 1080, "ymax": 1200, "right_side": false},
+    {"name": "Forehand Service Box", "id": 7, "xmin": 10, "ymin": 930, "xmax": 280, "ymax": 1200, "right_side": true},
+  ];
 
   Box<Solo_Defs> Exersise2;
   String box="Solo_Defs1";
@@ -88,19 +97,39 @@ class SoloDefs {
     } else {
       Exersise2 = await Hive.openBox<Solo_Defs>(box);
     }
+    var hand_boox = await Hive.openBox('solo_def');
+    String hand=hand_boox.get("hand");
 
     if(Exersise2.length==0){
 
       for(int i=0; i<Exersise.length;i++){
 
-        var temp = Solo_Defs()
-          ..name=Exersise[i]["name"]
-          ..id=i
-          ..xmin=Exersise[i]["xmin"]
-          ..ymin=Exersise[i]["ymin"]
-          ..xmax=Exersise[i]["xmax"]
-          ..ymax=Exersise[i]["ymax"]
-          ..right_side=Exersise[i]["right_side"];
+        Solo_Defs temp;
+        if(hand=="Right"){
+
+           temp = Solo_Defs()
+            ..name=Exersise[i]["name"]
+            ..id=i
+            ..xmin=Exersise[i]["xmin"]
+            ..ymin=Exersise[i]["ymin"]
+            ..xmax=Exersise[i]["xmax"]
+            ..ymax=Exersise[i]["ymax"]
+            ..right_side=Exersise[i]["right_side"];
+
+        }
+        else{
+
+           temp = Solo_Defs()
+            ..name=Exersise_Lefty[i]["name"]
+            ..id=i
+            ..xmin=Exersise_Lefty[i]["xmin"]
+            ..ymin=Exersise_Lefty[i]["ymin"]
+            ..xmax=Exersise_Lefty[i]["xmax"]
+            ..ymax=Exersise_Lefty[i]["ymax"]
+            ..right_side=Exersise_Lefty[i]["right_side"];
+
+
+        }
 
         Exersise2.add(temp);
 

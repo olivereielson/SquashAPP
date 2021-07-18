@@ -95,10 +95,6 @@ class beta extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontSize: 15),
                     ),
                     Text(
-                      "2) Use a court with good lighting",
-                      style: TextStyle(color: Colors.white, fontSize: 15),
-                    ),
-                    Text(
                       "3) Place the phone at shoulder level",
                       style: TextStyle(color: Colors.white, fontSize: 15),
                     ),
@@ -108,6 +104,10 @@ class beta extends StatelessWidget {
                     ),
                     Text(
                       "5) Remove extra objects from the frame",
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                    Text(
+                      "6) DO NOT use a glass court (supports for glass courts coming soon)",
                       style: TextStyle(color: Colors.white, fontSize: 15),
                     ),
                   ],
@@ -162,7 +162,7 @@ class beta extends StatelessWidget {
                       },
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                       child: Text(
-                        "Understand",
+                        "Accept",
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),

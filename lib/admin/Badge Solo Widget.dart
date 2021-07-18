@@ -123,7 +123,7 @@ class _Solo_BagdeState extends State<Solo_Bagde> {
                 widget.analytics.logEvent(
                   name: "Badge_Clicked",
                   parameters: <String, dynamic>{
-                    'type': 'Ghost_Badge',
+                    'type': 'Solo_Badge',
                     'title': title,
                     'haswon': hasWon,
                   },
