@@ -91,6 +91,11 @@ class _setupState extends State<setup> {
       debugShowCheckedModeBanner: false,
       navigatorObservers: <NavigatorObserver>[setup.observer],
       theme: ThemeProvider.themeOf(theme).data,
+      routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
+        'home': (context) => MyApp(setup.analytics,setup.observer),
+        // When navigating to the "/second" route, build the SecondScreen widget.
+      },
 
       home: home,
     );
@@ -289,12 +294,13 @@ class _setupState extends State<setup> {
           data: ThemeData(
 
 
-              brightness: Brightness.light,
+              brightness: Brightness.dark,
 
 
               backgroundColor: Color.fromRGBO(50, 50, 50, 1),
-              splashColor: Color.fromRGBO(42, 154, 96, 1),
-              primaryColor: Color.fromRGBO(42, 154, 96, 1),
+              splashColor: Color.fromRGBO(42, 150, 96, 1),
+              //primaryColor: Color.fromRGBO(42, 154, 96, 1),
+              primaryColor: Colors.greenAccent,
 
 
               appBarTheme: AppBarTheme(color: Color.fromRGBO(42, 154, 96, 1), textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
@@ -394,47 +400,50 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.shifting,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.shifting,
 
-        items: [
-          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.ghost), label: "Ghosting"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sports_tennis_outlined),
-            label: 'Solo',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(EvaIcons.activityOutline),
-            label: 'Data',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.profile_circled),
-            label: 'Profile',
-          ),
-        ],
+          items: [
+            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.ghost), label: "Ghosting"),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.sports_tennis_outlined),
+              label: 'Solo',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(EvaIcons.activityOutline),
+              label: 'Data',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.profile_circled),
+              label: 'Profile',
+            ),
+          ],
 //fixedColor:ThemeData().bottomNavigationBarTheme.selectedItemColor,
-        onTap: (index) {
-          _pageController.jumpToPage(index);
-          setState(() {
-            current = index;
-          });
-        },
-        currentIndex: current,
-      ),
-      body: PageView(
-        pageSnapping: true,
+          onTap: (index) {
+            _pageController.jumpToPage(index);
+            setState(() {
+              current = index;
+            });
+          },
+          currentIndex: current,
+        ),
+        body: PageView(
+          pageSnapping: true,
 
-        allowImplicitScrolling: true,
-        controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
+          allowImplicitScrolling: true,
+          controller: _pageController,
+          physics: NeverScrollableScrollPhysics(),
 
-        children: <Widget>[
-          GhostScreen(cameras, widget.analytics, widget.observer),
-          SoloScreen(cameras, widget.analytics, widget.observer),
-          SavedDataPage(widget.analytics, widget.observer),
-          Acount(widget.analytics, widget.observer)
-        ],
+          children: <Widget>[
+            GhostScreen(cameras, widget.analytics, widget.observer),
+            SoloScreen(cameras, widget.analytics, widget.observer),
+            SavedDataPage(widget.analytics, widget.observer),
+            Acount(widget.analytics, widget.observer)
+          ],
+        ),
       ),
     );
   }

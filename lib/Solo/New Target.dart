@@ -40,7 +40,6 @@ class _create_targetState extends State<create_target> {
     super.initState();
     locationB=(widget.screenH-150).toDouble();
     location = Point(250, (widget.screenH-200).toInt());
-
   }
 
   Widget draw_court() {

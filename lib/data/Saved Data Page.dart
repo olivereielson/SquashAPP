@@ -19,6 +19,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:scidart/numdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
@@ -49,20 +50,8 @@ class SavedDataPage extends StatefulWidget {
 class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderStateMixin {
   final GlobalKey<SliverAnimatedListState> _listKey = GlobalKey<SliverAnimatedListState>();
   final GlobalKey<SliverAnimatedListState> _listKey2 = GlobalKey<SliverAnimatedListState>();
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
 
-  List<String> ghost_data_names = [
-    "Average",
-    "Speed",
-    "Average",
-    "Duration",
-  ];
-
-  List<String> ghost_data_units = ["Ghosts/Second", "Seconds"];
-
-  List<String> solo_data_names = ["Average", "Duration", "Average", "Accuracy", "Average", "Shot Count"];
-
-  List<double> ghost_data = [100, 80];
-  List<double> solo_data = [100, 80, 40];
 
   int solo_index = 0;
   int ghost_index = 0;
@@ -70,47 +59,19 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   Box<Solo_stroage> solo_storage_box;
   Box<Ghosting> ghosting_box;
 
-  double rest = 0;
-  double work = 0;
-
-  int ave_solo_dur;
-  int ave_shot_num;
-
-  int ave_ghost_dur;
-  int ave_ghost_num;
-  double accuracy;
-
   List<double> solo_type_pie_chart_data = [0, 0, 0, 0];
   List<double> ghost_type_pie_chart_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  List<Color> type_pie_color = [
-    Color.fromRGBO(66, 89, 138, 1),
-    Colors.grey,
-    Color.fromRGBO(20, 20, 60, 1),
-    Color(0xff044d7c),
-    Color.fromRGBO(20, 20, 60, 1),
-    Colors.lightBlueAccent,
-    Color.fromRGBO(20, 20, 80, 1),
-    Colors.indigoAccent,
-    Colors.blueGrey,
-    Color.fromRGBO(20, 50, 120, 1),
-    Colors.indigo
-  ];
 
-  List<BarChartGroupData> barchrt = [];
-  List<double> single_corner_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   TabController _tabController;
 
   bool is_shaking = false;
 
-  List<FlSpot> speed = [];
-
   Map<DateTime, List<String>> eventDay = {};
 
   DateTime _currentDate = DateTime.now();
   DateTime _monthdate = DateTime.now();
-  int _count = 0;
   Future _load_calander;
 
 
@@ -373,94 +334,114 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
   Widget page_2() {
     //print(events);
 
-    return ListView(
-      children: [
-        FutureBuilder(
-          future: _load_calander,
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1")) {
+    return SmartRefresher(
+      controller: _refreshController,
+      enablePullDown: true,
+      enablePullUp: false,
+
+      onRefresh: (){
+        _onRefresh();
+      },
+      scrollDirection: Axis.vertical,
+
+      header: CustomHeader(
+
+        builder: (BuildContext context, RefreshStatus mode) {
+
+          return CupertinoActivityIndicator();
+
+        },
+
+      ),
+      child: ListView(
+        children: [
+          FutureBuilder(
+            future: _load_calander,
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              if (Hive.isBoxOpen("Ghosting1") && Hive.isBoxOpen("Solo1")) {
+
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    children: [
+                      CalendarCarousel<Event>(
+                        onDayPressed: (DateTime date, List<Event> events) {
+                          calculate_calender();
+                          this.setState(() => _currentDate = date);
+                          widget.analytics.logEvent(name: "Calender_Updated",
+                            parameters: <String, dynamic>{
+                              'type': 'day_change',
+                            },
+                          );
+
+
+                          print(events.length);
+
+
+                        },
+                        weekendTextStyle: TextStyle(
+                          color: Theme.of(context).highlightColor,
+                        ),
+                        daysTextStyle:  TextStyle(
+                          color: Theme.of(context).highlightColor,
+                        ),
+
+                        todayTextStyle: TextStyle(fontWeight: FontWeight.bold),
+                        weekdayTextStyle: TextStyle(color: Theme.of(context).primaryColorDark, fontWeight: FontWeight.bold),
+                        selectedDayBorderColor: Theme.of(context).primaryColor,
+                        todayButtonColor: Theme.of(context).splashColor.withOpacity(0.3),
+                        todayBorderColor: Theme.of(context).splashColor,
+                        selectedDayButtonColor: Theme.of(context).splashColor,
+                        iconColor: Theme.of(context).primaryColor,
+                        thisMonthDayBorderColor: Colors.grey,
+                        selectedDateTime: _currentDate,
+                        headerTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor, fontSize: 30),
+                        headerText: DateFormat("MMMM y").format(_monthdate),
+                        customGridViewPhysics: NeverScrollableScrollPhysics(),
+
+                        onCalendarChanged: (date) {
+                          setState(() {
+                            _monthdate = date;
+                            widget.analytics.logEvent(name: "Calender_Updated",
+                              parameters: <String, dynamic>{
+                                'type': 'month_change',
+                              },
+                            );
+                          });
+                        },
+                        isScrollable: false,
+                        weekFormat: false,
+                        height: 420.0,
+                        daysHaveCircularBorder: null,
+                      ),
+                      Column(
+                        children: eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)] != null
+                            ? eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)]
+                                .map((e) => e.substring(0, 1) == "1" ? ghost_saved(int.parse(e.substring(1))) : Solo_Saved(int.parse(e.substring(1))))
+                                .toList()
+                            : [Text("No Data")],
+                      )
+                    ],
+                  ),
+                );
+              }
 
 
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  children: [
-                    CalendarCarousel<Event>(
-                      onDayPressed: (DateTime date, List<Event> events) {
-                        calculate_calender();
-                        this.setState(() => _currentDate = date);
-                        widget.analytics.logEvent(name: "Calender_Updated",
-                          parameters: <String, dynamic>{
-                            'type': 'day_change',
-                          },
-                        );
-
-
-                        print(events.length);
-
-
-                      },
-                      weekendTextStyle: TextStyle(
-                        color: Theme.of(context).highlightColor,
-                      ),
-                      daysTextStyle:  TextStyle(
-                        color: Theme.of(context).highlightColor,
-                      ),
-
-                      todayTextStyle: TextStyle(fontWeight: FontWeight.bold),
-                      weekdayTextStyle: TextStyle(color: Theme.of(context).primaryColorDark, fontWeight: FontWeight.bold),
-                      selectedDayBorderColor: Theme.of(context).primaryColor,
-                      todayButtonColor: Theme.of(context).splashColor.withOpacity(0.3),
-                      todayBorderColor: Theme.of(context).splashColor,
-                      selectedDayButtonColor: Theme.of(context).splashColor,
-                      iconColor: Theme.of(context).primaryColor,
-                      thisMonthDayBorderColor: Colors.grey,
-                      selectedDateTime: _currentDate,
-                      headerTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor, fontSize: 30),
-                      headerText: DateFormat("MMMM y").format(_monthdate),
-                      customGridViewPhysics: NeverScrollableScrollPhysics(),
-
-                      onCalendarChanged: (date) {
-                        setState(() {
-                          _monthdate = date;
-                          widget.analytics.logEvent(name: "Calender_Updated",
-                            parameters: <String, dynamic>{
-                              'type': 'month_change',
-                            },
-                          );
-                        });
-                      },
-                      isScrollable: false,
-                      weekFormat: false,
-                      height: 420.0,
-                      daysHaveCircularBorder: null,
-                    ),
-                    Column(
-                      children: eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)] != null
-                          ? eventDay[DateTime(_currentDate.year, _currentDate.month, _currentDate.day)]
-                              .map((e) => e.substring(0, 1) == "1" ? ghost_saved(int.parse(e.substring(1))) : Solo_Saved(int.parse(e.substring(1))))
-                              .toList()
-                          : [Text("No Data")],
-                    )
-                  ],
+                padding: const EdgeInsets.symmetric(vertical: 50),
+                child: Center(
+                  child: Text(
+                    "No Saved Data",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
               );
-            }
 
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50),
-              child: Center(
-                child: Text(
-                  "No Saved Data",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-            );
-
-          },
-        ),
-      ],
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -499,6 +480,12 @@ class SavedDataPageSate extends State<SavedDataPage> with SingleTickerProviderSt
     );
   }
 
+  void _onRefresh() async{
+    calculate_calender();
+    widget.analytics.logEvent(name: "Calender_Refresh");
+
+    _refreshController.refreshCompleted();
+  }
 
   int pagenum = 0;
 

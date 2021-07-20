@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/hive_classes.dart';
 
@@ -23,7 +24,7 @@ class Ghost_Stat extends StatefulWidget{
 }
 
 class _Ghost_StatState extends State<Ghost_Stat> {
-
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   Box<Ghosting> ghosting_box;
   List<double> ghost_type_pie_chart_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   int ave_ghost_dur;
@@ -469,6 +470,14 @@ class _Ghost_StatState extends State<Ghost_Stat> {
         );
 
   }
+  void _onRefresh() async{
+    await load_ghost_hive();
+    calculate_ghost();
+
+    _refreshController.refreshCompleted();
+    widget.analytics.logEvent(name: "Ghost_Refresh");
+
+  }
 
 
 
@@ -482,26 +491,49 @@ class _Ghost_StatState extends State<Ghost_Stat> {
         future:load_ghost_hive(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (Hive.isBoxOpen("Ghosting1") && ghosting_box.length != 0) {
-            return ListView(
-              children: [
-                resting(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      single_card("Average", "Duration", Duration(seconds: ave_ghost_dur).toString().substring(2, 7)),
-                      single_card("Average", "Ghosts", ave_ghost_num.toString(), ),
-                    ],
-                  ),
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: SmartRefresher(
+                controller: _refreshController,
+                enablePullDown: true,
+                enablePullUp: false,
+
+                onRefresh: (){
+                  _onRefresh();
+                },
+                scrollDirection: Axis.vertical,
+
+                header: CustomHeader(
+
+                  builder: (BuildContext context, RefreshStatus mode) {
+
+                    return CupertinoActivityIndicator();
+
+                  },
+
                 ),
-                Speed(),
-                //Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: ghost_type_pie_chart())),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: speed != null ? speed2() : Text(""),
-                )
-              ],
+                child: ListView(
+                  children: [
+                    resting(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          single_card("Average", "Duration", Duration(seconds: ave_ghost_dur).toString().substring(2, 7)),
+                          single_card("Average", "Ghosts", ave_ghost_num.toString(), ),
+                        ],
+                      ),
+                    ),
+                    Speed(),
+                    //Card(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular((20.0)))), child: Container(child: ghost_type_pie_chart())),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: speed != null ? speed2() : Text(""),
+                    )
+                  ],
+                ),
+              ),
             );
           } else {
             return Center(

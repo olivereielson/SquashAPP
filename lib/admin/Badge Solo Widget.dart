@@ -74,7 +74,7 @@ class _Solo_BagdeState extends State<Solo_Bagde> {
                 Navigator.of(context).push(new PageRouteBuilder(
                     opaque: false,
                     barrierDismissible: true,
-                    //transitionDuration: Duration(seconds: 5),
+                   // transitionDuration: Duration(seconds: 5),
                     pageBuilder: (BuildContext context, _, __) {
                       return GestureDetector(
                         onTap: () {
@@ -87,29 +87,26 @@ class _Solo_BagdeState extends State<Solo_Bagde> {
                             child: Hero(
                               tag: title + image,
                               child: Container(
-                                height: 200,
-                                width: 200,
                                 decoration: BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
-                                    height: 500,
+                                    height: 100,
                                     width: 100,
                                     decoration: BoxDecoration(color: Theme.of(context).splashColor, shape: BoxShape.circle),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(40.0),
+                                      padding: const EdgeInsets.all(20.0),
                                       child: hasWon
                                           ? Image.asset(
-                                              "assets/badges/$image.png",
-                                              height: 20,
-                                              width: 40,
-                                              color: Colors.white,
-                                            )
+                                        "assets/badges/$image.png",
+                                        height: 20,
+                                        color: Colors.white,
+                                      )
                                           : Icon(
-                                              Icons.lock,
-                                              color: Colors.white,
-                                              size: 40,
-                                            ),
+                                        Icons.lock,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ),
                                     ),
                                   ),
                                 ),

@@ -5,18 +5,14 @@ import 'package:animated_widgets/widgets/rotation_animated.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
-import 'package:direct_select/direct_select.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -253,6 +249,70 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
           );
         });
   }
+
+  show_ghost_picker() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(18),
+              )),
+          title: new Text(
+            "Number of Ghosts",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          content: new TextField(
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            decoration: new InputDecoration(
+                counterStyle: TextStyle(color: Colors.white),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 10,
+                    ),
+                    gapPadding: 5),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 1,
+                  ),
+                ),
+                labelStyle: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white54),
+            onChanged: (value) {
+              setState(() {
+                number_set = double.parse(value);
+              });
+            },
+            onSubmitted: (value) {
+              setState(() {
+                number_set = double.parse(value);
+              });
+
+              Navigator.of(context).pop();
+            },
+          ),
+          actions: [
+            CupertinoButton(
+              child: Text(
+                "Done",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
 
   show_time_picker() {
     showModalBottomSheet(
@@ -629,6 +689,239 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
     );
   }
 
+  Widget input_page(int index){
+
+    return   Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+
+              show_initail_time_picker();
+            },
+            child: input(
+                "Inital Count Down",
+                start_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                Icon(
+                  Icons.timer,
+                  color:Theme.of(context).primaryColor,
+                  size: 30,
+                )),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+
+              show_time_picker();
+            },
+            child: input(
+                "Rest time",
+                rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
+                Icon(
+                  Icons.timer,
+
+                  color:Theme.of(context).primaryColor,
+                  size: 30,
+                )),
+          ),
+        ),
+        index==0?Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+
+              show_time_set_picker();
+            },
+            child: input(
+                "Time Per Round",
+                round_time.toString().substring(2, 7),
+                Icon(
+                  Icons.timer,
+                  color:Theme.of(context).primaryColor,
+                  size: 30,
+                )),
+          ),
+        ):
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+
+              show_ghost_picker();
+            },
+            child: input(
+                "Number of Ghosts",
+                number_set.toInt().toString(),
+                Icon(
+                  EvaIcons.hashOutline,
+                  color:Theme.of(context).primaryColor,
+                  size: 30,
+                )),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+
+              show_round_picker();
+            },
+            child: input(
+                "Number of rounds",
+                round_num.toInt().toString(),
+                Icon(
+                  EvaIcons.hashOutline,
+                  color:Theme.of(context).primaryColor,
+                  size: 30,
+                )),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+            onTap: () async {
+              corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
+
+              setState(() {});
+            },
+            child: input(
+                "Number of Corners",
+                corners.length.toInt().toString(),
+                Icon(
+                  Icons.apps,
+                  color:Theme.of(context).primaryColor,
+                  size: 30,
+                )),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  await loadModel();
+                  widget.analytics.logEvent(
+                    name: 'Ghosting_Workout_Started',
+                    parameters: <String, dynamic>{
+                      'name': name,
+                      'number_set':number_set,
+                      'round_num':round_num,
+                      'rest_time':rest_time,
+                      'start_time':start_time,
+                      'corners':corners.length,
+                      'round_time':round_time,
+                      'type': index==0?"count":"timed"
+                    },
+                  );
+
+                  //
+                  //   _sendAnalyticsEvent();
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(
+                          cameras,
+                          number_set,
+                          round_num,
+                          rest_time,
+                          corners,
+                          start_time.inSeconds,
+                          round_time,
+                          index,
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                        )),
+                  );
+                },
+                child: Center(
+                  child: Container(
+                    height: 50,
+                    width: 150,
+                    child: Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(18),
+                            )),
+                        elevation: 2,
+                        color: Theme.of(context).splashColor,
+                        child: Center(
+                            child: Text(
+                              "Start",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                            ))),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                  onTap: () async {
+                    await text_dialog();
+                    widget.analytics.logEvent(
+                      name: 'Ghosting_Workout_Saved',
+                      parameters: <String, dynamic>{
+                        'name': name,
+                        'number_set':number_set,
+                        'round_num':round_num,
+                        'rest_time':rest_time,
+                        'start_time':start_time,
+                        'corners':corners.length,
+                        'round_time':round_time,
+                        'type': index==0?"count":"timed"
+                      },
+
+                    );
+                    if (name != null && name != "") {
+                      var exersie = Custom()
+                        ..name = name
+                        ..number_set = number_set
+                        ..round_num = round_num
+                        ..rest_time = rest_time.inSeconds
+                        ..start_time = start_time.inSeconds
+                        ..corners = corners
+                        ..type = index
+                        ..round_time = round_time.inSeconds;
+
+                      Exersises.add(exersie); // Store this object for the first time
+                      _mylistkey.currentState.insertItem(0);
+                    }
+                  },
+                  child: Container(
+                    width: 200,
+                    height: 50,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(18),
+                          )),
+                      elevation: 2,
+                      color: Theme.of(context).splashColor,
+                      child: Center(
+                          child: Text(
+                            "Save Custom Set",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                          )),
+                    ),
+                  )),
+            ],
+          ),
+        ),
+      ],
+    );
+
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -681,424 +974,9 @@ class GhostScreenState extends State<GhostScreen> with SingleTickerProviderState
                         [
                           TabBarView(
                             children: [
-                              Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_initail_time_picker();
-                                      },
-                                      child: input(
-                                          "Inital Count Down",
-                                          start_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                          Icon(
-                                            Icons.timer,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_time_picker();
-                                      },
-                                      child: input(
-                                          "Rest time",
-                                          rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                          Icon(
-                                            Icons.timer,
-
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_time_set_picker();
-                                      },
-                                      child: input(
-                                          "Time Per Round",
-                                          round_time.toString().substring(2, 7),
-                                          Icon(
-                                            Icons.timer,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_round_picker();
-                                      },
-                                      child: input(
-                                          "Number of rounds",
-                                          round_num.toInt().toString(),
-                                          Icon(
-                                            EvaIcons.hashOutline,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
-
-                                        setState(() {});
-                                      },
-                                      child: input(
-                                          "Number of Corners",
-                                          corners.length.toInt().toString(),
-                                          Icon(
-                                            Icons.apps,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await loadModel();
-                                            widget.analytics.logEvent(
-                                              name: 'Ghosting_Workout_Started',
-                                              parameters: <String, dynamic>{
-                                                'name': name,
-                                                'number_set':number_set,
-                                                'round_num':round_num,
-                                                'rest_time':rest_time,
-                                                'start_time':start_time,
-                                                'corners':corners.length,
-                                                'round_time':round_time,
-                                                'type': _tabController.index==0?"count":"timed"
-                                              },
-                                            );
-
-                                            //
-                                            //   _sendAnalyticsEvent();
-
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => HomePage(
-                                                        cameras,
-                                                        number_set,
-                                                        round_num,
-                                                        rest_time,
-                                                        corners,
-                                                        start_time.inSeconds,
-                                                        round_time,
-                                                        0,
-                                                        analytics: widget.analytics,
-                                                        observer: widget.observer,
-                                                      )),
-                                            );
-                                          },
-                                          child: Center(
-                                            child: Container(
-                                              height: 50,
-                                              width: 150,
-                                              child: Card(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.all(
-                                                    Radius.circular(18),
-                                                  )),
-                                                  elevation: 2,
-                                                  color: Theme.of(context).splashColor,
-                                                  child: Center(
-                                                      child: Text(
-                                                    "Start",
-                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                                  ))),
-                                            ),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                            onTap: () async {
-                                              await text_dialog();
-                                              widget.analytics.logEvent(
-                                                name: 'Ghosting_Workout_Saved',
-                                                parameters: <String, dynamic>{
-                                                  'name': name,
-                                                  'number_set':number_set,
-                                                  'round_num':round_num,
-                                                  'rest_time':rest_time,
-                                                  'start_time':start_time,
-                                                  'corners':corners.length,
-                                                  'round_time':round_time,
-                                                  'type': _tabController.index==0?"count":"timed"
-                                                },
-
-                                              );
-                                              if (name != null && name != "") {
-                                                var exersie = Custom()
-                                                  ..name = name
-                                                  ..number_set = number_set
-                                                  ..round_num = round_num
-                                                  ..rest_time = rest_time.inSeconds
-                                                  ..start_time = start_time.inSeconds
-                                                  ..corners = corners
-                                                  ..type = _tabController.index
-                                                  ..round_time = round_time.inSeconds;
-
-                                                Exersises.add(exersie); // Store this object for the first time
-                                                _mylistkey.currentState.insertItem(0);
-                                              }
-                                            },
-                                            child: Container(
-                                              width: 200,
-                                              height: 50,
-                                              child: Card(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.all(
-                                                  Radius.circular(18),
-                                                )),
-                                                elevation: 2,
-                                                color: Theme.of(context).splashColor,
-                                                child: Center(
-                                                    child: Text(
-                                                  "Save Custom Set",
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                                )),
-                                              ),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_initail_time_picker();
-                                      },
-                                      child: input(
-                                          "Inital Count Down",
-                                          start_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                          Icon(
-                                            Icons.timer,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_time_picker();
-                                      },
-                                      child: input(
-                                          "Rest time",
-                                          rest_time.toString().split('.').first.padLeft(8, "0").substring(3),
-                                          Icon(
-                                            Icons.timer,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_set_picker();
-                                      },
-                                      child: input(
-                                          "Number of Ghosts",
-                                          number_set.toInt().toString(),
-                                          Icon(
-                                            EvaIcons.hashOutline,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-
-                                        show_round_picker();
-                                      },
-                                      child: input(
-                                          "Number of rounds",
-                                          round_num.toInt().toString(),
-                                          Icon(
-                                            EvaIcons.hashOutline,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        corners = await Navigator.push(context, PageTransition(type: PageTransitionType.size, alignment: Alignment.bottomCenter, child: Court_Screen(corners)));
-
-                                        setState(() {});
-                                      },
-                                      child: input(
-                                          "Number of Corners",
-                                          corners.length.toInt().toString(),
-                                          Icon(
-                                            Icons.apps,
-                                            color:Theme.of(context).primaryColor,
-                                            size: 30,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () async {
-
-                                            widget.analytics.logEvent(
-                                              name: 'Ghosting_Workout_Start',
-                                              parameters: <String, dynamic>{
-                                                'name': name,
-                                                'number_set':number_set,
-                                                'round_num':round_num,
-                                                'rest_time':rest_time,
-                                                'start_time':start_time,
-                                                'corners':corners.length,
-                                                'round_time':round_time,
-                                                'type': _tabController.index==0?"count":"timed"
-                                              },
-                                            );
-
-                                            await loadModel();
-
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => HomePage(
-                                                        cameras,
-                                                        number_set,
-                                                        round_num,
-                                                        rest_time,
-                                                        corners,
-                                                        start_time.inSeconds,
-                                                        round_time,
-                                                        1,
-                                                        analytics: widget.analytics,
-                                                        observer: widget.observer,
-                                                      )),
-                                            );
-                                          },
-                                          child: Center(
-                                            child: Container(
-                                              height: 50,
-                                              width: 150,
-                                              child: Card(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.all(
-                                                    Radius.circular(18),
-                                                  )),
-                                                  elevation: 2,
-                                                  color: Theme.of(context).splashColor,
-                                                  child: Center(
-                                                      child: Text(
-                                                    "Start",
-                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                                  ))),
-                                            ),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                            onTap: () async {
-
-                                              await text_dialog();
-
-                                              widget.analytics.logEvent(
-                                                name: 'Ghosting_Workout_Saved',
-                                                parameters: <String, dynamic>{
-                                                  'name': name,
-                                                  'number_set':number_set,
-                                                  'round_num':round_num,
-                                                  'rest_time':rest_time,
-                                                  'start_time':start_time,
-                                                  'corners':corners.length,
-                                                  'round_time':round_time,
-                                                  'type': _tabController.index==0?"count":"timed"
-                                                },
-
-                                              );
-
-
-                                              if (name != null && name != "") {
-                                                var exersie = Custom()
-                                                  ..name = name
-                                                  ..number_set = number_set
-                                                  ..round_num = round_num
-                                                  ..rest_time = rest_time.inSeconds
-                                                  ..start_time = start_time.inSeconds
-                                                  ..corners = corners
-                                                  ..type = _tabController.index
-                                                  ..round_time = round_time.inSeconds;
-
-                                                Exersises.add(exersie); // Store this object for the first time
-                                                _mylistkey.currentState.insertItem(0);
-                                              }
-                                            },
-                                            child: Container(
-                                              width: 200,
-                                              height: 50,
-                                              child: Card(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.all(
-                                                  Radius.circular(18),
-                                                )),
-                                                elevation: 2,
-                                                color: Theme.of(context).splashColor,
-                                                child: Center(
-                                                    child: Text(
-                                                  "Save Custom Set",
-                                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                                )),
-                                              ),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              input_page(0),
+                              input_page(1)
+                              
                             ],
                             controller: _tabController,
                           ),

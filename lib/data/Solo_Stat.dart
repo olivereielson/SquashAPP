@@ -9,6 +9,7 @@ import 'package:squash/Solo/solo_defs.dart';
 import 'package:squash/extra/hive_classes.dart';
 
 import 'calculations.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Solo_Stat extends StatefulWidget {
   final FirebaseAnalytics analytics;
@@ -46,6 +47,7 @@ class _Solo_StatState extends State<Solo_Stat> {
   List<FlSpot> dista = [];
   Map<String,int> Solo_Names={};
 
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -396,10 +398,19 @@ class _Solo_StatState extends State<Solo_Stat> {
 
   }
 
+  void _onRefresh() async{
+    await load_hive();
+    calculate_solo();
+
+    _refreshController.refreshCompleted();
+    widget.analytics.logEvent(name: "Solo_Refresh");
+
+  }
 
 
   @override
   Widget build(BuildContext context) {
+
 
     return Scaffold(
       body: FutureBuilder(
@@ -407,31 +418,52 @@ class _Solo_StatState extends State<Solo_Stat> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (Hive.isBoxOpen("Solo1") && solo_storage_box.length != 0) {
             return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView(
-                children: [
-                  type_pie_chart(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        single_card(
-                          "Average",
-                          "Duration",
-                          Duration(seconds: ave_solo_dur).toString().substring(2, 7),
-                        ),
-                        single_card(
-                          "Average",
-                          "Shots",
-                          ave_shot_num.toString(),
-                        ),
-                      ],
+              padding: const EdgeInsets.symmetric(vertical:40,horizontal: 8),
+              child: SmartRefresher(
+                controller: _refreshController,
+                enablePullDown: true,
+                enablePullUp: false,
+
+                onRefresh: (){
+                 _onRefresh();
+                },
+                scrollDirection: Axis.vertical,
+
+                header: CustomHeader(
+
+                  builder: (BuildContext context, RefreshStatus mode) {
+
+                    return CupertinoActivityIndicator();
+
+                  },
+
+                ),
+
+                child: ListView(
+                  children: [
+                    type_pie_chart(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          single_card(
+                            "Average",
+                            "Duration",
+                            Duration(seconds: ave_solo_dur).toString().substring(2, 7),
+                          ),
+                          single_card(
+                            "Average",
+                            "Shots",
+                            ave_shot_num.toString(),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  percsion(),
-                  dist()
-                ],
+                    percsion(),
+                    dist()
+                  ],
+                ),
               ),
             );
           } else {

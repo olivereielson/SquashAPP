@@ -1,8 +1,7 @@
-import 'dart:io';
+import 'dart:async';
 import 'dart:math';
 
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
-import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,17 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:squash/Ghosting/finish%20screen.dart';
 import 'package:squash/extra/data_collection.dart';
 import 'package:squash/extra/hive_classes.dart';
-import 'package:tflite/tflite.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'camera.dart';
 import 'bndbox.dart';
-import 'countdown.dart';
 
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -34,7 +29,7 @@ class HomePage extends StatefulWidget {
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
 
-  HomePage(this.cameras, this.number_set, this.round_num, this.rest_time, this.corners, this.start_time,this.round_time,this.type,{this.analytics,this.observer});
+  HomePage(this.cameras, this.number_set, this.round_num, this.rest_time, this.corners, this.start_time, this.round_time, this.type, {this.analytics, this.observer});
 
   @override
   _HomePageState createState() => new _HomePageState(number_set, round_num, rest_time, corners, start_time);
@@ -76,25 +71,27 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   List<double> time_array2 = [];
 
   List<double> corner_array = [];
-
   double precent_effort = 0;
   double xpoint;
   double maxsize = 200;
-
-  Widget center;
-
   List<TargetFocus> targets = [];
   GlobalKey keyButton = GlobalKey();
   GlobalKey keyButton4 = GlobalKey();
   GlobalKey keyButton5 = GlobalKey();
 
+  Timer _timer;
+  int _start;
+
+  bool countdown = false;
+
+  int center_state = 0;
 
   void showTutorial() {
     TutorialCoachMark(
       context,
       targets: targets,
       // List<TargetFocus>
-      colorShadow:Theme.of(context).primaryColor,
+      colorShadow: Theme.of(context).primaryColor,
       // DEFAULT Colors.black
       // alignSkip: Alignment.bottomRight,
       // textSkip: "SKIP",
@@ -121,13 +118,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void initState() {
     make_targets();
     _testSetCurrentScreen();
-    Data_Sender().testSetCurrentScreen(widget.analytics,"Ghosting Page","Ghosting_Page");
+    Data_Sender().testSetCurrentScreen(widget.analytics, "Ghosting Page", "Ghosting_Page");
 
     super.initState();
 
-    center = count_down_timer();
-
     application_start = DateTime.now();
+    _start = widget.start_time;
 
     controller = AnimationController(duration: const Duration(seconds: 2), vsync: this);
 
@@ -172,11 +168,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Finish_Screen(ghostcast, test.substring(0, test.length - 7), time_array2,widget.analytics,widget.observer)),
+      MaterialPageRoute(builder: (context) => Finish_Screen(ghostcast, test.substring(0, test.length - 7), time_array2, widget.analytics, widget.observer)),
     );
 
     Navigator.pop(context);
   }
+
   Future<void> _testSetCurrentScreen() async {
     await widget.analytics.setCurrentScreen(
       screenName: 'Solo_Workout_Page',
@@ -184,6 +181,47 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
+  Widget CountDown() {
+    return GestureDetector(
+      onTap: () {
+        countdown=true;
+        const oneSec = const Duration(seconds: 1);
+        _timer = new Timer.periodic(oneSec, (Timer timer) {
+          if (_start < 1) {
+            timer.cancel();
+            center_state = 1;
+          } else {
+            setState(() {
+              _start = _start - 1;
+            });
+          }
+        });
+      },
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          color: Theme.of(context).splashColor,
+          border: Border.all(
+              color: Theme.of(context).splashColor,
+              // set border color
+              width: 6.0), // set border width
+          borderRadius: BorderRadius.all(Radius.circular(25.0)), // set rounded corner radius
+        ),
+        child: countdown
+            ? Center(
+                child: Text(
+                _start.toString(),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: Colors.white),
+              ))
+            : Icon(
+                Icons.play_arrow,
+                color: Colors.white,
+                size: 60,
+              ),
+      ),
+    );
+  }
 
   Widget corner_box(int number) {
     return RotationTransition(
@@ -191,7 +229,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       child: AnimatedContainer(
         duration: Duration(milliseconds: 500),
         decoration: BoxDecoration(
-          color: corner == number ? Theme.of(context).primaryColor: Colors.transparent,
+          color: corner == number ? Theme.of(context).primaryColor : Colors.transparent,
           border: Border.all(
               color: corner == number ? Theme.of(context).primaryColor : Colors.transparent,
               // set border color
@@ -319,79 +357,35 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ));
   }
 
-  Widget count_down_timer() {
-
-    return Container(
-      width: 200,
-      child: Center(
-        child: CountDown(
-          start_countdown,
-          done: (t) {
-            setState(() {
-              is_exersising = true;
-
-              if(widget.type==0){
-
-                center=work_timer();
-
-
-              }else{
-
-                center = precent_complete_indicator(time_array.length / number_set);
-
-              }
-
-
-
-              corner = corners[new Random().nextInt(corners.length)].toInt();
-              start_time = DateTime.now();
-              showcam = false;
-            });
-          },
-        ),
-      ),
-    );
-
-
-
-  }
-
-
   Widget rest_timer() {
     return Container(
       key: Key("time"),
-      width: 350,
-      height: 350,
+      width: 300,
+      height: 300,
       child: Center(
         child: CircularCountDownTimer(
-          height: 300,
-          width: 300,
+          height: 250,
+          width: 250,
+          isTimerTextShown: center_state==2,
           duration: rest_time.inSeconds,
           fillColor: Theme.of(context).splashColor,
-          strokeWidth: 30,
-
+          strokeWidth: center_state==2?30:100,
           initialDuration: 0,
-
+          textFormat:           CountdownTextFormat.S,
           isReverse: true,
-          textStyle: TextStyle(color: resting?Theme.of(context).highlightColor:Colors.transparent, fontWeight: FontWeight.bold, fontSize: 70),
+         textStyle: TextStyle(color: resting ? Theme.of(context).highlightColor : Colors.transparent, fontWeight: FontWeight.bold, fontSize: 70),
+           //textStyle: TextStyle(color: Colors.pinkAccent, fontWeight: FontWeight.bold, fontSize: 70),
+
           onComplete: () {
             setState(() {
               resting = !resting;
 
-              if(widget.type==0){
-
-                center=work_timer();
-
-              }else{
-
-                center = precent_complete_indicator(time_array.length / number_set);
-
-              }
+              center_state = 1;
 
               corner = corners[new Random().nextInt(corners.length)].toInt();
             });
           },
-          ringColor: Colors.white,
+          ringColor: center_state==2?Colors.white:Colors.pinkAccent,
         ),
       ),
     );
@@ -408,10 +402,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             child: CircularCountDownTimer(
               height: 200,
               width: 200,
+              isTimerTextShown: center_state==1,
               duration: widget.round_time.inSeconds,
               fillColor: Theme.of(context).splashColor,
               strokeWidth: 20,
               isReverse: true,
+              textFormat:           CountdownTextFormat.S,
+
               textStyle: TextStyle(color: Theme.of(context).highlightColor, fontWeight: FontWeight.bold, fontSize: 70),
               onComplete: () {
                 setState(() {
@@ -419,7 +416,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   time_array.clear();
                   round_num--;
                   corner = 10;
-                  center = rest_timer();
+                  center_state = 2;
                 });
                 if (round_num <= 0) {
                   kill();
@@ -436,8 +433,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Widget precent_complete_indicator(double precent) {
-
-
     return Center(
       child: Container(
         width: 200,
@@ -586,23 +581,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 time_array2.add(dif.toDouble());
                 //time_array.sort();
 
-                if(widget.type==1){
-
-                  center = precent_complete_indicator(time_array.length / number_set);
-
-
-                }
-
                 //
                 //time_array
                 print(time_array);
 
-                if (time_array.length == number_set && widget.type==1) {
+                if (time_array.length == number_set && widget.type == 1) {
                   resting = true;
                   time_array.clear();
                   round_num--;
                   corner = 10;
-                  center = rest_timer();
+                  center_state = 2;
                 }
 
                 //(round_num);
@@ -624,103 +612,114 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     });
   }
 
+  Widget center_tile() {
+    if (center_state == 0) {
+      return CountDown();
+    }
+
+    if (center_state == 1 && widget.type == 0) {
+      return work_timer();
+    }
+
+    if (center_state == 1 && widget.type == 0) {
+      return precent_complete_indicator(time_array.length / number_set);
+    }
+    if (center_state == 2) {
+      return rest_timer();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // p1 = Point((MediaQuery.of(context).size.width - t_size) / 2, (MediaQuery.of(context).size.height - t_size) / 2);
 
-    return Scaffold(
-        body: Stack(
-      children: [
-        Camera(widget.cameras, setRecognitions, showcam, false, 1),
-        showcam ? BndBox(_recognitions == null ? [] : _recognitions) : Text(""),
-        showcam ? t_box() : draw_court(),
-        Positioned(
-            top: 0,
-            right: 20,
-            child: SafeArea(
-              child: showcam
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.help,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        widget.analytics.logEvent(name: "Ghost_Tutorial_Shown");
-                        showTutorial();
-                      },
-                    )
-                  : Text(""),
-            )),
-        Corner_tree(),
-        Positioned(
-            top: -20,
-            left: (MediaQuery.of(context).size.width - 170) / 2,
-            child: SafeArea(
-              child: GestureDetector(
-                onTap: () {
-                  widget.analytics.logEvent(name: "Ghosted_Ended_Early");
-                  Navigator.pop(context);
-                },
-                child: Container(
-                    width: 170,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).splashColor,
-                        border: Border.all(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+          body: Stack(
+        children: [
+          Camera(widget.cameras, setRecognitions, center_state==0, false, 1),
+          center_state == 0 ? BndBox(_recognitions == null ? [] : _recognitions) : Text(""),
+          center_state == 0 ? t_box() : draw_court(),
+          Positioned(
+              top: 0,
+              right: 20,
+              child: SafeArea(
+                child: center_state == 0
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.help,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          widget.analytics.logEvent(name: "Ghost_Tutorial_Shown");
+                          showTutorial();
+                        },
+                      )
+                    : Text(""),
+              )),
+          Corner_tree(),
+          Positioned(
+              top: -20,
+              left: (MediaQuery.of(context).size.width - 170) / 2,
+              child: SafeArea(
+                child: GestureDetector(
+                  onTap: () {
+                    widget.analytics.logEvent(name: "Ghosted_Ended_Early");
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                      width: 170,
+                      height: 50,
+                      decoration: BoxDecoration(
                           color: Theme.of(context).splashColor,
-                        ),
-                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
-                    child: Center(
-                        child: Text(
-                      "Close",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-                    ))),
-              ),
-            )),
-        GestureDetector(
-          onDoubleTap: () {
-            setState(() {
-              //showcam = !showcam;
-            });
-          },
-          onLongPress: () async {
-            await save_data();
-            Navigator.pop(context);
-          },
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40),
-              child: Container(
-                height: 400,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AnimatedSwitcher(
-                          key: keyButton4,
-                          duration: Duration(milliseconds: 400),
-                          child: center,
-                          transitionBuilder: (Widget child, Animation<double> animation) {
-                            return ScaleTransition(child: child, scale: animation);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                          border: Border.all(
+                            color: Theme.of(context).splashColor,
+                          ),
+                          borderRadius: BorderRadius.only(bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20))),
+                      child: Center(
+                          child: Text(
+                        "Close",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                      ))),
                 ),
-              ),
-            ),
+              )),
+          Positioned(
+            top: 100,
+            child: SafeArea(
+                child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    // color: Colors.pink,
+
+                    child: AnimatedSwitcher(
+                      key: keyButton4,
+                      duration: Duration(milliseconds: 400),
+                      child: center_tile(),
+                      transitionBuilder: (Widget child, Animation<double> animation) {
+                        return ScaleTransition(child: child, scale: animation);
+                      },
+                    ))),
           ),
-        ),
-      ],
-    ));
+        ],
+      )),
+    );
   }
 
   @override
   dispose() {
-    controller.dispose(); // you need this
+
+    controller.dispose();
     super.dispose();
   }
 }
+
+/*
+AnimatedSwitcher(
+                      key: keyButton4,
+                      duration: Duration(milliseconds: 400),
+                      child: center,
+                      transitionBuilder: (Widget child, Animation<double> animation) {
+                        return ScaleTransition(child: child, scale: animation);
+                      },
+ */

@@ -459,7 +459,9 @@ class _Finish_ScreenState extends State<Finish_Screen> {
           leading: IconButton(
             icon: Icon(Icons.close),
             onPressed: () {
-              Navigator.pop(context);
+              //Navigator.pop(context);
+
+              Navigator.pushNamed(context, 'home',);
             },
           ),
         ),
