@@ -919,7 +919,9 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                   is_shaking = false;
                 });
               },
-              child: CustomScrollView(slivers: [
+              child: CustomScrollView(
+
+                  slivers: [
                 SliverPersistentHeader(
                   pinned: true,
                   floating: false,
@@ -945,7 +947,7 @@ class SoloScreenState extends State<SoloScreen> with SingleTickerProviderStateMi
                     ], controller: _tabController),
                   ),
                 ),
-                SliverFixedExtentList(
+                    SliverFixedExtentList(
                   itemExtent: 700.0,
                   delegate: SliverChildListDelegate([
                     TabBarView(

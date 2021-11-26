@@ -141,7 +141,7 @@ class _setupState extends State<setup> {
               brightness: Brightness.dark,
               backgroundColor: Color.fromRGBO(50, 50, 50, 1),
               splashColor: Color.fromRGBO(60, 60, 100, 1),
-              appBarTheme: AppBarTheme(color: Color.fromRGBO(60, 60, 100, 1), textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
+              appBarTheme: AppBarTheme(color: Color.fromRGBO(60, 60, 100, 1), textTheme: TextTheme(subtitle1: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
               tabBarTheme: TabBarTheme(
                 labelStyle: TextStyle(color: Colors.white),
                 labelColor: Colors.white,
@@ -182,7 +182,7 @@ class _setupState extends State<setup> {
               primaryColor: Colors.pinkAccent,
 
 
-              appBarTheme: AppBarTheme(color: Colors.pinkAccent, textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
+              appBarTheme: AppBarTheme(color: Colors.pinkAccent, textTheme: TextTheme(subtitle1: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
               tabBarTheme: TabBarTheme(
                 labelStyle: TextStyle(color: Colors.white),
                 labelColor: Colors.white,
@@ -221,7 +221,7 @@ class _setupState extends State<setup> {
               primaryColor: Color.fromRGBO(40, 40, 40, 1),
 
 
-              appBarTheme: AppBarTheme(color: Color.fromRGBO(40, 40, 40, 1), textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
+              appBarTheme: AppBarTheme(color: Color.fromRGBO(40, 40, 40, 1), textTheme: TextTheme(subtitle1: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
               tabBarTheme: TabBarTheme(
                 labelStyle: TextStyle(color: Colors.white),
                 labelColor: Colors.white,
@@ -261,7 +261,7 @@ class _setupState extends State<setup> {
               primaryColor: Colors.deepPurple,
 
 
-              appBarTheme: AppBarTheme(color: Colors.deepPurple, textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
+              appBarTheme: AppBarTheme(color: Colors.deepPurple, textTheme: TextTheme(subtitle1: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
               tabBarTheme: TabBarTheme(
                 labelStyle: TextStyle(color: Colors.white),
                 labelColor: Colors.white,
@@ -303,7 +303,7 @@ class _setupState extends State<setup> {
               primaryColor: Colors.greenAccent,
 
 
-              appBarTheme: AppBarTheme(color: Color.fromRGBO(42, 154, 96, 1), textTheme: TextTheme(title: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
+              appBarTheme: AppBarTheme(color: Color.fromRGBO(42, 154, 96, 1), textTheme: TextTheme(subtitle1: TextStyle(color: Colors.white,fontSize: 25)), iconTheme: IconThemeData(color: Colors.white)),
               tabBarTheme: TabBarTheme(
                 labelStyle: TextStyle(color: Colors.white),
                 labelColor: Colors.white,
