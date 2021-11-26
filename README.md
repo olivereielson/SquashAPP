@@ -8,7 +8,7 @@ Track Ghosting a Solo Exersises
 
 
 <p float="left">
-  <img src="assets/readme_images/6E5A8058-D9BD-4CE5-97F5-D71CE357D4FA.PNG" width="100" />
+  <img src="assets/readme_images/Screen Shot 2021-11-26 at 4.27.56 PM.png" width="100" />
   <img src="assets/readme_images/6E5A8058-D9BD-4CE5-97F5-D71CE357D4FA.PNG" width="100" />
 </p>
 
